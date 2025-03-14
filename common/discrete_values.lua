@@ -614,7 +614,7 @@ return function(Account)
         local first_date = dv_pairs[1].first.result_date or ""
         local last_date = dv_pairs[#dv_pairs].first.result_date or ""
 
-        for _, dv_pair in lists.reverse(ipairs(dv_pairs)) do
+        for _, dv_pair in ipairs(lists.reverse(dv_pairs)) do
             values_text = values_text .. dv_pair.first.result .. "/" .. dv_pair.second.result .. ", "
         end
         values_text = values_text:sub(1, -3)
