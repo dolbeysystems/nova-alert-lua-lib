@@ -625,7 +625,7 @@ return function(Account)
         link.link_text = links.replace_link_place_holders(args.linkTemplate, nil, nil, dv_pairs[1].first, nil)
         link.link_text = link.link_text:gsub("%[VALUE_PAIRS%]", values_text)
         link.link_text = link.link_text:gsub("%[DATE1%]", dates.date_int_to_string(first_date))
-        link.link_text = link.link_text:gsub("%[DATE2%]", dates.date_int_to_strihng(last_date))
+        link.link_text = link.link_text:gsub("%[DATE2%]", dates.date_int_to_string(last_date))
 
         return link
     end
