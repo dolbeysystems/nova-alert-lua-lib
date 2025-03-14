@@ -10,7 +10,7 @@ return function(Account)
     ---
     --- @param args GetExistingCdiAlertArgs a table of arguments
     ---
-    --- @return CdiAlert? - the existing cdi alert or nil if not found
+    --- @return CdiAlert? - the existing cdi alert or nil if it is not found
     --------------------------------------------------------------------------------
     function module.get_existing_cdi_alert(args)
         local account = args.account or Account
