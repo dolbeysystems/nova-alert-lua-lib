@@ -1,5 +1,11 @@
 # Lua Libs
 
+This repostiory is meant to be used as a submodule for site-specific repositories.
+When cloning site-specific repositories, make sure to `git clone --recursive`.
+
+To update submodules, run `git pull --recurse-submodules`.
+You can set this as the default with `git config set submodule.recurse true`.
+
 ## Conversion Notes
 
 ### Mappings From "Global" Python Functions
