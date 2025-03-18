@@ -101,26 +101,32 @@ return function(Account)
     --------------------------------------------------------------------------------
     --- Get Hemoglobin and Hematocrit Links denoting a significant drop in hemoglobin
     ---
+    --- @param dv_names_hemoglobin string[] Names of the Hemoglobin discrete values
+    --- @param dv_names_hematocrit string[] Names of the Hematocrit discrete values
+    ---
     --- @return HematocritHemoglobinPeakDropLinks? - Peak and Drop links for Hemoglobin and Hematocrit if present
     --------------------------------------------------------------------------------
-    function module.get_hemoglobin_drop_pairs()
+    function module.get_hemoglobin_drop_pairs(dv_names_hemoglobin, dv_names_hematocrit)
         local hemoglobin_peak_link = nil
         local hemoglobin_drop_link = nil
         local hematocrit_peak_link = nil
         local hematocrit_drop_link = nil
 
         local highest_hemoglobin_in_past_week = discrete.get_highest_discrete_value({
-            discreteValueName = "Hemoglobin",
-            daysBack = 7
+            discreteValueNames = dv_names_hemoglobin,
         })
+
+        if not highest_hemoglobin_in_past_week then return nil end
+
         local lowest_hemoglobin_in_past_week_after_highest = discrete.get_lowest_discrete_value({
-            discreteValueName = "Hemoglobin",
-            daysBack = 7,
+            discreteValueNames = dv_names_hemoglobin,
             predicate = function(dv)
                 return highest_hemoglobin_in_past_week ~= nil and
                     dv.result_date > highest_hemoglobin_in_past_week.result_date
             end
         })
+        if not lowest_hemoglobin_in_past_week_after_highest then return nil end
+
         local hemoglobin_delta = 0
 
         if highest_hemoglobin_in_past_week and lowest_hemoglobin_in_past_week_after_highest then
@@ -132,11 +138,11 @@ return function(Account)
                 hemoglobin_drop_link = discrete.get_link_for_discrete_value(lowest_hemoglobin_in_past_week_after_highest,
                     "Dropped Hemoglobin", 2, true)
                 local hemoglobin_peak_hemocrit = discrete.get_discrete_value_nearest_to_date({
-                    discreteValueName = "Hematocrit",
+                    discreteValueNames = dv_names_hematocrit,
                     date = highest_hemoglobin_in_past_week.result_date
                 })
                 local hemoglobin_drop_hemocrit = discrete.get_discrete_value_nearest_to_date({
-                    discreteValueName = "Hematocrit",
+                    discreteValueNames = dv_names_hematocrit,
                     date = lowest_hemoglobin_in_past_week_after_highest.result_date
                 })
                 if hemoglobin_peak_hemocrit then
@@ -165,9 +171,12 @@ return function(Account)
     --------------------------------------------------------------------------------
     --- Get Hemoglobin and Hematocrit Links denoting a significant drop in hematocrit
     ---
+    --- @param dv_names_hemoglobin string[] Names of the Hemoglobin discrete values
+    --- @param dv_names_hematocrit string[] Names of the Hematocrit discrete values
+    ---
     --- @return HematocritHemoglobinPeakDropLinks? - Peak and Drop links for Hemoglobin and Hematocrit if present
     --------------------------------------------------------------------------------
-    function module.get_hematocrit_drop_pairs()
+    function module.get_hematocrit_drop_pairs(dv_names_hemoglobin, dv_names_hematocrit)
         local hemoglobin_peak_link = nil
         local hemoglobin_drop_link = nil
         local hematocrit_peak_link = nil
@@ -175,17 +184,21 @@ return function(Account)
 
         -- If we didn't find the hemoglobin drop, look for a hematocrit drop
         local highest_hematocrit_in_past_week = discrete.get_highest_discrete_value({
-            discreteValueName = "Hematocrit",
-            daysBack = 7
+            discreteValueNames = dv_names_hematocrit,
         })
+
+        if not highest_hematocrit_in_past_week then return nil end
+
         local lowest_hematocrit_in_past_week_after_highest = discrete.get_lowest_discrete_value({
-            discreteValueName = "Hematocrit",
-            daysBack = 7,
+            discreteValueNames = dv_names_hematocrit,
             predicate = function(dv)
                 return highest_hematocrit_in_past_week ~= nil and
                     dv.result_date > highest_hematocrit_in_past_week.result_date
             end
         })
+
+        if not lowest_hematocrit_in_past_week_after_highest then return nil end
+
         local hematocrit_delta = 0
 
         if highest_hematocrit_in_past_week and lowest_hematocrit_in_past_week_after_highest then
@@ -197,11 +210,11 @@ return function(Account)
                 hematocrit_drop_link = discrete.get_link_for_discrete_value(lowest_hematocrit_in_past_week_after_highest,
                     "Dropped Hematocrit", 6, true)
                 local hemocrit_peak_hemoglobin = discrete.get_discrete_value_nearest_to_date({
-                    discreteValueName = "Hemoglobin",
+                    discreteValueNames = dv_names_hemoglobin,
                     date = highest_hematocrit_in_past_week.result_date
                 })
                 local hemocrit_drop_hemoglobin = discrete.get_discrete_value_nearest_to_date({
-                    discreteValueName = "Hemoglobin",
+                    discreteValueNames = dv_names_hemoglobin,
                     date = lowest_hematocrit_in_past_week_after_highest.result_date
                 })
                 if hemocrit_peak_hemoglobin then
