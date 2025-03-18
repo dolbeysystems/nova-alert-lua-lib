@@ -10,32 +10,31 @@ return function(Account)
     --------------------------------------------------------------------------------
     --- Get Low Hemoglobin Discrete Value Pairs
     ---
-    --- @param gender string Gender of the patient
+    --- @param dv_names_hemoglobin string[] Names of the Hemoglobin discrete values
+    --- @param dv_names_hematocrit string[] Names of the Hematocrit discrete values
+    --- @param low_hemoglobin_value number Low value for hemoglobin
     ---
     --- @return HematocritHemoglobinDiscreteValuePair[]
     --------------------------------------------------------------------------------
-    function module.get_low_hemoglobin_discrete_value_pairs(gender)
-        local low_hemoglobin_value = 12
-
-        if gender == "M" then
-            low_hemoglobin_value = 13.5
-        end
-
+    function module.get_low_hemoglobin_discrete_value_pairs(
+        dv_names_hemoglobin,
+        dv_names_hematocrit,
+        low_hemoglobin_value
+    )
         --- @type HematocritHemoglobinDiscreteValuePair[]
         local low_hemoglobin_pairs = {}
 
         local low_hemoglobin_values = discrete.get_ordered_discrete_values({
-            discreteValueName = "Hemoglobin",
+            discreteValueNames = dv_names_hemoglobin,
             predicate = function(dv)
                 return discrete.get_dv_value_number(dv) <= low_hemoglobin_value
-            end,
-            daysBack = 31
+            end
         })
         for i = 1, #low_hemoglobin_values do
             local dv_hemoglobin = low_hemoglobin_values[i]
             local dv_date = dv_hemoglobin.result_date
             local dv_hematocrit = dv_date and discrete.get_discrete_value_nearest_to_date({
-                discreteValueName = "Hematocrit",
+                discreteValueNames = dv_names_hematocrit,
                 date = dv_date
             })
             if dv_hematocrit then
@@ -52,24 +51,24 @@ return function(Account)
     end
 
     --------------------------------------------------------------------------------
-    --- Get Low Hemoglobin Discrete Value Pairs
+    --- Get Low Hematocrit Discrete Value Pairs
     ---
-    --- @param gender string Gender of the patient
+    --- @param dv_names_hematocrit string[] Names of the Hematocrit discrete values
+    --- @param dv_names_hemoglobin string[] Names of the Hemoglobin discrete values
+    --- @param low_hematocrit_value number Low value for hematocrit
     ---
     --- @return HematocritHemoglobinDiscreteValuePair[]
     --------------------------------------------------------------------------------
-    function module.get_low_hematocrit_discrete_value_pairs(gender)
-        local low_hematocrit_value = 35
-
-        if gender == "M" then
-            low_hematocrit_value = 38
-        end
-
+    function module.get_low_hematocrit_discrete_value_pairs(
+        dv_names_hematocrit,
+        dv_names_hemoglobin,
+        low_hematocrit_value
+    )
         --- @type HematocritHemoglobinDiscreteValuePair[]
         local low_hematocrit_pairs = {}
 
         local low_hematomocrit_values = discrete.get_ordered_discrete_values({
-            discreteValueName = "Hematocrit",
+            discreteValueNames = dv_names_hematocrit,
             predicate = function(dv)
                 return discrete.get_dv_value_number(dv) <= low_hematocrit_value
             end,
@@ -79,7 +78,7 @@ return function(Account)
             local dv_hematocrit = low_hematomocrit_values[i]
             local dv_date = dv_hematocrit.result_date
             local dv_hemoglobin = dv_date and discrete.get_discrete_value_nearest_to_date({
-                discreteValueName = "Hemoglobin",
+                discreteValueNames = dv_names_hemoglobin,
                 date = dv_date
             })
             if dv_hemoglobin then
