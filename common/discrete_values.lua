@@ -122,7 +122,7 @@ return function(Account)
         local highest = discrete_values[1]
         local highest_value = module.get_dv_value_number(highest)
         for i = 2, #discrete_values do
-            if module.check_dv_result_number(discrete_values[i], function(v) return v > highest_value end) then
+            if module.check_dv_result_number(discrete_values[i], function(dv_, num) return num > highest_value end) then
                 highest = discrete_values[i]
                 highest_value = module.get_dv_value_number(highest)
             end
@@ -145,7 +145,7 @@ return function(Account)
         local lowest = discrete_values[1]
         local lowest_value = module.get_dv_value_number(lowest)
         for i = 2, #discrete_values do
-            if module.check_dv_result_number(discrete_values[i], function(v) return v < lowest_value end) then
+            if module.check_dv_result_number(discrete_values[i], function(dv_, num) return num < lowest_value end) then
                 lowest = discrete_values[i]
                 lowest_value = module.get_dv_value_number(lowest)
             end
