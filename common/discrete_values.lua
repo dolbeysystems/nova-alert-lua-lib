@@ -757,7 +757,7 @@ return function(Account)
     function module.make_match_predicate(patterns)
         return function(dv, num_)
             return lists.any(patterns, function(pattern)
-                return string.match(dv.result, pattern)
+                return string.match(dv.result or "", pattern)
             end)
         end
     end
@@ -771,7 +771,7 @@ return function(Account)
     function module.make_no_match_predicate(patterns)
         return function(dv, num_)
             return not lists.any(patterns, function(pattern)
-                return string.match(dv.result, pattern)
+                return string.match(dv.result or "", pattern)
             end)
         end
     end
