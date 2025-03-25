@@ -417,7 +417,7 @@ return function(Account)
         local max_per_value = args.max_per_value or 9999
         local include_standard_suffix = args.include_standard_suffix
         local sort = args.sort or function(a, b)
-            return a.result_date > b.result_date
+            return a.result_date < b.result_date
         end
 
         if include_standard_suffix == nil or include_standard_suffix then
@@ -477,7 +477,7 @@ return function(Account)
         args.max_per_value = 1
         local links = module.get_discrete_value_links(args)
         if #links > 0 then
-            return links[1]
+            return links[#links]
         else
             return nil
         end
