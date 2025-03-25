@@ -23,6 +23,7 @@ return function(Account)
 
         local link = cdi_alert_link()
         link.discrete_value_name = discrete_value.name
+        link.discrete_value_id = discrete_value.unique_id
         link.link_text = links.replace_link_place_holders(link_template, nil, nil, discrete_value, nil)
         link.sequence = sequence
         return link
