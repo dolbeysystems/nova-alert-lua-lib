@@ -134,9 +134,9 @@ return function(Account)
                 discrete.get_dv_value_number(lowest_hemoglobin_in_past_week_after_highest)
             if hemoglobin_delta >= 2 then
                 hemoglobin_peak_link = discrete.get_link_for_discrete_value(highest_hemoglobin_in_past_week,
-                    "Peak Hemoglobin", 1, true)
+                    "Hemoglobin", 1, true)
                 hemoglobin_drop_link = discrete.get_link_for_discrete_value(lowest_hemoglobin_in_past_week_after_highest,
-                    "Dropped Hemoglobin", 2, true)
+                    "Hemoglobin", 2, true)
                 local hemoglobin_peak_hemocrit = discrete.get_discrete_value_nearest_to_date({
                     discreteValueNames = dv_names_hematocrit,
                     date = highest_hemoglobin_in_past_week.result_date
@@ -147,11 +147,11 @@ return function(Account)
                 })
                 if hemoglobin_peak_hemocrit then
                     hematocrit_peak_link = discrete.get_link_for_discrete_value(hemoglobin_peak_hemocrit,
-                        "Hematocrit at Hemoglobin Peak", 3, true)
+                        "Hematocrit", 3, true)
                 end
                 if hemoglobin_drop_hemocrit then
                     hematocrit_drop_link = discrete.get_link_for_discrete_value(hemoglobin_drop_hemocrit,
-                        "Hematocrit at Hemoglobin Drop", 4, true)
+                        "Hematocrit", 4, true)
                 end
             end
         end
@@ -206,9 +206,9 @@ return function(Account)
                 discrete.get_dv_value_number(lowest_hematocrit_in_past_week_after_highest)
             if hematocrit_delta >= 6 then
                 hematocrit_peak_link = discrete.get_link_for_discrete_value(highest_hematocrit_in_past_week,
-                    "Peak Hematocrit", 5, true)
+                    "Hematocrit", 5, true)
                 hematocrit_drop_link = discrete.get_link_for_discrete_value(lowest_hematocrit_in_past_week_after_highest,
-                    "Dropped Hematocrit", 6, true)
+                    "Hematocrit", 6, true)
                 local hemocrit_peak_hemoglobin = discrete.get_discrete_value_nearest_to_date({
                     discreteValueNames = dv_names_hemoglobin,
                     date = highest_hematocrit_in_past_week.result_date
@@ -219,11 +219,11 @@ return function(Account)
                 })
                 if hemocrit_peak_hemoglobin then
                     hemoglobin_peak_link = discrete.get_link_for_discrete_value(hemocrit_peak_hemoglobin,
-                        "Hemoglobin at Hematocrit Peak", 7, true)
+                        "Hemoglobin", 7, true)
                 end
                 if hemocrit_drop_hemoglobin then
                     hemoglobin_drop_link = discrete.get_link_for_discrete_value(hemocrit_drop_hemoglobin,
-                        "Hemoglobin at Hematocrit Drop", 8, true)
+                        "Hemoglobin", 8, true)
                 end
             end
         end
