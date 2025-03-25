@@ -554,8 +554,8 @@ return function(Account)
         link.discrete_value_name = first_value.name
         link.discrete_value_id = first_value.unique_id
         link.link_text = links.replace_link_place_holders(link_template, nil, nil, first_value, nil)
-        link.link_text = link.link_text:gsub("%[DATE1%]", dates.date_int_to_string(first_value.result_date))
-        link.link_text = link.link_text:gsub("%[DATE2%]", dates.date_int_to_string(second_value.result_date))
+        link.link_text = link.link_text:gsub("%[DATE1%]", dates.date_int_to_string(first_value.result_date, "%m/%d/%Y"))
+        link.link_text = link.link_text:gsub("%[DATE2%]", dates.date_int_to_string(second_value.result_date, "%m/%d/%Y"))
         return link
     end
 
@@ -611,8 +611,8 @@ return function(Account)
             return nil
         end
 
-        local first_date = dv_pairs[1].first.result_date or ""
-        local last_date = dv_pairs[#dv_pairs].first.result_date or ""
+        local first_date = dv_pairs[#dv_pairs].first.result_date or ""
+        local last_date = dv_pairs[1].first.result_date or ""
 
         for _, dv_pair in ipairs(lists.reverse(dv_pairs)) do
             values_text = values_text .. dv_pair.first.result .. "/" .. dv_pair.second.result .. ", "
@@ -624,8 +624,8 @@ return function(Account)
         link.discrete_value_name = dv_pairs[1].first.name
         link.link_text = links.replace_link_place_holders(args.linkTemplate, nil, nil, dv_pairs[1].first, nil)
         link.link_text = link.link_text:gsub("%[VALUE_PAIRS%]", values_text)
-        link.link_text = link.link_text:gsub("%[DATE1%]", dates.date_int_to_string(first_date))
-        link.link_text = link.link_text:gsub("%[DATE2%]", dates.date_int_to_string(last_date))
+        link.link_text = link.link_text:gsub("%[DATE1%]", dates.date_int_to_string(first_date, "%m/%d/%Y"))
+        link.link_text = link.link_text:gsub("%[DATE2%]", dates.date_int_to_string(last_date, "%m/%d/%Y"))
 
         return link
     end
