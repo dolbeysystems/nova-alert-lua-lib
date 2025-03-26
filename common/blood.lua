@@ -27,7 +27,8 @@ return function(Account)
         local low_hemoglobin_values = discrete.get_ordered_discrete_values({
             discreteValueNames = dv_names_hemoglobin,
             predicate = function(dv)
-                return discrete.get_dv_value_number(dv) <= low_hemoglobin_value
+                local value = discrete.get_dv_value_number(dv)
+                return value ~= nil and value <= low_hemoglobin_value
             end
         })
         for i = 1, #low_hemoglobin_values do
@@ -70,7 +71,8 @@ return function(Account)
         local low_hematomocrit_values = discrete.get_ordered_discrete_values({
             discreteValueNames = dv_names_hematocrit,
             predicate = function(dv)
-                return discrete.get_dv_value_number(dv) <= low_hematocrit_value
+                local value = discrete.get_dv_value_number(dv)
+                return value ~= nil and value <= low_hematocrit_value
             end,
             daysBack = 31
         })
