@@ -26,8 +26,8 @@ return function(Account)
     --- @field add_abstraction_link_with_value (fun (self: header_builder, abstraction: string, description: string)) : CdiAlertLink?
     --- @field add_discrete_value_link (fun (self: header_builder, dv_name: string, description: string, predicate: (fun (dv: DiscreteValue, num: number?): boolean)?)) : CdiAlertLink?
     --- @field add_discrete_value_one_of_link (fun (self: header_builder, dv_names: string[], description: string, predicate: (fun (dv: DiscreteValue, num: number?): boolean)?)) : CdiAlertLink?
-    --- @field add_discrete_value_links (fun (self: header_builder, dv_name: string, description: string, max: number, predicate: (fun (dv: DiscreteValue, num: number?): boolean)?)) : CdiAlertLink?
-    --- @field add_discrete_value_many_links (fun (self: header_builder, dv_names: string[], description: string, max_per_value: number, predicate: (fun (dv: DiscreteValue, num: number?): boolean)?)) : CdiAlertLink?
+    --- @field add_discrete_value_links (fun (self: header_builder, dv_name: string, description: string, predicate: (fun (dv: DiscreteValue, num: number?): boolean)?, max_per_value: number?)) : CdiAlertLink?
+    --- @field add_discrete_value_many_links (fun (self: header_builder, dv_names: string[], description: string, predicate: (fun (dv: DiscreteValue, num: number?): boolean)?, max_per_value: number?)) : CdiAlertLink?
     --- @field add_medication_link (fun (self: header_builder, cat: string, description: string?, predicate: (fun (med: Medication): boolean)?)) : CdiAlertLink?
     --- @field add_medication_links (fun (self: header_builder, cats: string[], description: string?, predicate: (fun (med: Medication): boolean)?)) : CdiAlertLink?
 
@@ -221,15 +221,15 @@ return function(Account)
             --- @param self header_builder
             --- @param dv_name string
             --- @param description string
-            --- @param max number
             --- @param predicate (fun (dv: DiscreteValue, num: number): boolean)?
+            --- @param max_per_value number?
             --- @return CdiAlertLink?
-            add_discrete_value_links = function(self, dv_name, description, max, predicate)
+            add_discrete_value_links = function(self, dv_name, description, predicate, max_per_value)
                 local lnks = links_lib.get_discrete_value_links {
                     discreteValueName = dv_name,
                     text = description,
                     predicate = predicate,
-                    max_per_value = max
+                    max_per_value = max_per_value
                 }
 
                 for _, link in ipairs(lnks) do
@@ -243,10 +243,10 @@ return function(Account)
             --- @param self header_builder
             --- @param dv_names string[]
             --- @param description string
-            --- @param max_per_value number
             --- @param predicate (fun (dv: DiscreteValue, num: number): boolean)?
+            --- @param max_per_value number?
             --- @return CdiAlertLink[]
-            add_discrete_value_many_links = function(self, dv_names, description, max_per_value, predicate)
+            add_discrete_value_many_links = function(self, dv_names, description, predicate, max_per_value)
                 local lnks = links_lib.get_discrete_value_links {
                     discreteValueNames = dv_names,
                     text = description,

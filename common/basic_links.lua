@@ -414,7 +414,7 @@ return function(Account)
         local predicate = args.predicate
         local sequence = args.seq or 0
         local fixed_sequence = args.fixed_seq or false
-        local max_per_value = args.max_per_value or 9999
+        local max_per_value = args.max_per_value or 10
         local include_standard_suffix = args.include_standard_suffix
         local sort = args.sort or function(a, b)
             return a.result_date < b.result_date
