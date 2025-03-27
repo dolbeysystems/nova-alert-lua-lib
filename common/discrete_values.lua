@@ -349,7 +349,7 @@ return function(Account)
             return nil
         end
 
-        for _, dv in ipairs(discrete_values) do
+        for _, dv in ipairs(lists.reverse(discrete_values)) do
             if first_date == nil and dv.result_date then
                 first_date = dv.result_date
             end
