@@ -373,8 +373,8 @@ return function(Account)
         end
 
         if first_date and last_date then
-            link_text = link_text:gsub("%[DATE1%]", dates.date_int_to_string(first_date))
-            link_text = link_text:gsub("%[DATE2%]", dates.date_int_to_string(last_date))
+            link_text = link_text:gsub("%[DATE1%]", dates.date_int_to_string(first_date, "%m/%d/%Y"))
+            link_text = link_text:gsub("%[DATE2%]", dates.date_int_to_string(last_date, "%m/%d/%Y"))
             link_text = link_text .. concat_values
             local link = cdi_alert_link()
             link.discrete_value_name = dv_names[1]
