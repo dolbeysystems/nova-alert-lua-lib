@@ -109,6 +109,7 @@
 --- @field links CdiAlertLink[] - A list of sublinks
 --- @field sequence integer - The sequence number of the link
 --- @field hidden boolean - Whether the link is hidden
+--- @field permanent boolean - Whether the link is permanent
 
 --- @class AccountWorkingHistoryEntry: userdata
 --- @field diagnoses DiagnosisCode[] -

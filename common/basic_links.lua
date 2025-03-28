@@ -16,6 +16,8 @@ return function(Account)
     --- @field seq number? Starting sequence number to use for the links
     --- @field fixed_seq boolean? If true, the sequence number will not be incremented for each link
     --- @field include_standard_suffix boolean? If true, the standard suffix will be appended to the link text
+    --- @field hidden boolean? If true, the link will be hidden
+    --- @field permanent boolean? If true, the link will be permanent
 
     --- @class (exact) GetCodeLinksArgs : LinkArgs
     --- @field codes string[]? List of codes to search for
@@ -41,6 +43,8 @@ return function(Account)
         local fixed_sequence = args.fixed_seq or false
         local max_per_value = args.max_per_value or 9999
         local include_standard_suffix = args.include_standard_suffix
+        local hidden = args.hidden or false
+        local permanent = args.permanent or false
         local sort = args.sort or function(a, b)
             return a.code_reference.code > b.code_reference.code
         end
@@ -84,6 +88,8 @@ return function(Account)
                 link.link_text = module.replace_link_place_holders(link_template or "", code_reference, document, nil,
                     nil)
                 link.sequence = sequence
+                link.permanent = permanent
+                link.hidden = hidden
                 table.insert(links, link)
                 if not fixed_sequence then
                     sequence = sequence + 1
@@ -97,6 +103,8 @@ return function(Account)
                         link.link_text = module.replace_link_place_holders(link_template, code_reference, document, nil,
                             nil)
                         link.sequence = sequence
+                        link.permanent = permanent
+                        link.hidden = hidden
                         table.insert(links, link)
                         if max_per_value and #links >= max_per_value then
                             break
@@ -219,6 +227,8 @@ return function(Account)
         local fixed_sequence = args.fixed_seq or false
         local max_per_value = args.max_per_value or 9999
         local include_standard_suffix = args.include_standard_suffix
+        local hidden = args.hidden or false
+        local permanent = args.permanent or false
 
         --- sorts the documents by date
         --- @param a CACDocument
@@ -258,6 +268,8 @@ return function(Account)
             link.document_id = document.document_id
             link.link_text = module.replace_link_place_holders(link_template, nil, document, nil, nil)
             link.sequence = sequence
+            link.permanent = permanent
+            link.hidden = hidden
             table.insert(links, link)
             if not fixed_sequence then
                 sequence = sequence + 1
@@ -309,6 +321,8 @@ return function(Account)
         local include_standard_suffix = args.include_standard_suffix
         local use_cdi_alert_category_field = args.useCdiAlertCategoryField or false
         local one_per_date = args.onePerDate or false
+        local hidden = args.hidden or false
+        local permanent = args.permanent or false
         local sort = args.sort or function(a, b)
             return a.start_date > b.start_date
         end
@@ -369,6 +383,8 @@ return function(Account)
             link.medication_id = medication.external_id
             link.link_text     = module.replace_link_place_holders(link_template, nil, nil, nil, medication)
             link.sequence      = sequence
+            link.permanent     = permanent
+            link.hidden        = hidden
             table.insert(links, link)
             if not fixed_sequence then
                 sequence = sequence + 1
@@ -416,8 +432,10 @@ return function(Account)
         local fixed_sequence = args.fixed_seq or false
         local max_per_value = args.max_per_value or 10
         local include_standard_suffix = args.include_standard_suffix
+        local hidden = args.hidden or false
+        local permanent = args.permanent or false
         local sort = args.sort or function(a, b)
-            return a.result_date < b.result_date
+            return a.result_date > b.result_date
         end
 
         if include_standard_suffix == nil or include_standard_suffix then
@@ -458,6 +476,8 @@ return function(Account)
             link.discrete_value_id = discrete_value.unique_id
             link.link_text = module.replace_link_place_holders(link_template, nil, nil, discrete_value, nil)
             link.sequence = sequence
+            link.permanent = permanent
+            link.hidden = hidden
             table.insert(links, link)
             if not fixed_sequence then
                 sequence = sequence + 1
@@ -474,7 +494,13 @@ return function(Account)
     --- @return CdiAlertLink? # the link to the first discrete value or nil if not found
     --------------------------------------------------------------------------------
     function module.get_discrete_value_link(args)
+        if args.permanent == nil then
+            args.permanent = true
+        end
         args.max_per_value = 1
+        args.sort = args.sort or function(a, b)
+            return a.result_date < b.result_date
+        end
         local links = module.get_discrete_value_links(args)
         if #links > 0 then
             return links[#links]
@@ -584,14 +610,32 @@ return function(Account)
         elseif #new_links == 0 then
             return old_links
         else
+            local permanent_discrete_value_names = {}
+            local permanent_codes = {}
+            local permanent_medication_names = {}
+
             -- First, add all of the old links
             for _, old_link in ipairs(old_links) do
                 table.insert(merged_links, old_link)
+
+                if old_link.permanent then
+                    if old_link.code then
+                        permanent_codes[old_link.code] = true
+                    elseif old_link.discrete_value_id then
+                        permanent_discrete_value_names[old_link.discrete_value_name] = true
+                    elseif old_link.medication_id then
+                        permanent_medication_names[old_link.medication_name] = true
+                    end
+                end
             end
 
             -- Next, upsert the new links
             for _, new_link in ipairs(new_links) do
                 local matching_existing_link = nil
+
+                if new_link.code ~= nil and permanent_codes[new_link.code] then goto continue end
+                if new_link.discrete_value_name ~= nil and permanent_discrete_value_names[new_link.discrete_value_name] then goto continue end
+                if new_link.medication_name ~= nil and permanent_medication_names[new_link.medication_name] then goto continue end
 
                 for _, existing_link in ipairs(merged_links) do
                     if compare_links(existing_link, new_link) then
@@ -609,11 +653,12 @@ return function(Account)
                     matching_existing_link.link_text = new_link.link_text
                     matching_existing_link.links = module.merge_links(matching_existing_link.links, new_link.links)
                 end
+                ::continue::
             end
 
             return merged_links
         end
     end
+
     return module
 end
-
