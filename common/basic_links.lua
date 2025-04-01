@@ -239,7 +239,7 @@ return function(Account)
         end
 
         if include_standard_suffix == nil or include_standard_suffix then
-            link_template = link_template .. " ([DOCUMENTTYPE], [DOCUMENTDATE])"
+            link_template = link_template
         end
 
         --- @type CdiAlertLink[]
