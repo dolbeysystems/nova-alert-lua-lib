@@ -435,7 +435,7 @@ return function(Account)
         local hidden = args.hidden or false
         local permanent = args.permanent or false
         local sort = args.sort or function(a, b)
-            return a.result_date > b.result_date
+            return a.result_date < b.result_date
         end
 
         if include_standard_suffix == nil or include_standard_suffix then
@@ -499,7 +499,7 @@ return function(Account)
         end
         args.max_per_value = 1
         args.sort = args.sort or function(a, b)
-            return a.result_date < b.result_date
+            return a.result_date > b.result_date
         end
         local links = module.get_discrete_value_links(args)
         if #links > 0 then
