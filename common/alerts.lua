@@ -17,7 +17,7 @@ return function(Account)
         local script_name = args.scriptName
 
         for _, alert in ipairs(account.cdi_alerts) do
-            if alert.script_name == script_name then
+            if alert.script_name == script_name and alert.passed == true then
                 return alert
             end
         end
