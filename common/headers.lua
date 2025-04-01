@@ -126,17 +126,17 @@ return function(Account)
             --- @return CdiAlertLink?
             add_code_one_of_link = function(self, codes, description)
                 ---@type CdiAlertLink[]
-                local lnks = {}
+                local lnk = {}
                 for _, code in ipairs(codes) do
                     local link = links_lib.get_code_link { code = code, text = description }
                     if link then
                         link.sequence = self.sequence_counter
                         self.sequence_counter = self.sequence_counter + 1
                         self:add_link(link)
-                        table.insert(lnks, link)
+                        table.insert(lnk, link)
                     end
+                    return lnk
                 end
-                return lnks
             end,
 
             --- @param self header_builder
