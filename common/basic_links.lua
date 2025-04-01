@@ -532,7 +532,7 @@ return function(Account)
 
         if document ~= nil then
             link = string.gsub(link, "%[DOCUMENTID%]", document.document_id or "")
-            link = string.gsub(link, "%[DOCUMENTDATE%]", dates.date_int_to_string(document.document_date_time))
+            link = string.gsub(link, "%[DOCUMENTDATE%]", dates.date_int_to_string(document.document_date_time, "%m/%d/%Y"))
             link = string.gsub(link, "%[DOCUMENTTYPE%]", document.document_type or "")
         end
 
