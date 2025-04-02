@@ -592,14 +592,17 @@ return function(Account)
         local discrete_id = {}
         --- @type CdiAlertLink[]
         local unique_links = {}
-        
-        for _, link in ipairs(links) do
-            if not discrete_id[link.discrete_value_id] then
-                discrete_id[link.discrete_value_id] = true
-                table.insert(unique_links, link)
+        if #links == 0 then
+            return links
+        else
+            for _, link in ipairs(links) do
+                if not discrete_id[link.discrete_value_id] then
+                    discrete_id[link.discrete_value_id] = true
+                    table.insert(unique_links, link)
+                end
             end
+            return unique_links
         end
-        return unique_links
     end
 
     --------------------------------------------------------------------------------
