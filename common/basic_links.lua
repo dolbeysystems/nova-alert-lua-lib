@@ -594,7 +594,7 @@ return function(Account)
         local unique_links = {}
 
         for _, link in ipairs(links) do
-            if not discrete_id[link.discrete_value_id] then
+            if link.discrete_value_id ~= nil and not discrete_id[link.discrete_value_id] then
                 discrete_id[link.discrete_value_id] = true
                 table.insert(unique_links, link)
             end
