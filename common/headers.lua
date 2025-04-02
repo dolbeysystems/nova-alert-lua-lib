@@ -134,8 +134,8 @@ return function(Account)
                         self.sequence_counter = self.sequence_counter + 1
                         self:add_link(link)
                         table.insert(lnk, link)
+                        return lnk
                     end
-                    return lnk
                 end
             end,
 
