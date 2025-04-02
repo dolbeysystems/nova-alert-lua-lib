@@ -593,7 +593,7 @@ return function(Account)
         --- @type CdiAlertLink[]
         local unique_links = {}
 
-        if #header.links == 0 then
+        if header ~= nil and #header.links == 0 then
             return header
         else
             for _, link in ipairs(header) do
