@@ -593,10 +593,10 @@ return function(Account)
         --- @type CdiAlertLink[]
         local unique_links = {}
 
-        if header ~= nil and #header.links == 0 then
+        if header.links ~= nil and #header.links == 0 then
             return header
         else
-            for _, link in ipairs(header) do
+            for _, link in ipairs(header.links) do
                 if not discrete_id[link.discrete_value_id] then
                     discrete_id[link.discrete_value_id] = true
                     table.insert(unique_links, link)
