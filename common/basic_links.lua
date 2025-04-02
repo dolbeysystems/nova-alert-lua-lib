@@ -584,18 +584,19 @@ return function(Account)
     --------------------------------------------------------------------------------
     --- Create a link to a header
     ---
-    ---@param links CdiAlertLink[] The links to check for duplicates
+    ---@param header CdiAlertLink[] The links to check for duplicates
     --- 
     --- @return CdiAlertLink[] - The unique links by discrete _id
     --------------------------------------------------------------------------------
-    function module.remove_duplicate_links_in_header(links)
+    function module.remove_duplicate_links_in_header(header)
         local discrete_id = {}
         --- @type CdiAlertLink[]
         local unique_links = {}
-        if #links == 0 then
-            return links
+
+        if #header.links == 0 then
+            return header
         else
-            for _, link in ipairs(links) do
+            for _, link in ipairs(header) do
                 if not discrete_id[link.discrete_value_id] then
                     discrete_id[link.discrete_value_id] = true
                     table.insert(unique_links, link)
