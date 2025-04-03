@@ -687,19 +687,16 @@ return function(Account)
                 ::continue::
             end
 
-            local headers_to_sort = { "Clinical Evidence" == true, "Documented Dx" == true, "Treatment and Monitoring" == true, "Oxygenation/Ventilation" == true, "Sign of Bleeding" == true, "Framingham Criteria:" == true }
             local function sort_by_link_text(a, b)
                 return a.link_text < b.link_text
             end
     
             for _, link in ipairs(merged_links) do
-                if headers_to_sort[link.link_text] then
-                    table.sort(link.links, sort_by_link_text)
-    
-                    for i, link in ipairs(link.links) do
-                        if link.sequence < 90 then
-                            link.sequence = i
-                        end
+                table.sort(link.links, sort_by_link_text)
+
+                for i, link in ipairs(link.links) do
+                    if link.sequence < 90 then
+                        link.sequence = i
                     end
                 end
             end
