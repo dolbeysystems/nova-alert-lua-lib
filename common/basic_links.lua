@@ -686,7 +686,7 @@ return function(Account)
                 end
                 ::continue::
             end
-            local main_headers = { "Documented Dx", "Alert Trigger", "Laboratory Studies", "Vital Signs/Intake and Output Data", "Clinical Evidence", "Treatment and Monitoring", "Sign of Bleeding", "Other", "Oxygenation/Ventilation" }
+            local main_headers = { "Documented Dx", "Alert Trigger", "Laboratory Studies", "Vital Signs/Intake and Output Data", "Clinical Evidence", "Urinary Device(s)", "Treatment and Monitoring", "SIRS Criteria:", "Withdrawal Symptoms", "Pain Team Consult", "Procedure", "Contributing Dx", "Septic Shock Indicators", "Infection", "O2 Indicators", "Cardiogenic Indicators", "Contributing Dx", "Wound Care Note", "Medication that can suppress the immune system", "Obesity Co-Morbidities", "Risk Factor(s)", "Nutrition Note", "Sign of Bleeding", "Infectious Process", "Chronic Conditions", "O2 Indicators", "End Organ Dysfunction", "Blood Product Transfusion", "Medication(s)", "Medication(s)/Transfusion(s)", "Calculated P02/Fi02 Ratio", "Other", "Chest X-Ray", "Oxygenation/Ventilation", "Framingham Criteria:", "CT", "Echo", "EKG", "Signs of Coma", "Glasgow Coma Score", "EEG", "CT Head/Brain", "MRI Brain", "Heart Cath", "Supporting Illness Dx" }
             local function sort_by_link_text(a, b)
                 return a.link_text < b.link_text
             end
