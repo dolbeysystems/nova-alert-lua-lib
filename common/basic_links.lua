@@ -686,7 +686,7 @@ return function(Account)
                 end
                 ::continue::
             end
-
+            local main_headers = { "Documented Dx", "Alert Trigger", "Laboratory Studies", "Vital Signs/Intake and Output Data", "Clinical Evidence", "Treatment and Monitoring", "Sign of Bleeding", "Other", "Oxygenation/Ventilation" }
             local function sort_by_link_text(a, b)
                 return a.link_text < b.link_text
             end
@@ -695,7 +695,7 @@ return function(Account)
                 table.sort(merged_links, sort_by_link_text)
 
                 for i, link in ipairs(merged_links) do
-                    if link.sequence < 90 then
+                    if link.sequence < 85 or not main_headers[link.link_text] then
                         link.sequence = i
                     end
                 end
