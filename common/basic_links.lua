@@ -692,9 +692,9 @@ return function(Account)
             end
     
             for _, link in ipairs(merged_links) do
-                table.sort(link.links, sort_by_link_text)
+                table.sort(merged_links, sort_by_link_text)
 
-                for i, link in ipairs(link.links) do
+                for i, link in ipairs(merged_links) do
                     if link.sequence < 90 then
                         link.sequence = i
                     end
