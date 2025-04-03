@@ -695,7 +695,7 @@ return function(Account)
                 table.sort(merged_links, sort_by_link_text)
 
                 for i, link in ipairs(merged_links) do
-                    if link.sequence < 85 or not main_headers[link.link_text] then
+                    if link.sequence < 85 and not main_headers[link.link_text] then
                         link.sequence = i
                     end
                 end
