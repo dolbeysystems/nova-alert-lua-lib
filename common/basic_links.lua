@@ -604,26 +604,6 @@ return function(Account)
             end
         end
     end
-    --------------------------------------------------------------------------------
-    --- Remove duplicate links from a header
-    ---
-    ---@param links CdiAlertLink[] The links to check for duplicates
-    --- 
-    --- @return CdiAlertLink[] - The unique links by discrete _id
-    --------------------------------------------------------------------------------
-    function module.remove_duplicate_links_in_header(links)
-        local discrete_id = {}
-        --- @type CdiAlertLink[]
-        local unique_links = {}
-
-        for _, link in ipairs(links) do
-            if link.discrete_value_id ~= nil and not discrete_id[link.discrete_value_id] then
-                discrete_id[link.discrete_value_id] = true
-                table.insert(unique_links, link)
-            end
-        end
-        return unique_links
-    end
 
     --------------------------------------------------------------------------------
     --- Merge links with old links
@@ -650,7 +630,6 @@ return function(Account)
         end
 
         if #old_links == 0 then
-            new_links = module.alphabetize_links_in_header(new_links)
             return new_links
         elseif #new_links == 0 then
             return old_links
@@ -700,7 +679,6 @@ return function(Account)
                 end
                 ::continue::
             end
-            merged_links = module.alphabetize_links_in_header(merged_links)
             return merged_links
         end
     end
