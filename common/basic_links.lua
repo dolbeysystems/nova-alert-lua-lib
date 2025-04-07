@@ -588,8 +588,21 @@ return function(Account)
     --- 
     --- @return CdiAlertLink[] - The unique links by discrete _id
     --------------------------------------------------------------------------------
-    function module.alphabetize_links_in_header(links, headers_to_sort)
+    function module.alphabetize_links_in_header(links)
+        local main_headers = { "Documented Dx", "Alert Trigger", "Laboratory Studies", "Vital Signs/Intake and Output Data", "Clinical Evidence", "Urinary Device(s)", "Treatment and Monitoring", "SIRS Criteria:", "Withdrawal Symptoms", "Pain Team Consult", "Procedure", "Contributing Dx", "Septic Shock Indicators", "Infection", "O2 Indicators", "Cardiogenic Indicators", "Contributing Dx", "Wound Care Note", "Medication that can suppress the immune system", "Obesity Co-Morbidities", "Risk Factor(s)", "Nutrition Note", "Sign of Bleeding", "Infectious Process", "Chronic Conditions", "O2 Indicators", "End Organ Dysfunction", "Blood Product Transfusion", "Medication(s)", "Medication(s)/Transfusion(s)", "Calculated P02/Fi02 Ratio", "Other", "Chest X-Ray", "Oxygenation/Ventilation", "Framingham Criteria:", "CT", "Echo", "EKG", "Signs of Coma", "Glasgow Coma Score", "EEG", "CT Head/Brain", "MRI Brain", "Heart Cath", "Supporting Illness Dx" }
+        local function sort_by_link_text(a, b)
+            return a.link_text < b.link_text
+        end
 
+        for _, link in ipairs(links) do
+            table.sort(links, sort_by_link_text)
+
+            for i, link in ipairs(links) do
+                if link.sequence < 85 and not main_headers[link.link_text] then
+                    link.sequence = i
+                end
+            end
+        end
     end
     --------------------------------------------------------------------------------
     --- Remove duplicate links from a header
@@ -637,6 +650,7 @@ return function(Account)
         end
 
         if #old_links == 0 then
+            new_links = module.alphabetize_links_in_header(new_links)
             return new_links
         elseif #new_links == 0 then
             return old_links
@@ -686,20 +700,7 @@ return function(Account)
                 end
                 ::continue::
             end
-            local main_headers = { "Documented Dx", "Alert Trigger", "Laboratory Studies", "Vital Signs/Intake and Output Data", "Clinical Evidence", "Urinary Device(s)", "Treatment and Monitoring", "SIRS Criteria:", "Withdrawal Symptoms", "Pain Team Consult", "Procedure", "Contributing Dx", "Septic Shock Indicators", "Infection", "O2 Indicators", "Cardiogenic Indicators", "Contributing Dx", "Wound Care Note", "Medication that can suppress the immune system", "Obesity Co-Morbidities", "Risk Factor(s)", "Nutrition Note", "Sign of Bleeding", "Infectious Process", "Chronic Conditions", "O2 Indicators", "End Organ Dysfunction", "Blood Product Transfusion", "Medication(s)", "Medication(s)/Transfusion(s)", "Calculated P02/Fi02 Ratio", "Other", "Chest X-Ray", "Oxygenation/Ventilation", "Framingham Criteria:", "CT", "Echo", "EKG", "Signs of Coma", "Glasgow Coma Score", "EEG", "CT Head/Brain", "MRI Brain", "Heart Cath", "Supporting Illness Dx" }
-            local function sort_by_link_text(a, b)
-                return a.link_text < b.link_text
-            end
-    
-            for _, link in ipairs(merged_links) do
-                table.sort(merged_links, sort_by_link_text)
-
-                for i, link in ipairs(merged_links) do
-                    if link.sequence < 85 and not main_headers[link.link_text] then
-                        link.sequence = i
-                    end
-                end
-            end
+            merged_links = module.alphabetize_links_in_header(merged_links)
             return merged_links
         end
     end
