@@ -596,16 +596,18 @@ return function(Account)
 
         for _, link in ipairs(links) do
             table.sort(links, sort_by_link_text)
-
-            for i, link in ipairs(links) do
-                if link.sequence < 85 and not main_headers[link.link_text] then
-                    link.sequence = i
+            for _, lnk in ipairs(link.links) do 
+                for i, result in ipairs(lnk) do
+                    if result.sequence < 85 and not main_headers[result.link_text] then
+                        link.sequence = i
+                    end
                 end
             end
         end
+        return links
     end
 
-    --------------------------------------------------------------------------------
+        --------------------------------------------------------------------------------
     --- Remove duplicate links from a header
     ---
     ---@param links CdiAlertLink[] The links to check for duplicates
