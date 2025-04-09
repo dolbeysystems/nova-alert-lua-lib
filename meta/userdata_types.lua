@@ -27,8 +27,6 @@
 --- @field get_unique_discrete_values fun(self: Account): string[] - Return all discrete value keys in the account
 --- @field get_unique_medications fun(self: Account): string[] - Return all medication keys in the account
 --- @field get_unique_medications_by_cdi_alert_category fun(self: Account): string[] - Return all medication keys in the account
---- @field is_diagnosis_code_in_working_history fun(self: Account, code: string): boolean - Check if a diagnosis code is in the working history
---- @field is_procedure_code_in_working_history fun(self: Account, code: string): boolean - Check if a procedure code is in the working history
 
 --- @class Patient: userdata
 --- @field mrn string? - Medical record number
