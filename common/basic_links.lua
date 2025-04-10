@@ -655,10 +655,8 @@ return function(Account)
         end
 
         if #old_links == 0 then
-            log.debug("returning new links")
             return new_links
         elseif #new_links == 0 then
-            log.debug("returning old links")
             return old_links
         else
             local permanent_discrete_value_names = {}
@@ -682,8 +680,6 @@ return function(Account)
 
             -- Next, upsert the new links
             for _, new_link in ipairs(new_links) do
-                log.debug("new_link: " .. new_link.link_text)
-
                 local matching_existing_link = nil
 
                 if new_link.code ~= nil and permanent_codes[new_link.code] then goto continue end
@@ -708,25 +704,6 @@ return function(Account)
                 end
                 ::continue::
             end
-            if #merged_links > 0 then
-                log.debug("merged_links is greater then 0; length is " .. #merged_links)
-                for _, link in ipairs(merged_links) do
-                    log.debug("lnk " .. link.link_text)
-                    for _, lnk in ipairs(link.links) do
-                        log.debug("lnk " .. lnk.link_text)
-                        if #lnk.links > 0 then
-                            for _, lk in ipairs(lnk.links) do
-                                log.debug("lnk " .. lk.link_text)
-                            end
-                        end
-                    end
-                end
-            elseif #merged_links == 0 then
-                log.debug("merged_links is empty")
-            else
-                log.debug("merged_links is nil")
-            end
-            log.debug("returning merged_links")
             return merged_links
         end
     end
