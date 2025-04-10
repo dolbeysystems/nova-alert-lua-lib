@@ -637,6 +637,8 @@ return function(Account)
     --- @return CdiAlertLink[] - The merged links
     --------------------------------------------------------------------------------
     function module.merge_links(old_links, new_links)
+        local log = require("cdi.log")
+
         --- @type CdiAlertLink[]
         local merged_links = {}
 
@@ -653,8 +655,10 @@ return function(Account)
         end
 
         if #old_links == 0 then
+            log.debug("returning new links")
             return new_links
         elseif #new_links == 0 then
+            log.debug("returning old links")
             return old_links
         else
             local permanent_discrete_value_names = {}
@@ -678,6 +682,8 @@ return function(Account)
 
             -- Next, upsert the new links
             for _, new_link in ipairs(new_links) do
+                log.debug("new_link: " .. new_link.link_text)
+
                 local matching_existing_link = nil
 
                 if new_link.code ~= nil and permanent_codes[new_link.code] then goto continue end
