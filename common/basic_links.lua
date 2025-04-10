@@ -708,8 +708,11 @@ return function(Account)
                 end
                 ::continue::
             end
-            log.debug("new_links" .. new_links)
-
+            if #new_links > 0 then
+                for _, link in ipairs(new_links) do
+                    log.debug("new_links " .. link.link_text)
+                end
+            end
             log.debug("returning merged_links")
             return merged_links
         end
