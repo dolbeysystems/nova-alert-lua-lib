@@ -712,6 +712,10 @@ return function(Account)
                 for _, link in ipairs(new_links) do
                     log.debug("new_links " .. link.link_text)
                 end
+            elseif #new_links == 0 then
+                log.debug("new_links is empty")
+            else
+                log.debug("new_links is nil")
             end
             log.debug("returning merged_links")
             return merged_links
