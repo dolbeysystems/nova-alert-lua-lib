@@ -202,8 +202,10 @@ return function(Account)
     --- @return boolean? - nil if the working history is empty.
     function module.is_diagnosis_code_in_working_history(code)
         if Account.working_history[1] then
-            for _, diagnosis in ipairs(Account.working_history[1].diagnoses) do
-                if diagnosis.code == code then return true end
+            if #Account.working_history[1].diagnoses > 0 then
+                for _, diagnosis in ipairs(Account.working_history[1].diagnoses) do
+                    if diagnosis.code == code then return true end
+                end
             end
             return false
         end

@@ -709,6 +709,7 @@ return function(Account)
                 ::continue::
             end
             if #new_links > 0 then
+                log.debug("new_links is greater then 0")
                 for _, link in ipairs(new_links) do
                     log.debug("new_links " .. link.link_text)
                 end
