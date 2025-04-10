@@ -711,6 +711,10 @@ return function(Account)
             if #merged_links > 0 then
                 log.debug("merged_links is greater then 0; length is " .. #merged_links)
                 for _, link in ipairs(merged_links) do
+                    log.debug("lnk " .. link.link_text)
+                    for _, lnk in ipairs(link.links) do
+                        log.debug("lnk " .. lnk.link_text)
+                    end
                     log.debug("link " .. link.link_text)
                 end
             elseif #merged_links == 0 then
