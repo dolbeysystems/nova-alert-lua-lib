@@ -714,6 +714,11 @@ return function(Account)
                     log.debug("lnk " .. link.link_text)
                     for _, lnk in ipairs(link.links) do
                         log.debug("lnk " .. lnk.link_text)
+                        if #lnk.links > 0 then
+                            for _, lk in ipairs(lnk.links) do
+                                log.debug("lnk " .. lk.link_text)
+                            end
+                        end
                     end
                 end
             elseif #merged_links == 0 then
