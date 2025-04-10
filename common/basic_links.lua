@@ -711,7 +711,7 @@ return function(Account)
             if #new_links > 0 then
                 log.debug("new_links is greater then 0")
                 for _, link in ipairs(new_links) do
-                    log.debug("new_links " .. link.link_text)
+                    log.debug("new_links " .. link)
                 end
             elseif #new_links == 0 then
                 log.debug("new_links is empty")
