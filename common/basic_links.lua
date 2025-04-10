@@ -708,6 +708,7 @@ return function(Account)
                 end
                 ::continue::
             end
+            log.debug("returning merged_links")
             return merged_links
         end
     end
