@@ -708,15 +708,15 @@ return function(Account)
                 end
                 ::continue::
             end
-            if #new_links > 0 then
-                log.debug("new_links is greater then 0" .. #new_links)
-                for _, link in ipairs(new_links) do
-                    log.debug("new_links " .. link.link_text)
+            if #merged_links > 0 then
+                log.debug("merged_links is greater then 0; length is " .. #merged_links)
+                for _, link in ipairs(merged_links) do
+                    log.debug("link " .. link.link_text)
                 end
-            elseif #new_links == 0 then
-                log.debug("new_links is empty")
+            elseif #merged_links == 0 then
+                log.debug("merged_links is empty")
             else
-                log.debug("new_links is nil")
+                log.debug("merged_links is nil")
             end
             log.debug("returning merged_links")
             return merged_links
