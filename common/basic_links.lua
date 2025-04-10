@@ -607,7 +607,7 @@ return function(Account)
         return links
     end
 
-        --------------------------------------------------------------------------------
+    --------------------------------------------------------------------------------
     --- Remove duplicate links from a header
     ---
     ---@param links CdiAlertLink[] The links to check for duplicates
@@ -709,9 +709,9 @@ return function(Account)
                 ::continue::
             end
             if #new_links > 0 then
-                log.debug("new_links is greater then 0")
+                log.debug("new_links is greater then 0" .. #new_links)
                 for _, link in ipairs(new_links) do
-                    log.debug("new_links " .. link)
+                    log.debug("new_links " .. link.link_text)
                 end
             elseif #new_links == 0 then
                 log.debug("new_links is empty")
