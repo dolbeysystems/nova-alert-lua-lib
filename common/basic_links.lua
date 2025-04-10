@@ -715,7 +715,6 @@ return function(Account)
                     for _, lnk in ipairs(link.links) do
                         log.debug("lnk " .. lnk.link_text)
                     end
-                    log.debug("link " .. link.link_text)
                 end
             elseif #merged_links == 0 then
                 log.debug("merged_links is empty")
