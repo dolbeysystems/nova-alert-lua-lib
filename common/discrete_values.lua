@@ -123,7 +123,7 @@ return function(Account)
         local highest = discrete_values[1]
         local highest_value = module.get_dv_value_number(highest)
         for i = 2, #discrete_values do
-            if module.check_dv_result_number(discrete_values[i], function(dv_, num) return num > highest_value end) then
+            if discrete_values[i] ~= nil and module.check_dv_result_number(discrete_values[i], function(dv_, num) return num > highest_value end) then
                 highest = discrete_values[i]
                 highest_value = module.get_dv_value_number(highest)
             end
