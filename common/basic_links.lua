@@ -594,12 +594,21 @@ return function(Account)
             return a.link_text < b.link_text
         end
 
-        for _, link in ipairs(links) do
-            table.sort(links, sort_by_link_text)
-            for _, lnk in ipairs(link.links) do 
+        for _, link in ipairs(links) do -- go through each header
+            for _, lnk in ipairs(link.links) do -- go through header links
+                table.sort(link.links, sort_by_link_text)
                 for i, result in ipairs(lnk) do
-                    if result.sequence < 85 and not main_headers[result.link_text] then
+                    if result.sequence < 85 then
                         link.sequence = i
+                    elseif result.sequence >= 85 then
+                        -- go through sub header links
+                        for _, subresult in ipairs(result.links) do
+                            table.sort(subresult.links, sort_by_link_text)
+                            for j, sub_result in ipairs(lnk) do
+                                sub_result.sequence = j
+                            end
+                        end
+                        
                     end
                 end
             end
@@ -703,6 +712,9 @@ return function(Account)
                     matching_existing_link.links = module.merge_links(matching_existing_link.links, new_link.links)
                 end
                 ::continue::
+            end
+            if Account.id == '1638463270' then 
+                module.alphabetize_links_in_header(merged_links)
             end
             return merged_links
         end
