@@ -733,13 +733,32 @@ return function(Account)
                                 table.sort(subresult.links, sort_by_link_text)
                                 for j, sub_result in ipairs(subresult.links) do
                                     sub_result.sequence = j
-                                    log.debug("adjusted sub result sequence: " .. result.sequence)
+                                    log.debug("adjusted sub result sequence: " .. sub_result.sequence)
                                 end
                             end
                         end
                     end
                 end
             end
+            if #merged_links > 0 then
+                log.debug("merged_links is greater then 0; length is " .. #merged_links)
+                for _, link in ipairs(merged_links) do
+                    log.debug("lnk " .. link.link_text .. " sequence: " .. link.sequence)
+                    for _, lnk in ipairs(link.links) do
+                        log.debug("lnk " .. lnk.link_text .. " sequence: " .. lnk.sequence)
+                        if #lnk.links > 0 then
+                            for _, lk in ipairs(lnk.links) do
+                                log.debug("lnk " .. lk.link_text .. " sequence: " .. lk.sequence)
+                            end
+                        end
+                    end
+                end
+            elseif #merged_links == 0 then
+                log.debug("merged_links is empty")
+            else
+                log.debug("merged_links is nil")
+            end
+            log.debug("returning merged_links")
             return merged_links
         end
     end
