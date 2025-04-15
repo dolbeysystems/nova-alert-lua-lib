@@ -718,7 +718,7 @@ return function(Account)
                     return a.link_text < b.link_text
                 end
         
-                for _, lnk in ipairs(link.links) do -- go through header links
+                for _, lnk in ipairs(merged_links) do -- go through header links
                     log.debug("merged_links link " .. lnk.link_text)
                     table.sort(lnk.links, sort_by_link_text)
                     for i, result in ipairs(lnk) do
