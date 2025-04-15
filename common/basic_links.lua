@@ -721,7 +721,7 @@ return function(Account)
                 for _, lnk in ipairs(merged_links) do -- go through header links
                     log.debug("merged_links link " .. lnk.link_text)
                     table.sort(lnk.links, sort_by_link_text)
-                    for i, result in ipairs(lnk) do
+                    for i, result in ipairs(lnk.links) do
                         log.debug("result link " .. result.link_text .. " sequence: " .. result.sequence)
                         if result.sequence < 85 then
                             result.sequence = i
