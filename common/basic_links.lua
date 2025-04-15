@@ -722,7 +722,7 @@ return function(Account)
                     log.debug("merged_links header " .. link.link_text)
                     for _, lnk in ipairs(link.links) do -- go through header links
                         log.debug("merged_links link " .. lnk.link_text)
-                        table.sort(link.links, sort_by_link_text)
+                        table.sort(lnk.links, sort_by_link_text)
                         for i, result in ipairs(lnk) do
                             log.debug("result link " .. result.link_text .. " sequence: " .. result.sequence)
                             if result.sequence < 85 then
@@ -733,7 +733,7 @@ return function(Account)
                                 for _, subresult in ipairs(result.links) do
                                     log.debug("subresult link " .. subresult.link_text .. " sequence: " .. subresult.sequence)
                                     table.sort(subresult.links, sort_by_link_text)
-                                    for j, sub_result in ipairs(lnk) do
+                                    for j, sub_result in ipairs(subresult.links) do
                                         sub_result.sequence = j
                                         log.debug("adjusted sub result sequence: " .. result.sequence)
                                     end
