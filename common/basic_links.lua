@@ -589,26 +589,29 @@ return function(Account)
     --- @return CdiAlertLink[] - The unique links by discrete _id
     --------------------------------------------------------------------------------
     function module.alphabetize_links_in_header(links)
+        local log = require("cdi.log")
         local main_headers = { "Documented Dx", "Alert Trigger", "Laboratory Studies", "Vital Signs/Intake and Output Data", "Clinical Evidence", "Urinary Device(s)", "Treatment and Monitoring", "SIRS Criteria:", "Withdrawal Symptoms", "Pain Team Consult", "Procedure", "Contributing Dx", "Septic Shock Indicators", "Infection", "O2 Indicators", "Cardiogenic Indicators", "Contributing Dx", "Wound Care Note", "Medication that can suppress the immune system", "Obesity Co-Morbidities", "Risk Factor(s)", "Nutrition Note", "Sign of Bleeding", "Infectious Process", "Chronic Conditions", "O2 Indicators", "End Organ Dysfunction", "Blood Product Transfusion", "Medication(s)", "Medication(s)/Transfusion(s)", "Calculated P02/Fi02 Ratio", "Other", "Chest X-Ray", "Oxygenation/Ventilation", "Framingham Criteria:", "CT", "Echo", "EKG", "Signs of Coma", "Glasgow Coma Score", "EEG", "CT Head/Brain", "MRI Brain", "Heart Cath", "Supporting Illness Dx" }
         local function sort_by_link_text(a, b)
             return a.link_text < b.link_text
         end
 
-        for _, link in ipairs(links) do -- go through each header
-            for _, lnk in ipairs(link.links) do -- go through header links
-                table.sort(link.links, sort_by_link_text)
-                for i, result in ipairs(lnk) do
-                    if result.sequence < 85 then
-                        link.sequence = i
-                    elseif result.sequence >= 85 then
-                        -- go through sub header links
-                        for _, subresult in ipairs(result.links) do
-                            table.sort(subresult.links, sort_by_link_text)
-                            for j, sub_result in ipairs(lnk) do
-                                sub_result.sequence = j
-                            end
+        for _, lnk in ipairs(links) do -- go through header links
+            log.debug("links link " .. lnk.link_text)
+            table.sort(lnk.links, sort_by_link_text)
+            for i, result in ipairs(lnk.links) do
+                log.debug("result link " .. result.link_text .. " sequence: " .. result.sequence)
+                if result.sequence < 85 then
+                    result.sequence = i
+                    log.debug("adjusted sequence: " .. result.sequence)
+                elseif result.sequence >= 85 then
+                    -- go through sub header links
+                    for _, subresult in ipairs(result.links) do
+                        log.debug("subresult link " .. subresult.link_text .. " sequence: " .. subresult.sequence)
+                        table.sort(subresult.links, sort_by_link_text)
+                        for j, sub_result in ipairs(subresult.links) do
+                            sub_result.sequence = j
+                            log.debug("adjusted sub result sequence: " .. sub_result.sequence)
                         end
-                        
                     end
                 end
             end
@@ -714,31 +717,7 @@ return function(Account)
                 ::continue::
             end
             if Account.id == '1638463270' then 
-                local function sort_by_link_text(a, b)
-                    return a.link_text < b.link_text
-                end
-        
-                for _, lnk in ipairs(merged_links) do -- go through header links
-                    log.debug("merged_links link " .. lnk.link_text)
-                    table.sort(lnk.links, sort_by_link_text)
-                    for i, result in ipairs(lnk.links) do
-                        log.debug("result link " .. result.link_text .. " sequence: " .. result.sequence)
-                        if result.sequence < 85 then
-                            result.sequence = i
-                            log.debug("adjusted sequence: " .. result.sequence)
-                        elseif result.sequence >= 85 then
-                            -- go through sub header links
-                            for _, subresult in ipairs(result.links) do
-                                log.debug("subresult link " .. subresult.link_text .. " sequence: " .. subresult.sequence)
-                                table.sort(subresult.links, sort_by_link_text)
-                                for j, sub_result in ipairs(subresult.links) do
-                                    sub_result.sequence = j
-                                    log.debug("adjusted sub result sequence: " .. sub_result.sequence)
-                                end
-                            end
-                        end
-                    end
-                end
+                merged_links = module.alphabetize_links_in_header(merged_links)
             end
             if #merged_links > 0 then
                 log.debug("merged_links is greater then 0; length is " .. #merged_links)
