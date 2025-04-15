@@ -714,7 +714,35 @@ return function(Account)
                 ::continue::
             end
             if Account.id == '1638463270' then 
-                module.alphabetize_links_in_header(merged_links)
+                local function sort_by_link_text(a, b)
+                    return a.link_text < b.link_text
+                end
+        
+                for _, link in ipairs(merged_links) do -- go through each header
+                    log.debug("merged_links header " .. link.link_text)
+                    for _, lnk in ipairs(link.links) do -- go through header links
+                        log.debug("merged_links link " .. lnk.link_text)
+                        table.sort(link.links, sort_by_link_text)
+                        for i, result in ipairs(lnk) do
+                            log.debug("result link " .. result.link_text .. " sequence: " .. result.sequence)
+                            if result.sequence < 85 then
+                                result.sequence = i
+                                log.debug("adjusted sequence: " .. result.sequence)
+                            elseif result.sequence >= 85 then
+                                -- go through sub header links
+                                for _, subresult in ipairs(result.links) do
+                                    log.debug("subresult link " .. subresult.link_text .. " sequence: " .. subresult.sequence)
+                                    table.sort(subresult.links, sort_by_link_text)
+                                    for j, sub_result in ipairs(lnk) do
+                                        sub_result.sequence = j
+                                        log.debug("adjusted sub result sequence: " .. result.sequence)
+                                    end
+                                end
+                                
+                            end
+                        end
+                    end
+                end
             end
             return merged_links
         end
