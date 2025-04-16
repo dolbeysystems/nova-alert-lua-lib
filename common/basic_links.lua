@@ -588,23 +588,20 @@ return function(Account)
     --- @return CdiAlertLink - the link to the header
     --------------------------------------------------------------------------------
     function module.alphabetize_links(headers)
+        local log = require("cdi.log")
+        --- @type CdiAlertLink[]
         local resequenced_links = {}
         for _, header in ipairs(headers) do
+            log.debug("header link " .. header.link_text .. " sequence: " .. header.sequence)
             local resequenced_header = {}
             resequenced_header.link_text = header.link_text
-            resequenced_header.document_id = header.document_id
-            resequenced_header.code = header.code
-            resequenced_header.discrete_value_id = header.discrete_value_id
-            resequenced_header.discrete_value_name = header.discrete_value_name
-            resequenced_header.medication_id = header.medication_id
-            resequenced_header.medication_name = header.medication_name
-            resequenced_header.latest_discrete_value_id = header.latest_discrete_value_id
             resequenced_header.is_validated = header.is_validated
             resequenced_header.user_notes = header.user_notes
             resequenced_header.links = module.alphabetize_links(header.links)
             resequenced_header.sequence = header.sequence
             resequenced_header.hidden = header.hidden
             resequenced_header.permanent = header.permanent
+            log.debug("resequenced_header link " .. resequenced_header.link_text .. " sequence: " .. resequenced_header.sequence)
             table.insert(resequenced_links, resequenced_header)
         end
         return resequenced_links
@@ -662,6 +659,7 @@ return function(Account)
                 resequenced_sub_header.sequence = link.sequence
                 resequenced_sub_header.hidden = link.hidden
                 resequenced_sub_header.permanent = link.permanent
+                log.debug("adjusted result link " .. resequenced_sub_header.link_text .. " sequence: " .. resequenced_sub_header.sequence)
                 table.insert(resequenced_links, resequenced_sub_header)
             end
         end
