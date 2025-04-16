@@ -786,6 +786,7 @@ return function(Account)
                     matching_existing_link.sequence = new_link.sequence
                     matching_existing_link.hidden = new_link.hidden
                     matching_existing_link.link_text = new_link.link_text
+                    log.debug("matching_existing_link " .. matching_existing_link.link_text .. " new_link: " .. new_link.link_text)
                     matching_existing_link.links = module.merge_links(matching_existing_link.links, new_link.links)
                 end
                 ::continue::
