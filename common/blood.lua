@@ -21,10 +21,6 @@ return function(Account)
         dv_names_hematocrit,
         low_hemoglobin_value
     )
-        local log = require("cdi.log")
-        if Account.id == '1638668978' then
-            log.debug("low_hemoglobin_value" .. low_hemoglobin_value)
-        end
         --- @type HematocritHemoglobinDiscreteValuePair[]
         local low_hemoglobin_pairs = {}
 
