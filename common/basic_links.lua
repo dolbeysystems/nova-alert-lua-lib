@@ -588,21 +588,16 @@ return function(Account)
     --- @return CdiAlertLink - the link to the header
     --------------------------------------------------------------------------------
     function module.alphabetize_links(headers)
-        local log = require("cdi.log")
         --- @type CdiAlertLink[]
         local resequenced_links = {}
-        log.debug("starting resequence headers length" .. #headers)
 
         for _, header in ipairs(headers) do
-            log.debug("header link " .. header.link_text .. " sequence: " .. header.sequence)
             local resequenced_header = {}
             resequenced_header = header
             resequenced_header.links = module.alphabetize_links_in_header(header.links)
-            log.debug("resequenced_header link " .. resequenced_header.link_text .. " sequence: " .. resequenced_header.sequence)
             table.insert(resequenced_links, resequenced_header)
         end
 
-        log.debug("returning headers length" .. #resequenced_links)
         return resequenced_links
     end
 
@@ -613,8 +608,6 @@ return function(Account)
     --- @return CdiAlertLink[] - The unique links by discrete _id
     --------------------------------------------------------------------------------
     function module.alphabetize_links_in_header(links)
-        local log = require("cdi.log")
-
         --- @type CdiAlertLink[]
         local resequenced_links = {}
 
@@ -622,28 +615,32 @@ return function(Account)
             return a.link_text < b.link_text
         end
         
-        log.debug("starting resequence links length" .. #links)
-        
         table.sort(links, sort_by_link_text)
         for i, link in ipairs(links) do
-            log.debug("result link " .. link.link_text .. " sequence: " .. link.sequence)
-            if link.sequence < 85 then
+            if link.link_text == "Major:" or link.link_text == "Minor:" then
+                local resequenced_sub_header = {}
+                -- go through sub header links
+                resequenced_sub_header = link
+                resequenced_sub_header.links = module.alphabetize_links_in_header(link.links)
+                table.insert(resequenced_links, resequenced_sub_header)
+                
+            elseif link.sequence < 85 then
                 local resequenced_link = {}
                 resequenced_link = link
                 resequenced_link.sequence = i
                 table.insert(resequenced_links, resequenced_link)
-                log.debug("adjusted result link " .. resequenced_link.link_text .. " sequence: " .. resequenced_link.sequence)
+
             elseif link.sequence >= 85 then
                 local resequenced_sub_header = {}
                 -- go through sub header links
                 resequenced_sub_header = link
                 -- Recursively resequence the subheader’s links
                 local sub_links = link.links
-                -- Sort by extracted date (oldest to newest)
+                -- Sort by extracted date (newest to oldest)
                 table.sort(sub_links, function(a, b)
                     local date_a = module.extract_result_date(a.link_text) or 0
                     local date_b = module.extract_result_date(b.link_text) or 0
-                    return date_a < date_b
+                    return date_a > date_b -- Sort newest first
                 end)
 
                 -- Resequence the sorted links
@@ -651,16 +648,14 @@ return function(Account)
                     l.sequence = idx
                 end
                 resequenced_sub_header.links = sub_links
-                log.debug("adjusted result link " .. resequenced_sub_header.link_text .. " sequence: " .. resequenced_sub_header.sequence)
                 table.insert(resequenced_links, resequenced_sub_header)
             end
         end
-        log.debug("returning links length" .. #resequenced_links)
         return resequenced_links
     end
 
     --------------------------------------------------------------------------------
-    --- abstract date from link text for sorting
+    --- Abstract date from link text for sorting
     ---
     --------------------------------------------------------------------------------
     function module.extract_result_date(link_text)
