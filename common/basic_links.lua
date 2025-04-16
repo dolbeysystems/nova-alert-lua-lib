@@ -733,16 +733,8 @@ return function(Account)
         end
 
         if #old_links == 0 then
-            if Account.id == '1638463270' then 
-                merged_links = module.alphabetize_links(old_links)
-                return merged_links
-            end
             return new_links
         elseif #new_links == 0 then
-            if Account.id == '1638463270' then 
-                merged_links = module.alphabetize_links(new_links)
-                return merged_links
-            end
             return old_links
         else
             local permanent_discrete_value_names = {}
@@ -786,7 +778,6 @@ return function(Account)
                     matching_existing_link.sequence = new_link.sequence
                     matching_existing_link.hidden = new_link.hidden
                     matching_existing_link.link_text = new_link.link_text
-                    log.debug("matching_existing_link " .. matching_existing_link.link_text .. " new_link: " .. new_link.link_text)
                     matching_existing_link.links = module.merge_links(matching_existing_link.links, new_link.links)
                 end
                 ::continue::
