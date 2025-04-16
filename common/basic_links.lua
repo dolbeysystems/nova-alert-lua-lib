@@ -637,13 +637,47 @@ return function(Account)
                 local resequenced_sub_header = {}
                 -- go through sub header links
                 resequenced_sub_header = link
-                resequenced_sub_header.links = module.alphabetize_links_in_header(link.links)
+                -- Recursively resequence the subheader’s links
+                local sub_links = link.links
+                -- Sort by extracted date (oldest to newest)
+                table.sort(sub_links, function(a, b)
+                    local date_a = module.extract_result_date(a.link_text) or 0
+                    local date_b = module.extract_result_date(b.link_text) or 0
+                    return date_a < date_b
+                end)
+
+                -- Resequence the sorted links
+                for idx, l in ipairs(sub_links) do
+                    l.sequence = idx
+                end
+                resequenced_sub_header.links = sub_links
                 log.debug("adjusted result link " .. resequenced_sub_header.link_text .. " sequence: " .. resequenced_sub_header.sequence)
                 table.insert(resequenced_links, resequenced_sub_header)
             end
         end
         log.debug("returning links length" .. #resequenced_links)
         return resequenced_links
+    end
+
+    --------------------------------------------------------------------------------
+    --- abstract date from link text for sorting
+    ---
+    --------------------------------------------------------------------------------
+    function module.extract_result_date(link_text)
+        -- Example format: "WBC: 19 (ResultDate: 04/15/2025 13:54)"
+        local month, day, year, hour, minute = string.match(link_text, "ResultDate:%s*(%d+)/(%d+)/(%d+)%s+(%d+):(%d+)")
+        if not (month and day and year and hour and minute) then
+            return nil
+        end
+    
+        return os.time({
+            year = tonumber(year),
+            month = tonumber(month),
+            day = tonumber(day),
+            hour = tonumber(hour),
+            min = tonumber(minute),
+            sec = 0,
+        })
     end
 
     --------------------------------------------------------------------------------
