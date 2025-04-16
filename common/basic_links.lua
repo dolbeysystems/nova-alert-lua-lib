@@ -596,17 +596,12 @@ return function(Account)
         for _, header in ipairs(headers) do
             log.debug("header link " .. header.link_text .. " sequence: " .. header.sequence)
             local resequenced_header = {}
-            resequenced_header.link_text = header.link_text
-            resequenced_header.is_validated = header.is_validated
-            resequenced_header.user_notes = header.user_notes
+            resequenced_header = header
             resequenced_header.links = module.alphabetize_links(header.links)
-            resequenced_header.sequence = header.sequence
-            resequenced_header.hidden = header.hidden
-            resequenced_header.permanent = header.permanent
             log.debug("resequenced_header link " .. resequenced_header.link_text .. " sequence: " .. resequenced_header.sequence)
             table.insert(resequenced_links, resequenced_header)
         end
-        
+
         log.debug("returning headers length" .. #resequenced_links)
         return resequenced_links
     end
@@ -634,39 +629,15 @@ return function(Account)
             log.debug("result link " .. link.link_text .. " sequence: " .. link.sequence)
             if link.sequence < 85 then
                 local resequenced_link = {}
-                resequenced_link.link_text = link.link_text
-                resequenced_link.document_id = link.document_id
-                resequenced_link.code = link.code
-                resequenced_link.discrete_value_id = link.discrete_value_id
-                resequenced_link.discrete_value_name = link.discrete_value_name
-                resequenced_link.medication_id = link.medication_id
-                resequenced_link.medication_name = link.medication_name
-                resequenced_link.latest_discrete_value_id = link.latest_discrete_value_id
-                resequenced_link.is_validated = link.is_validated
-                resequenced_link.user_notes = link.user_notes
-                resequenced_link.links = link.links
+                resequenced_link = link
                 resequenced_link.sequence = i
-                resequenced_link.hidden = link.hidden
-                resequenced_link.permanent = link.permanent
                 table.insert(resequenced_links, resequenced_link)
                 log.debug("adjusted result link " .. resequenced_link.link_text .. " sequence: " .. resequenced_link.sequence)
             elseif link.sequence >= 85 then
                 local resequenced_sub_header = {}
                 -- go through sub header links
-                resequenced_sub_header.link_text = link.link_text
-                resequenced_sub_header.document_id = link.document_id
-                resequenced_sub_header.code = link.code
-                resequenced_sub_header.discrete_value_id = link.discrete_value_id
-                resequenced_sub_header.discrete_value_name = link.discrete_value_name
-                resequenced_sub_header.medication_id = link.medication_id
-                resequenced_sub_header.medication_name = link.medication_name
-                resequenced_sub_header.latest_discrete_value_id = link.latest_discrete_value_id
-                resequenced_sub_header.is_validated = link.is_validated
-                resequenced_sub_header.user_notes = link.user_notes
+                resequenced_sub_header = link
                 resequenced_sub_header.links = module.alphabetize_links_in_header(link.links)
-                resequenced_sub_header.sequence = link.sequence
-                resequenced_sub_header.hidden = link.hidden
-                resequenced_sub_header.permanent = link.permanent
                 log.debug("adjusted result link " .. resequenced_sub_header.link_text .. " sequence: " .. resequenced_sub_header.sequence)
                 table.insert(resequenced_links, resequenced_sub_header)
             end
