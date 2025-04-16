@@ -601,7 +601,6 @@ return function(Account)
             resequenced_header.medication_name = header.medication_name
             resequenced_header.latest_discrete_value_id = header.latest_discrete_value_id
             resequenced_header.is_validated = header.is_validated
-            resequenced_header.user_notes = header.user_notes
             resequenced_header.links = module.alphabetize_links_in_header(header.links)
             resequenced_header.sequence = header.sequence
             resequenced_header.hidden = header.hidden
@@ -639,7 +638,6 @@ return function(Account)
                 resequenced_link.medication_name = link.medication_name
                 resequenced_link.latest_discrete_value_id = link.latest_discrete_value_id
                 resequenced_link.is_validated = link.is_validated
-                resequenced_link.user_notes = link.user_notes
                 resequenced_link.links = link.links
                 resequenced_link.sequence = i
                 resequenced_link.hidden = link.hidden
@@ -658,11 +656,9 @@ return function(Account)
                 resequenced_sub_header.medication_name = link.medication_name
                 resequenced_sub_header.latest_discrete_value_id = link.latest_discrete_value_id
                 resequenced_sub_header.is_validated = link.is_validated
-                resequenced_sub_header.user_notes = link.user_notes
                 resequenced_sub_header.links = module.alphabetize_links_in_header(link.links)
                 resequenced_sub_header.sequence = link.sequence
                 resequenced_sub_header.hidden = link.hidden
-                resequenced_sub_header.permanent = link.permanent
                 table.insert(resequenced_links, resequenced_sub_header)
             end
         end
