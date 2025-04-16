@@ -675,8 +675,9 @@ return function(Account)
                     end
                 end
             end
-        elseif #links == 0 then
+        elseif #resequenced_links == 0 then
             log.debug("links is empty")
+            return links
         else
             log.debug("links is nil")
         end
@@ -732,8 +733,16 @@ return function(Account)
         end
 
         if #old_links == 0 then
+            if Account.id == '1638463270' then 
+                merged_links = module.alphabetize_links(merged_links)
+                return merged_links
+            end
             return new_links
         elseif #new_links == 0 then
+            if Account.id == '1638463270' then 
+                merged_links = module.alphabetize_links(merged_links)
+                return merged_links
+            end
             return old_links
         else
             local permanent_discrete_value_names = {}
@@ -782,6 +791,25 @@ return function(Account)
                 ::continue::
             end
             if Account.id == '1638463270' then 
+                if #merged_links > 0 then
+                    log.debug("merged_links. links is greater then 0; length is " .. #merged_links)
+                    for _, link in ipairs(merged_links) do
+                        log.debug("merged_links. links header " .. link.link_text .. " sequence: " .. link.sequence)
+                        for _, lnk in ipairs(link.links) do
+                            log.debug("merged_links. links link " .. lnk.link_text .. " sequence: " .. lnk.sequence)
+                            if #lnk.links > 0 then
+                                for _, lk in ipairs(lnk.links) do
+                                    log.debug("merged_links. links sub link " .. lk.link_text .. " sequence: " .. lk.sequence)
+                                end
+                            end
+                        end
+                    end
+                elseif #merged_links == 0 then
+                    log.debug("merged_links is empty")
+                else
+                    log.debug("merged_links is nil")
+                end
+                log.debug("returning merged_links")
                 merged_links = module.alphabetize_links(merged_links)
             end
 
