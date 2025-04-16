@@ -21,6 +21,7 @@ return function(Account)
         dv_names_hematocrit,
         low_hemoglobin_value
     )
+        local log = require("cdi.log")
         --- @type HematocritHemoglobinDiscreteValuePair[]
         local low_hemoglobin_pairs = {}
 
@@ -31,6 +32,7 @@ return function(Account)
                 return value ~= nil and value <= low_hemoglobin_value
             end
         })
+        log.debug("low_hemoglobin_values length " .. #low_hemoglobin_values)
         for i = 1, #low_hemoglobin_values do
             local dv_hemoglobin = low_hemoglobin_values[i]
             local dv_date = dv_hemoglobin.result_date
