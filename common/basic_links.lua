@@ -642,7 +642,7 @@ return function(Account)
             log.debug("links is nil")
         end
         log.debug("returning links")
-        return links
+        return resequenced_link
     end
 
     --------------------------------------------------------------------------------
