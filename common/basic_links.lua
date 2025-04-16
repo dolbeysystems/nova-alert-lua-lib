@@ -616,6 +616,25 @@ return function(Account)
                 end
             end
         end
+        if #links > 0 then
+            log.debug("Links after resequencing. links is greater then 0; length is " .. #links)
+            for _, link in ipairs(links) do
+                log.debug("Links after resequencing. links header " .. link.link_text)
+                for _, lnk in ipairs(link.links) do
+                    log.debug("Links after resequencing. links link " .. lnk.link_text)
+                    if #lnk.links > 0 then
+                        for _, lk in ipairs(lnk.links) do
+                            log.debug("Links after resequencing. links sub link " .. lk.link_text)
+                        end
+                    end
+                end
+            end
+        elseif #links == 0 then
+            log.debug("links is empty")
+        else
+            log.debug("links is nil")
+        end
+        log.debug("returning links")
         return links
     end
 
