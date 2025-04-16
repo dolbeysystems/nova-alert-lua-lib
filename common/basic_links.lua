@@ -784,10 +784,6 @@ return function(Account)
                 end
                 ::continue::
             end
-            if Account.id == '1638463270' then 
-                merged_links = module.alphabetize_links_in_header(merged_links)
-            end
-
             return merged_links
         end
     end
