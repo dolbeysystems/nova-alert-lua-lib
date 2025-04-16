@@ -623,9 +623,9 @@ return function(Account)
         end
         
         log.debug("starting resequence links length" .. #links)
-
+        
+        table.sort(links, sort_by_link_text)
         for i, link in ipairs(links) do
-            table.sort(links, sort_by_link_text)
             log.debug("result link " .. link.link_text .. " sequence: " .. link.sequence)
             if link.sequence < 85 then
                 local resequenced_link = {}
