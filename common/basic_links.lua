@@ -588,7 +588,6 @@ return function(Account)
     --- @return CdiAlertLink - the link to the header
     --------------------------------------------------------------------------------
     function module.alphabetize_links(headers)
-        --- @type CdiAlertLink[]
         local resequenced_links = {}
         for _, header in ipairs(headers) do
             local resequenced_header = {}
@@ -601,7 +600,8 @@ return function(Account)
             resequenced_header.medication_name = header.medication_name
             resequenced_header.latest_discrete_value_id = header.latest_discrete_value_id
             resequenced_header.is_validated = header.is_validated
-            resequenced_header.links = module.alphabetize_links_in_header(header.links)
+            resequenced_header.user_notes = header.user_notes
+            resequenced_header.links = module.alphabetize_links(header.links)
             resequenced_header.sequence = header.sequence
             resequenced_header.hidden = header.hidden
             resequenced_header.permanent = header.permanent
@@ -638,6 +638,7 @@ return function(Account)
                 resequenced_link.medication_name = link.medication_name
                 resequenced_link.latest_discrete_value_id = link.latest_discrete_value_id
                 resequenced_link.is_validated = link.is_validated
+                resequenced_link.user_notes = link.user_notes
                 resequenced_link.links = link.links
                 resequenced_link.sequence = i
                 resequenced_link.hidden = link.hidden
@@ -656,9 +657,11 @@ return function(Account)
                 resequenced_sub_header.medication_name = link.medication_name
                 resequenced_sub_header.latest_discrete_value_id = link.latest_discrete_value_id
                 resequenced_sub_header.is_validated = link.is_validated
+                resequenced_sub_header.user_notes = link.user_notes
                 resequenced_sub_header.links = module.alphabetize_links_in_header(link.links)
                 resequenced_sub_header.sequence = link.sequence
                 resequenced_sub_header.hidden = link.hidden
+                resequenced_sub_header.permanent = link.permanent
                 table.insert(resequenced_links, resequenced_sub_header)
             end
         end
@@ -675,9 +678,8 @@ return function(Account)
                     end
                 end
             end
-        elseif #resequenced_links == 0 then
+        elseif #links == 0 then
             log.debug("links is empty")
-            return links
         else
             log.debug("links is nil")
         end
@@ -783,26 +785,7 @@ return function(Account)
                 ::continue::
             end
             if Account.id == '1638463270' then 
-                if #merged_links > 0 then
-                    log.debug("merged_links. links is greater then 0; length is " .. #merged_links)
-                    for _, link in ipairs(merged_links) do
-                        log.debug("merged_links. links header " .. link.link_text .. " sequence: " .. link.sequence)
-                        for _, lnk in ipairs(link.links) do
-                            log.debug("merged_links. links link " .. lnk.link_text .. " sequence: " .. lnk.sequence)
-                            if #lnk.links > 0 then
-                                for _, lk in ipairs(lnk.links) do
-                                    log.debug("merged_links. links sub link " .. lk.link_text .. " sequence: " .. lk.sequence)
-                                end
-                            end
-                        end
-                    end
-                elseif #merged_links == 0 then
-                    log.debug("merged_links is empty")
-                else
-                    log.debug("merged_links is nil")
-                end
-                log.debug("returning merged_links")
-                merged_links = module.alphabetize_links(merged_links)
+                merged_links = module.alphabetize_links_in_header(merged_links)
             end
 
             return merged_links
