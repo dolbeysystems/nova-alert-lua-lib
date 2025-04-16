@@ -596,6 +596,7 @@ return function(Account)
         for _, header in ipairs(headers) do
             log.debug("header link " .. header.link_text .. " sequence: " .. header.sequence)
             local resequenced_header = {}
+            resequenced_header = header
             resequenced_header.links = module.alphabetize_links_in_header(header.links)
             log.debug("resequenced_header link " .. resequenced_header.link_text .. " sequence: " .. resequenced_header.sequence)
             table.insert(resequenced_links, resequenced_header)
