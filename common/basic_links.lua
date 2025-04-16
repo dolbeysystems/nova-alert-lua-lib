@@ -734,13 +734,13 @@ return function(Account)
 
         if #old_links == 0 then
             if Account.id == '1638463270' then 
-                merged_links = module.alphabetize_links(merged_links)
+                merged_links = module.alphabetize_links(old_links)
                 return merged_links
             end
             return new_links
         elseif #new_links == 0 then
             if Account.id == '1638463270' then 
-                merged_links = module.alphabetize_links(merged_links)
+                merged_links = module.alphabetize_links(new_links)
                 return merged_links
             end
             return old_links
