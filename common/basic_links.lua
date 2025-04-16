@@ -588,6 +588,7 @@ return function(Account)
     --- @return CdiAlertLink - the link to the header
     --------------------------------------------------------------------------------
     function module.alphabetize_links(headers)
+        --- @type CdiAlertLink[]
         local resequenced_links = {}
         for _, header in ipairs(headers) do
             local resequenced_header = {}
