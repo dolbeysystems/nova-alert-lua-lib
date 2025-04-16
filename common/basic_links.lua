@@ -582,52 +582,92 @@ return function(Account)
     end
 
     --------------------------------------------------------------------------------
+    --- Sort through headers and readd links alphabetized by their link text
+    ---
+    --- @param headers CdiAlertLink[] The links to check through to alphabetize
+    --- @return CdiAlertLink - the link to the header
+    --------------------------------------------------------------------------------
+    function module.alphabetize_links(headers)
+        local resequenced_links = {}
+        for _, header in ipairs(headers) do
+            local resequenced_header = {}
+            resequenced_header.link_text = header.link_text
+            resequenced_header.document_id = header.document_id
+            resequenced_header.code = header.code
+            resequenced_header.discrete_value_id = header.discrete_value_id
+            resequenced_header.discrete_value_name = header.discrete_value_name
+            resequenced_header.medication_id = header.medication_id
+            resequenced_header.medication_name = header.medication_name
+            resequenced_header.latest_discrete_value_id = header.latest_discrete_value_id
+            resequenced_header.is_validated = header.is_validated
+            resequenced_header.user_notes = header.user_notes
+            resequenced_header.links = module.alphabetize_links_in_header(header.links)
+            resequenced_header.sequence = header.sequence
+            resequenced_header.hidden = header.hidden
+            resequenced_header.permanent = header.permanent
+            table.insert(resequenced_links, resequenced_header)
+        end
+        return resequenced_links
+    end
+
+    --------------------------------------------------------------------------------
     --- Resequence links in a header by alphabetizing them 
     ---
-    ---@param links CdiAlertLink[] The links to check for duplicates
-    --- 
+    --- @param links CdiAlertLink[] The links to check through to alphabetize
     --- @return CdiAlertLink[] - The unique links by discrete _id
     --------------------------------------------------------------------------------
     function module.alphabetize_links_in_header(links)
         local log = require("cdi.log")
-        local main_headers = { "Documented Dx", "Alert Trigger", "Laboratory Studies", "Vital Signs/Intake and Output Data", "Clinical Evidence", "Urinary Device(s)", "Treatment and Monitoring", "SIRS Criteria:", "Withdrawal Symptoms", "Pain Team Consult", "Procedure", "Contributing Dx", "Septic Shock Indicators", "Infection", "O2 Indicators", "Cardiogenic Indicators", "Contributing Dx", "Wound Care Note", "Medication that can suppress the immune system", "Obesity Co-Morbidities", "Risk Factor(s)", "Nutrition Note", "Sign of Bleeding", "Infectious Process", "Chronic Conditions", "O2 Indicators", "End Organ Dysfunction", "Blood Product Transfusion", "Medication(s)", "Medication(s)/Transfusion(s)", "Calculated P02/Fi02 Ratio", "Other", "Chest X-Ray", "Oxygenation/Ventilation", "Framingham Criteria:", "CT", "Echo", "EKG", "Signs of Coma", "Glasgow Coma Score", "EEG", "CT Head/Brain", "MRI Brain", "Heart Cath", "Supporting Illness Dx" }
-        
         --- @type CdiAlertLink[]
-        local resequenced_link = {}
-        
+        local resequenced_links = {}
         local function sort_by_link_text(a, b)
             return a.link_text < b.link_text
         end
 
-        for _, lnk in ipairs(links) do -- go through header links
-            table.insert(resequenced_link, lnk)
-            log.debug("links link " .. lnk.link_text)
-            table.sort(lnk.links, sort_by_link_text)
-            for i, result in ipairs(lnk.links) do
-                log.debug("result link " .. result.link_text .. " sequence: " .. result.sequence)
-                if result.sequence < 85 then
-                    local seq = i
-                    result.sequence = seq
-                    table.insert(resequenced_link, result)
-                    log.debug("adjusted result link " .. result.link_text .. " sequence: " .. result.sequence)
-                elseif result.sequence >= 85 then
-                    -- go through sub header links
-                    for _, subresult in ipairs(result.links) do
-                        log.debug("subresult link " .. subresult.link_text .. " sequence: " .. subresult.sequence)
-                        table.sort(subresult.links, sort_by_link_text)
-                        for j, sub_result in ipairs(subresult.links) do
-                            local seq = j
-                            sub_result.sequence = seq
-                            table.insert(resequenced_link, sub_result)
-                            log.debug("adjusted subresult link " .. subresult.link_text .. " sequence: " .. subresult.sequence)
-                        end
-                    end
-                end
+        for i, link in ipairs(links) do
+            table.sort(links, sort_by_link_text)
+            log.debug("result link " .. link.link_text .. " sequence: " .. link.sequence)
+            if link.sequence < 85 then
+                local resequenced_link = {}
+                resequenced_link.link_text = link.link_text
+                resequenced_link.document_id = link.document_id
+                resequenced_link.code = link.code
+                resequenced_link.discrete_value_id = link.discrete_value_id
+                resequenced_link.discrete_value_name = link.discrete_value_name
+                resequenced_link.medication_id = link.medication_id
+                resequenced_link.medication_name = link.medication_name
+                resequenced_link.latest_discrete_value_id = link.latest_discrete_value_id
+                resequenced_link.is_validated = link.is_validated
+                resequenced_link.user_notes = link.user_notes
+                resequenced_link.links = link.links
+                resequenced_link.sequence = i
+                resequenced_link.hidden = link.hidden
+                resequenced_link.permanent = link.permanent
+                table.insert(resequenced_links, resequenced_link)
+                log.debug("adjusted result link " .. resequenced_link.link_text .. " sequence: " .. resequenced_link.sequence)
+            elseif link.sequence >= 85 then
+                local resequenced_sub_header = {}
+                -- go through sub header links
+                resequenced_sub_header.link_text = link.link_text
+                resequenced_sub_header.document_id = link.document_id
+                resequenced_sub_header.code = link.code
+                resequenced_sub_header.discrete_value_id = link.discrete_value_id
+                resequenced_sub_header.discrete_value_name = link.discrete_value_name
+                resequenced_sub_header.medication_id = link.medication_id
+                resequenced_sub_header.medication_name = link.medication_name
+                resequenced_sub_header.latest_discrete_value_id = link.latest_discrete_value_id
+                resequenced_sub_header.is_validated = link.is_validated
+                resequenced_sub_header.user_notes = link.user_notes
+                resequenced_sub_header.links = module.alphabetize_links_in_header(link.links)
+                resequenced_sub_header.sequence = link.sequence
+                resequenced_sub_header.hidden = link.hidden
+                resequenced_sub_header.permanent = link.permanent
+                table.insert(resequenced_links, resequenced_sub_header)
             end
         end
-        if #resequenced_link > 0 then
-            log.debug("Links after resequencing. links is greater then 0; length is " .. #resequenced_link)
-            for _, link in ipairs(resequenced_link) do
+        if #resequenced_links > 0 then
+            log.debug("Links after resequencing. links is greater then 0; length is " .. #resequenced_links)
+            for _, link in ipairs(resequenced_links) do
                 log.debug("Links after resequencing. links header " .. link.link_text .. " sequence: " .. link.sequence)
                 for _, lnk in ipairs(link.links) do
                     log.debug("Links after resequencing. links link " .. lnk.link_text .. " sequence: " .. lnk.sequence)
@@ -644,7 +684,7 @@ return function(Account)
             log.debug("links is nil")
         end
         log.debug("returning links")
-        return resequenced_link
+        return resequenced_links
     end
 
     --------------------------------------------------------------------------------
@@ -745,7 +785,7 @@ return function(Account)
                 ::continue::
             end
             if Account.id == '1638463270' then 
-                merged_links = module.alphabetize_links_in_header(merged_links)
+                merged_links = module.alphabetize_links(merged_links)
             end
 
             return merged_links
