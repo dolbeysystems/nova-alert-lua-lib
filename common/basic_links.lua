@@ -590,65 +590,44 @@ return function(Account)
     --------------------------------------------------------------------------------
     function module.alphabetize_links_in_header(links)
         local log = require("cdi.log")
-    
+        local main_headers = { "Documented Dx", "Alert Trigger", "Laboratory Studies", "Vital Signs/Intake and Output Data", "Clinical Evidence", "Urinary Device(s)", "Treatment and Monitoring", "SIRS Criteria:", "Withdrawal Symptoms", "Pain Team Consult", "Procedure", "Contributing Dx", "Septic Shock Indicators", "Infection", "O2 Indicators", "Cardiogenic Indicators", "Contributing Dx", "Wound Care Note", "Medication that can suppress the immune system", "Obesity Co-Morbidities", "Risk Factor(s)", "Nutrition Note", "Sign of Bleeding", "Infectious Process", "Chronic Conditions", "O2 Indicators", "End Organ Dysfunction", "Blood Product Transfusion", "Medication(s)", "Medication(s)/Transfusion(s)", "Calculated P02/Fi02 Ratio", "Other", "Chest X-Ray", "Oxygenation/Ventilation", "Framingham Criteria:", "CT", "Echo", "EKG", "Signs of Coma", "Glasgow Coma Score", "EEG", "CT Head/Brain", "MRI Brain", "Heart Cath", "Supporting Illness Dx" }
+        
+        --- @type CdiAlertLink[]
+        local resequenced_link = {}
+        
         local function sort_by_link_text(a, b)
             return a.link_text < b.link_text
         end
-    
-        local resequenced_links = {}
-    
-        for _, header in ipairs(links or {}) do
-            log.debug("Sorting header: " .. tostring(header.link_text))
-            table.sort(header.links, sort_by_link_text)
-    
-            local new_header = {
-                link_text = header.link_text,
-                sequence = header.sequence,
-                links = {}
-            }
-    
-            for i, link in ipairs(header.links or {}) do
-                if not link.sequence or link.sequence < 85 then
-                    link.sequence = i
-                end
-                log.debug("  Link: " .. link.link_text .. " sequence: " .. link.sequence)
-    
-                local new_link = {
-                    link_text = link.link_text,
-                    sequence = link.sequence,
-                    links = {}
-                }
-    
-                if link.sequence >= 85 and link.links then
-                    for _, subheader in ipairs(link.links or {}) do
-                        table.sort(subheader.links, sort_by_link_text)
-                        local new_subheader = {
-                            link_text = subheader.link_text,
-                            sequence = subheader.sequence,
-                            links = {}
-                        }
-    
-                        for j, sublink in ipairs(subheader.links or {}) do
-                            sublink.sequence = j
-                            log.debug("    SubLink: " .. sublink.link_text .. " sequence: " .. sublink.sequence)
-                            table.insert(new_subheader.links, {
-                                link_text = sublink.link_text,
-                                sequence = sublink.sequence
-                            })
+
+        for _, lnk in ipairs(links) do -- go through header links
+            table.insert(resequenced_link, lnk)
+            log.debug("links link " .. lnk.link_text)
+            table.sort(lnk.links, sort_by_link_text)
+            for i, result in ipairs(lnk.links) do
+                log.debug("result link " .. result.link_text .. " sequence: " .. result.sequence)
+                if result.sequence < 85 then
+                    local seq = i
+                    result.sequence = seq
+                    table.insert(resequenced_link, result)
+                    log.debug("adjusted result link " .. result.link_text .. " sequence: " .. result.sequence)
+                elseif result.sequence >= 85 then
+                    -- go through sub header links
+                    for _, subresult in ipairs(result.links) do
+                        log.debug("subresult link " .. subresult.link_text .. " sequence: " .. subresult.sequence)
+                        table.sort(subresult.links, sort_by_link_text)
+                        for j, sub_result in ipairs(subresult.links) do
+                            local seq = j
+                            sub_result.sequence = seq
+                            table.insert(resequenced_link, sub_result)
+                            log.debug("adjusted subresult link " .. subresult.link_text .. " sequence: " .. subresult.sequence)
                         end
-    
-                        table.insert(new_link.links, new_subheader)
                     end
                 end
-    
-                table.insert(new_header.links, new_link)
             end
-    
-            table.insert(resequenced_links, new_header)
         end
-        if #resequenced_links > 0 then
-            log.debug("Links after resequencing. links is greater then 0; length is " .. #resequenced_links)
-            for _, link in ipairs(resequenced_links) do
+        if #resequenced_link > 0 then
+            log.debug("Links after resequencing. links is greater then 0; length is " .. #resequenced_link)
+            for _, link in ipairs(resequenced_link) do
                 log.debug("Links after resequencing. links header " .. link.link_text .. " sequence: " .. link.sequence)
                 for _, lnk in ipairs(link.links) do
                     log.debug("Links after resequencing. links link " .. lnk.link_text .. " sequence: " .. lnk.sequence)
@@ -665,8 +644,7 @@ return function(Account)
             log.debug("links is nil")
         end
         log.debug("returning links")
-        log.debug("Returning resequenced links")
-        return resequenced_links
+        return resequenced_link
     end
 
     --------------------------------------------------------------------------------
