@@ -591,17 +591,23 @@ return function(Account)
     function module.alphabetize_links_in_header(links)
         local log = require("cdi.log")
         local main_headers = { "Documented Dx", "Alert Trigger", "Laboratory Studies", "Vital Signs/Intake and Output Data", "Clinical Evidence", "Urinary Device(s)", "Treatment and Monitoring", "SIRS Criteria:", "Withdrawal Symptoms", "Pain Team Consult", "Procedure", "Contributing Dx", "Septic Shock Indicators", "Infection", "O2 Indicators", "Cardiogenic Indicators", "Contributing Dx", "Wound Care Note", "Medication that can suppress the immune system", "Obesity Co-Morbidities", "Risk Factor(s)", "Nutrition Note", "Sign of Bleeding", "Infectious Process", "Chronic Conditions", "O2 Indicators", "End Organ Dysfunction", "Blood Product Transfusion", "Medication(s)", "Medication(s)/Transfusion(s)", "Calculated P02/Fi02 Ratio", "Other", "Chest X-Ray", "Oxygenation/Ventilation", "Framingham Criteria:", "CT", "Echo", "EKG", "Signs of Coma", "Glasgow Coma Score", "EEG", "CT Head/Brain", "MRI Brain", "Heart Cath", "Supporting Illness Dx" }
+        
+        --- @type CdiAlertLink[]
+        local resequenced_link = {}
+        
         local function sort_by_link_text(a, b)
             return a.link_text < b.link_text
         end
 
         for _, lnk in ipairs(links) do -- go through header links
+            table.insert(resequenced_link, lnk)
             log.debug("links link " .. lnk.link_text)
             table.sort(lnk.links, sort_by_link_text)
             for i, result in ipairs(lnk.links) do
                 log.debug("result link " .. result.link_text .. " sequence: " .. result.sequence)
                 if result.sequence < 85 then
                     result.sequence = i
+                    table.insert(resequenced_link, result)
                     log.debug("adjusted result link " .. result.link_text .. " sequence: " .. result.sequence)
                 elseif result.sequence >= 85 then
                     -- go through sub header links
@@ -610,15 +616,16 @@ return function(Account)
                         table.sort(subresult.links, sort_by_link_text)
                         for j, sub_result in ipairs(subresult.links) do
                             sub_result.sequence = j
+                            table.insert(resequenced_link, sub_result)
                             log.debug("adjusted subresult link " .. subresult.link_text .. " sequence: " .. subresult.sequence)
                         end
                     end
                 end
             end
         end
-        if #links > 0 then
-            log.debug("Links after resequencing. links is greater then 0; length is " .. #links)
-            for _, link in ipairs(links) do
+        if #resequenced_link > 0 then
+            log.debug("Links after resequencing. links is greater then 0; length is " .. #resequenced_link)
+            for _, link in ipairs(resequenced_link) do
                 log.debug("Links after resequencing. links header " .. link.link_text .. " sequence: " .. link.sequence)
                 for _, lnk in ipairs(link.links) do
                     log.debug("Links after resequencing. links link " .. lnk.link_text .. " sequence: " .. lnk.sequence)
