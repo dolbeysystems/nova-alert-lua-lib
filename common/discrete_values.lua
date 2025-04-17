@@ -334,6 +334,8 @@ return function(Account)
         local concat_values = ""
         --- @type string
         local id = nil
+        --- @type string
+        local concat_values = ""
 
         for _, dv_name in ipairs(dv_names) do
             local discrete_values_for_name = account:find_discrete_values(dv_name)
@@ -362,14 +364,12 @@ return function(Account)
 
             local cleaned_value = dv.result:gsub("[\\>\\>]", "")
             if tonumber(cleaned_value) then
-                concat_values = concat_values .. cleaned_value .. ", "
+                if concat_values == "" then
+                    concat_values = cleaned_value
+                else
+                    concat_values = concat_values .. ", " .. cleaned_value 
+                end
             end
-        end
-
-        -- Remove final trailing ,
-        if concat_values ~= "" then
-            --- @type string
-            concat_values = concat_values:sub(1, -3)
         end
 
         if first_date and last_date then
@@ -380,7 +380,6 @@ return function(Account)
             link.discrete_value_name = dv_names[1]
             link.link_text = link_text
             link.discrete_value_id = id
-
             return link
         end
     end
