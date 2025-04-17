@@ -460,6 +460,12 @@ return function(Account)
                     tonumber(string.gsub(dv.result, "[<>]", ""), 10) or
                     nil
 
+                if Account.id == "1638594586" then
+                    log.debug("discrete_value_name " .. dv.name .. " result " .. dv.result)
+                    log.debug("max_per_value " .. max_per_value .. " discrete_values length " .. #discrete_values)
+
+                end
+
                 if predicate == nil or predicate(dv, result_as_number) then
                     table.insert(discrete_values, discrete_values_for_name[j])
 
