@@ -311,6 +311,9 @@ return function(Account)
     --- @return CdiAlertLink[] # a list of CdiAlertLink objects or a single CdiAlertLink object
     --------------------------------------------------------------------------------
     function module.get_medication_links(args)
+        local log = require("cdi.log")
+
+
         local account = args.account or Account
         local medication_categories = args.cats or { args.cat }
         local link_template = args.text or ""
@@ -335,6 +338,9 @@ return function(Account)
             end
         end
 
+        if Account.id == "1638495918" then
+            log.debug("use_cdi_alert_category_field = " .. tostring(use_cdi_alert_category_field) .. " medication_categories " .. tostring(medication_categories) .. " one_per_date " .. tostring(one_per_date)) 
+        end
         --- @type CdiAlertLink[]
         local links = {}
         --- @type Medication[]
@@ -345,6 +351,9 @@ return function(Account)
 
             if use_cdi_alert_category_field then
                 for _, med in ipairs(account.medications) do
+                    if Account.id == "1638495918" then
+                        log.debug("med.Name " .. tostring(med.medication) .. " category  " .. tostring(med.cdi_alert_category) .. " one_per_date " .. tostring(one_per_date)) 
+                    end
                     if med.cdi_alert_category == medication_category then
                         table.insert(medications, med)
                     end
@@ -378,6 +387,9 @@ return function(Account)
         end
 
         table.sort(medications, sort)
+        if Account.id == "1638495918" then
+            log.debug("medications length " .. #medications) 
+        end
         for _, medication in ipairs(medications) do
             local link         = cdi_alert_link()
             link.medication_id = medication.external_id
