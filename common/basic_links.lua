@@ -479,7 +479,7 @@ return function(Account)
         table.sort(discrete_values, sort)
         
         if Account.id == "1638594586" then
-            log.debug("discrete_values length " .. #discrete_values)
+            log.debug("discrete_values after for loop; length " .. #discrete_values)
         end
 
         for i = 1, #discrete_values do
@@ -494,6 +494,11 @@ return function(Account)
             table.insert(links, link)
             if not fixed_sequence then
                 sequence = sequence + 1
+            end
+        end
+        if Account.id == "1638594586" then
+            for _, link in ipairs(links) do
+                log.debug("links " .. link.link_text)
             end
         end
         return links
