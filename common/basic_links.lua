@@ -424,6 +424,9 @@ return function(Account)
     --- @return CdiAlertLink[] # a list of CdiAlertLink objects or a single CdiAlertLink object
     --------------------------------------------------------------------------------
     function module.get_discrete_value_links(args)
+        local log = require("cdi.log")
+
+
         local account = args.account or Account
         local discrete_value_names = args.discreteValueNames or { args.discreteValueName }
         local link_template = args.text or ""
@@ -468,6 +471,10 @@ return function(Account)
         end
 
         table.sort(discrete_values, sort)
+        
+        if Account.id == "1638594586" then
+            log.debug("discrete_values length " .. #discrete_values)
+        end
 
         for i = 1, #discrete_values do
             local discrete_value = discrete_values[i]
