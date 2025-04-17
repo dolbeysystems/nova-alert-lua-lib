@@ -532,7 +532,7 @@ return function(Account)
 
         if document ~= nil then
             link = string.gsub(link, "%[DOCUMENTID%]", document.document_id or "")
-            link = string.gsub(link, "%[DOCUMENTDATE%]", dates.date_int_to_string(document.document_date_time, "%m/%d/%Y"))
+            link = string.gsub(link, "%[DOCUMENTDATE%]", dates.date_int_to_string(document.document_date_time, "%m/%d/%Y") or "")
             link = string.gsub(link, "%[DOCUMENTTYPE%]", document.document_type or "")
         end
 
@@ -540,7 +540,7 @@ return function(Account)
         if discrete_value ~= nil then
             link = string.gsub(link, "%[DISCRETEVALUENAME%]", discrete_value.name or "")
             link = string.gsub(link, "%[DISCRETEVALUE%]", discrete_value.result or "")
-            link = string.gsub(link, "%[RESULTDATE%]", dates.date_int_to_string(discrete_value.result_date))
+            link = string.gsub(link, "%[RESULTDATE%]", dates.date_int_to_string(discrete_value.result_date) or "")
         end
 
         if medication ~= nil then
@@ -548,7 +548,7 @@ return function(Account)
             link = string.gsub(link, "%[MEDICATION%]", medication.medication or "")
             link = string.gsub(link, "%[DOSAGE%]", medication.dosage or "")
             link = string.gsub(link, "%[ROUTE%]", medication.route or "")
-            link = string.gsub(link, "%[STARTDATE%]", dates.date_int_to_string(medication.start_date))
+            link = string.gsub(link, "%[STARTDATE%]", dates.date_int_to_string(medication.start_date) or "")
             link = string.gsub(link, "%[STATUS%]", medication.status or "")
             link = string.gsub(link, "%[CATEGORY%]", medication.category or "")
         end
