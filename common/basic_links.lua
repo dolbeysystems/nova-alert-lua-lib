@@ -339,7 +339,10 @@ return function(Account)
         end
 
         if Account.id == "1638495918" then
-            log.debug("use_cdi_alert_category_field = " .. tostring(use_cdi_alert_category_field) .. " medication_categories " .. tostring(medication_categories) .. " one_per_date " .. tostring(one_per_date)) 
+            log.debug("use_cdi_alert_category_field = " .. tostring(use_cdi_alert_category_field) .. " one_per_date " .. tostring(one_per_date)) 
+            for _, item in ipairs(medication_categories) do
+                log.debug(" medication_categories " .. tostring(item))
+            end
         end
         --- @type CdiAlertLink[]
         local links = {}
@@ -351,15 +354,15 @@ return function(Account)
 
             if use_cdi_alert_category_field then
                 for _, med in ipairs(account.medications) do
-                    if Account.id == "1638495918" then
-                        log.debug("med.Name " .. tostring(med.medication) .. " category  " .. tostring(med.cdi_alert_category) .. " one_per_date " .. tostring(one_per_date)) 
-                    end
                     if med.cdi_alert_category == medication_category then
                         table.insert(medications, med)
                     end
                 end
             else
                 medications_for_category = account:find_medications(medication_category)
+                if Account.id == "1638495918" then
+                    log.debug("#medications_for_category " .. #medications_for_category) 
+                end
             end
 
             if one_per_date then
@@ -377,7 +380,13 @@ return function(Account)
             end
 
             for j = 1, #medications_for_category do
+                if Account.id == "1638495918" then
+                    log.debug("outside predicate medications_for_category[j] " .. medications_for_category[j].medication .. " category " .. medications_for_category[j].category) 
+                end
                 if predicate == nil or predicate(medications_for_category[j]) then
+                    if Account.id == "1638495918" then
+                        log.debug("inside predicate medications_for_category[j] " .. medications_for_category[j].medication .. " category " .. medications_for_category[j].category) 
+                    end
                     table.insert(medications, medications_for_category[j])
                     if max_per_value and #medications >= max_per_value then
                         break
