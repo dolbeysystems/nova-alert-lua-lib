@@ -105,10 +105,11 @@ return function(Account)
     ---
     --- @param dv_names_hemoglobin string[] Names of the Hemoglobin discrete values
     --- @param dv_names_hematocrit string[] Names of the Hematocrit discrete values
+    --- @param low_hemoglobin_value number Low value for hemoglobin
     ---
     --- @return HematocritHemoglobinPeakDropLinks? - Peak and Drop links for Hemoglobin and Hematocrit if present
     --------------------------------------------------------------------------------
-    function module.get_hemoglobin_drop_pairs(dv_names_hemoglobin, dv_names_hematocrit)
+    function module.get_hemoglobin_drop_pairs(dv_names_hemoglobin, dv_names_hematocrit, low_hemoglobin_value)
         local hemoglobin_peak_link = nil
         local hemoglobin_drop_link = nil
         local hematocrit_peak_link = nil
@@ -128,6 +129,9 @@ return function(Account)
             end
         })
         if not lowest_hemoglobin_in_past_week_after_highest then return nil end
+        if lowest_hemoglobin_in_past_week_after_highest.result > low_hemoglobin_value then
+            return nil
+        end
 
         local hemoglobin_delta = 0
 
@@ -175,10 +179,11 @@ return function(Account)
     ---
     --- @param dv_names_hemoglobin string[] Names of the Hemoglobin discrete values
     --- @param dv_names_hematocrit string[] Names of the Hematocrit discrete values
+    --- @param low_hematocrit_value number Low value for hematocrit
     ---
     --- @return HematocritHemoglobinPeakDropLinks? - Peak and Drop links for Hemoglobin and Hematocrit if present
     --------------------------------------------------------------------------------
-    function module.get_hematocrit_drop_pairs(dv_names_hemoglobin, dv_names_hematocrit)
+    function module.get_hematocrit_drop_pairs(dv_names_hemoglobin, dv_names_hematocrit, low_hematocrit_value)
         local hemoglobin_peak_link = nil
         local hemoglobin_drop_link = nil
         local hematocrit_peak_link = nil
@@ -200,6 +205,9 @@ return function(Account)
         })
 
         if not lowest_hematocrit_in_past_week_after_highest then return nil end
+        if lowest_hematocrit_in_past_week_after_highest.result > low_hematocrit_value then
+            return nil
+        end
 
         local hematocrit_delta = 0
 
