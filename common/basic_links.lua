@@ -717,6 +717,7 @@ return function(Account)
         local function compare_links(a, b)
             return
                 (a.code and a.code == b.code) or
+                (a.document_id and a.document_id == b.document_id) or
                 (a.medication_id and a.medication_id == b.medication_id) or
                 (a.discrete_value_id and a.discrete_value_id == b.discrete_value_id) or
                 (not a.code and not a.medication_id and not a.discrete_value_id and a.link_text and a.link_text == b.link_text)
