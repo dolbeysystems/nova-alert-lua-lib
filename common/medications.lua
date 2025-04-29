@@ -90,9 +90,12 @@ return function(Account)
     function module.make_route_no_match_predicate(...)
         local patterns = { ... }
         return function(med)
-            return not lists.any(patterns, function(pattern)
-                return string.match(med.route, pattern)
-            end)
+            for _, pattern in ipairs(patterns) do
+                if med.route and string.match(med.route, pattern) then
+                    return false
+                end
+            end
+            return true
         end
     end
 
