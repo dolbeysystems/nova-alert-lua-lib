@@ -488,6 +488,8 @@ return function(Account)
     function module.discrete_value_pair_to_link_pair(dv_pair, link_template1, link_template2)
         local first_value = dv_pair.first
         local second_value = dv_pair.second
+        link_template1 = link_template1 .. ": [DISCRETEVALUE] (Result Date: [RESULTDATE])"
+        link_template2 = link_template2 .. ": [DISCRETEVALUE] (Result Date: [RESULTDATE])"
 
         local link1 = cdi_alert_link()
         link1.discrete_value_name = first_value.name
