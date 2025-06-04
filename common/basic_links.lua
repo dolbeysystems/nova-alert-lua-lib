@@ -609,6 +609,7 @@ return function(Account)
     --------------------------------------------------------------------------------
     function module.alphabetize_links_in_header(links)
         --- @type CdiAlertLink[]
+        local log = require("cdi.log")
         local resequenced_links = {}
 
         local function sort_by_link_text(a, b)
@@ -631,6 +632,9 @@ return function(Account)
                 table.insert(resequenced_links, resequenced_link)
 
             elseif link.sequence >= 85 then
+                if Account.id == "1639898838" and link.link_text == "Hemoglobin" then
+                    log.debug("Found Hemoglobin header")
+                end
                 local resequenced_sub_header = {}
                 -- go through sub header links
                 resequenced_sub_header = link
@@ -645,6 +649,9 @@ return function(Account)
 
                 -- Resequence the sorted links
                 for idx, l in ipairs(sub_links) do
+                    if Account.id == "1639898838" then
+                        log.debug("l: " .. l.link_text .. ", idx: " .. idx)
+                    end
                     l.sequence = idx
                 end
                 resequenced_sub_header.links = sub_links
