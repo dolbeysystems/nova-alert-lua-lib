@@ -668,7 +668,7 @@ return function(Account)
     --------------------------------------------------------------------------------
     function module.extract_result_date(link_text)
         -- Example format: "WBC: 19 (ResultDate: 04/15/2025 13:54)"
-        local month, day, year, hour, minute = string.match(link_text, string.match(link_text, "[Rr]esult[Dd]ate:%s*(%d%d?)/(%d%d?)/(%d%d%d%d)%s+(%d%d?):(%d%d)"))
+        local month, day, year, hour, minute = string.match(link_text, "[Rr]esult[Dd]ate:%s*(%d%d?)/(%d%d?)/(%d%d%d%d)%s+(%d%d?):(%d%d)")
         if not (month and day and year and hour and minute) then
             log.debug("returning nil")
             return nil
