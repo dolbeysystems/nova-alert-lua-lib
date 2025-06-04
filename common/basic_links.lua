@@ -4,6 +4,7 @@ local dates = require "libs.common.dates"
 ---@diagnostic disable-next-line:name-style-check
 return function(Account)
     local module = {}
+    local log = require("cdi.log")
     local cdi_alert_link = require "cdi.link"
 
     ---------------------------------------------------------------------------------------------
@@ -669,9 +670,10 @@ return function(Account)
         -- Example format: "WBC: 19 (ResultDate: 04/15/2025 13:54)"
         local month, day, year, hour, minute = string.match(link_text, "ResultDate:%s*(%d+)/(%d+)/(%d+)%s+(%d+):(%d+)")
         if not (month and day and year and hour and minute) then
+            log.debug("returning nil")
             return nil
         end
-    
+        log.debug("month: " .. month .. ", day: " .. day .. ", year: " .. year .. ", hour: " .. hour .. ", minute: " .. minute)
         return os.time({
             year = tonumber(year),
             month = tonumber(month),
