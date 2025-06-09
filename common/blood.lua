@@ -205,6 +205,12 @@ return function(Account)
         })
 
         if not lowest_hematocrit_in_past_week_after_highest then return nil end
+
+        local log = require("cdi.log")
+        log.debug("lowest_hematocrit_in_past_week_after_highest.result: " .. 
+            tostring(lowest_hematocrit_in_past_week_after_highest.result) .. ", low_hematocrit_value: " .. 
+            tostring(low_hematocrit_value))
+
         if lowest_hematocrit_in_past_week_after_highest.result > low_hematocrit_value then
             return nil
         end
