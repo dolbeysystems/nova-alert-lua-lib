@@ -429,8 +429,7 @@ return function(Account)
         local discrete_value_names = args.discreteValueNames or { args.discreteValueName }
         local link_template = args.text or ""
         local predicate = args.predicate
-        local sequence = args.seq or 0
-        local fixed_sequence = args.fixed_seq or false
+        local sequence = 1
         local max_per_value = args.max_per_value or 10
         local include_standard_suffix = args.include_standard_suffix
         local hidden = args.hidden or false
@@ -480,9 +479,6 @@ return function(Account)
             link.permanent = permanent
             link.hidden = hidden
             table.insert(links, link)
-            if not fixed_sequence then
-                sequence = sequence + 1
-            end
         end
         return links
     end
