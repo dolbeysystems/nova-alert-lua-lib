@@ -638,16 +638,16 @@ return function(Account)
                 resequenced_sub_header = link
                 -- Recursively resequence the subheader’s links
                 local sub_links = link.links
-                -- Sort by extracted date (newest to oldest)
+                -- Sort by extracted date (oldest to newest)
                 table.sort(sub_links, function(a, b)
                     local date_a = module.extract_result_date(a.link_text) or 0
                     local date_b = module.extract_result_date(b.link_text) or 0
-                    return date_a > date_b -- Sort newest first
+                    return date_a < date_b -- Sort oldest first
                 end)
 
                 -- Resequence the sorted links
                 for idx, l in ipairs(sub_links) do
-                    l.sequence = idx
+                    l.sequence = idx 
                 end
                 resequenced_sub_header.links = sub_links
                 table.insert(resequenced_links, resequenced_sub_header)
