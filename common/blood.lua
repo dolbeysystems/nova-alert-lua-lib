@@ -129,7 +129,7 @@ return function(Account)
             end
         })
         if not lowest_hemoglobin_in_past_week_after_highest then return nil end
-        if lowest_hemoglobin_in_past_week_after_highest.result > low_hemoglobin_value then
+        if tonumber(lowest_hemoglobin_in_past_week_after_highest.result) > tonumber(low_hemoglobin_value) then
             return nil
         end
 
