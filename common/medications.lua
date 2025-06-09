@@ -14,12 +14,11 @@ return function(Account)
     ---
     --- @return CdiAlertLink? - a link to the medication or nil if not found
     --------------------------------------------------------------------------------
-    function module.make_medication_link(cat, text, sequence, predicate)
+    function module.make_medication_link(cat, text, predicate)
         text = text or ""
         return links.get_medication_link {
             cat = cat,
             text = text,
-            seq = sequence,
             predicate = predicate
         }
     end
