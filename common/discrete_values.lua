@@ -145,10 +145,12 @@ return function(Account)
         end
         local lowest = discrete_values[1]
         local lowest_value = module.get_dv_value_number(lowest)
-        for i = 2, #discrete_values do
-            if discrete_values[i] ~= nil and module.check_dv_result_number(discrete_values[i], function(dv_, num) return num ~= nil and num < lowest_value end) then
-                lowest = discrete_values[i]
-                lowest_value = module.get_dv_value_number(lowest)
+        if lowest_value ~= nil then
+            for i = 2, #discrete_values do
+                if discrete_values[i] ~= nil and module.check_dv_result_number(discrete_values[i], function(dv_, num) return num ~= nil and num < lowest_value end) then
+                    lowest = discrete_values[i]
+                    lowest_value = module.get_dv_value_number(lowest)
+                end
             end
         end
         return lowest
