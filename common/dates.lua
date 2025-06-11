@@ -28,9 +28,9 @@ end
 --------------------------------------------------------------------------------
 function module.date_is_less_than_x_days_ago(date, days)
     --- @diagnostic disable-next-line: param-type-mismatch
-    local now_utc = os.time(os.date("!*t"))
+    local now_local = os.time()
     local days_in_seconds = days * 24 * 60 * 60
-    return now_utc - date < days_in_seconds
+    return now_local - date < days_in_seconds
 end
 
 --------------------------------------------------------------------------------
@@ -42,9 +42,9 @@ end
 --------------------------------------------------------------------------------
 function module.days_ago(days)
     --- @diagnostic disable-next-line: param-type-mismatch
-    local now_utc = os.time()
+    local now_local = os.time()
     local days_in_seconds = days * 24 * 60 * 60
-    return now_utc - days_in_seconds
+    return now_local - days_in_seconds
 end
 
 --------------------------------------------------------------------------------
@@ -56,12 +56,12 @@ end
 --- @return boolean - true if the date is less than the number of minutes ago, false otherwise
 --------------------------------------------------------------------------------
 function module.date_is_less_than_x_minutes_ago(date, minutes)
-    local now_utc_str = os.date("!*t")
+    local now_utc_str = os.date()
     --- @diagnostic disable-next-line: param-type-mismatch
-    local now_utc = os.time(now_utc_str)
+    local now_local = os.time(now_utc_str)
 
     local minutes_in_seconds = minutes * 60
-    return now_utc - date < minutes_in_seconds
+    return now_local - date < minutes_in_seconds
 end
 
 --------------------------------------------------------------------------------
