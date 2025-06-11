@@ -42,7 +42,7 @@ end
 --------------------------------------------------------------------------------
 function module.days_ago(days)
     --- @diagnostic disable-next-line: param-type-mismatch
-    local now_utc = os.time(os.date("!*t"))
+    local now_utc = os.time()
     local days_in_seconds = days * 24 * 60 * 60
     return now_utc - days_in_seconds
 end
