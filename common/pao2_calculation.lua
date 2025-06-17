@@ -4,6 +4,7 @@ return function(Account)
     local discrete = require("libs.common.discrete_values")(Account)
     local links = require("libs.common.basic_links")(Account)
     local dates = require("libs.common.dates")
+    local log = require("cdi.log")
     local cdi_alert_link = require "cdi.link"
 
 
@@ -127,10 +128,16 @@ return function(Account)
                 end,
                 seq = 2
             }
+            if Account.id == "1640042638" then
+                log.debug("Checking Method #1 for PaO2/FiO2 links - " .. tostring(#pa_o2_fi_o2_ratio_links) .. " links found")
+            end
             return pa_o2_fi_o2_ratio_links
         end
 
         if #pa_o2_fi_o2_ratio_links == 0 then
+            if Account.id == "1640042638" then
+                log.debug("Checking Method #2 - Look through FiO2 values for matching PaO2 values")
+            end
             -- Method #2 - Look through FiO2 values for matching PaO2 values
             for _, fi_o2_dv in ipairs(fi_o2_dvs) do
                 local pa_o2_dv = discrete.get_discrete_value_nearest_to_date {
@@ -175,6 +182,9 @@ return function(Account)
         end
 
         if #pa_o2_fi_o2_ratio_links == 0 then
+            if Account.id == "1640042638" then
+                log.debug("Checking Method #3 - Look through FiO2 values for matching SpO2 values")
+            end
             -- Method #3 - Look through FiO2 values for matching SpO2 values
             for _, fi_o2_dv in ipairs(fi_o2_dvs) do
                 local sp_o2_dv = discrete.get_discrete_value_nearest_to_date {
@@ -220,6 +230,9 @@ return function(Account)
         end
 
         if #pa_o2_fi_o2_ratio_links == 0 then
+            if Account.id == "1640042638" then
+                log.debug("Checking Method #4 - Look through Oxygen values for matching PaO2 values")
+            end
             -- Method #4 - Look through Oxygen values for matching PaO2 values
             for _, oxygen_pair in ipairs(oxygen_pairs) do
                 local oxygen_flow_rate_value = discrete.get_dv_value_number(oxygen_pair.first)
@@ -270,6 +283,9 @@ return function(Account)
         end
 
         if #pa_o2_fi_o2_ratio_links == 0 then
+            if Account.id == "1640042638" then
+                log.debug("Checking Method #5 - Look through Oxygen values for matching SpO2 values")
+            end
             -- Method #5 - Look through Oxygen values for matching SpO2 values
             for _, oxygen_pair in ipairs(oxygen_pairs) do
                 local oxygen_flow_rate_value = discrete.get_dv_value_number(oxygen_pair.first)
@@ -325,6 +341,9 @@ return function(Account)
         end
 
         if #pa_o2_fi_o2_ratio_links == 0 then
+            if Account.id == "1640042638" then
+                log.debug("Checking Method #6 - Look through Oxygen therapy values for matching PaO2 values")
+            end
             -- Method #6 - Look through Oxygen therapy values for matching PaO2 values
             for _, oxygen_therapy_item in ipairs(oxygen_therapy_dv) do
                 local oxygen_therapy_value = oxygen_therapy_item.result
@@ -375,12 +394,18 @@ return function(Account)
         end
 
         if #pa_o2_fi_o2_ratio_links == 0 then
+            if Account.id == "1640042638" then
+                log.debug("Checking Method #7 - Look through Oxygen therapy values for matching SpO2 values")
+            end
             -- Method #7 - Look through Oxygen therapy values for matching SpO2 values
             for _, oxygen_therapy_item in ipairs(oxygen_therapy_dv) do
                 local oxygen_therapy_value = oxygen_therapy_item.result
                 --- @type number?
                 local fi_o2 = nil
                 fi_o2 = oxgyen_therapy_to_fi_o2_lookup[oxygen_therapy_item.result]
+                if Account.id == "1640042638" then
+                    log.debug("Checking Method #7 - fi_o2: " .. tostring(fi_o2) .. ", oxygen_therapy_value: " .. tostring(oxygen_therapy_value))
+                end
                 if fi_o2 then
                     if tonumber(fi_o2) ~= nil and tonumber(fi_o2) > 0 then
                         local sp_o2_dv = discrete.get_discrete_value_nearest_to_date {
