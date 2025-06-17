@@ -131,7 +131,10 @@ return function(Account)
             if Account.id == "1640042638" then
                 log.debug("Checking Method #1 for PaO2/FiO2 links - " .. tostring(#pa_o2_fi_o2_ratio_links) .. " links found")
             end
-            return pa_o2_fi_o2_ratio_links
+            if #pa_o2_fi_o2_ratio_links > 0 then
+                -- If we found links, return them
+                return pa_o2_fi_o2_ratio_links
+            end
         end
 
         if #pa_o2_fi_o2_ratio_links == 0 then
