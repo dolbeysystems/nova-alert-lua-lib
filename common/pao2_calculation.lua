@@ -107,41 +107,6 @@ return function(Account)
             end
         }
 
-        if Account.id == "1640042638" then
-            if #oxygen_pairs > 0 then
-                for _, dv_name in ipairs(oxygen_pairs) do
-                    log.debug("pao2 fio2 calculation oxygen_pairs: " .. tostring(dv_name.name) .. ", result: " .. tostring(dv_name.result))
-                end
-            else
-                log.debug("pao2 fio2 calculation oxygen_pairs: No pairs found")
-            end
-
-            if #oxygen_therapy_dv > 0 then
-                for _, dv_name in ipairs(oxygen_therapy_dv) do
-                    log.debug("pao2 fio2 calculation oxygen_therapy_dv: " .. tostring(dv_name.name) .. ", result: " .. tostring(dv_name.result))
-                end
-            else
-                log.debug("pao2 fio2 calculation oxygen_therapy_dv: No pairs found")
-            end
-
-            if #resp_rate_dv > 0 then
-                for _, dv_name in ipairs(resp_rate_dv) do
-                    log.debug("pao2 fio2 calculation resp_rate_dv: " .. tostring(dv_name.name) .. ", result: " .. tostring(dv_name.result))
-                end
-            else
-                log.debug("pao2 fio2 calculation resp_rate_dv: No pairs found")
-            end
-
-            if #fi_o2_dvs > 0 then
-                for _, dv_name in ipairs(fi_o2_dvs) do
-                    log.debug("pao2 fio2 calculation fi_o2_dvs: " .. tostring(dv_name.name) .. ", result: " .. tostring(dv_name.result))
-                end
-            else
-                log.debug("pao2 fio2 calculation fi_o2_dvs: No pairs found")
-            end
-
-        end
-
         if #pa_o2_fi_o2_ratio_links == 0 then
             -- Method #1 - Look for site calculated discrete values
             pa_o2_fi_o2_ratio_links = links.get_discrete_value_links {
@@ -152,9 +117,6 @@ return function(Account)
                 end,
                 seq = 2
             }
-            if Account.id == "1640042638" then
-                log.debug("Checking Method #1 for PaO2/FiO2 links - " .. tostring(#pa_o2_fi_o2_ratio_links) .. " links found")
-            end
             if #pa_o2_fi_o2_ratio_links > 0 then
                 -- If we found links, return them
                 return pa_o2_fi_o2_ratio_links
@@ -162,9 +124,6 @@ return function(Account)
         end
 
         if #pa_o2_fi_o2_ratio_links == 0 then
-            if Account.id == "1640042638" then
-                log.debug("Checking Method #2 - Look through FiO2 values for matching PaO2 values")
-            end
             -- Method #2 - Look through FiO2 values for matching PaO2 values
             for _, fi_o2_dv in ipairs(fi_o2_dvs) do
                 local pa_o2_dv = discrete.get_discrete_value_nearest_to_date {
@@ -176,14 +135,7 @@ return function(Account)
                             tonumber(dv.result) ~= nil
                     end
                 }
-                if Account.id == "1640042638" then
-                    log.debug("Checking Method #2 - fi_o2_dv: " .. tostring(fi_o2_dv) .. ", sp_o2_dv: " .. tostring(pa_o2_dv))
-                end
                 if pa_o2_dv then
-                    if Account.id == "1640042638" then
-                        log.debug("Checking Method #2 - fi_o2_dv: " .. tostring(fi_o2_dv) ..
-                            ", pa_o2_dv: " .. tostring(pa_o2_dv))
-                    end
                     local fi_o2 = discrete.get_dv_value_number(fi_o2_dv)
                     local pa_o2 = discrete.get_dv_value_number(pa_o2_dv)
                     local resp_rate = "XX"
@@ -216,9 +168,6 @@ return function(Account)
         end
 
         if #pa_o2_fi_o2_ratio_links == 0 then
-            if Account.id == "1640042638" then
-                log.debug("Checking Method #3 - Look through FiO2 values for matching SpO2 values")
-            end
             -- Method #3 - Look through FiO2 values for matching SpO2 values
             for _, fi_o2_dv in ipairs(fi_o2_dvs) do
                 local sp_o2_dv = discrete.get_discrete_value_nearest_to_date {
@@ -230,14 +179,7 @@ return function(Account)
                             tonumber(dv.result) ~= nil
                     end
                 }
-                if Account.id == "1640042638" then
-                    log.debug("Checking Method #3 - fi_o2_dv: " .. tostring(fi_o2_dv) .. ", sp_o2_dv: " .. tostring(sp_o2_dv))
-                end
                 if sp_o2_dv then
-                    if Account.id == "1640042638" then
-                        log.debug("Checking Method #3 - fi_o2_dv: " .. tostring(fi_o2_dv) ..
-                            ", sp_o2_dv: " .. tostring(sp_o2_dv))
-                    end
                     local fi_o2 = discrete.get_dv_value_number(fi_o2_dv)
                     local sp_o2 = discrete.get_dv_value_number(sp_o2_dv)
                     local resp_rate = "XX"
@@ -271,18 +213,12 @@ return function(Account)
         end
 
         if #pa_o2_fi_o2_ratio_links == 0 then
-            if Account.id == "1640042638" then
-                log.debug("Checking Method #4 - Look through Oxygen values for matching PaO2 values")
-            end
             -- Method #4 - Look through Oxygen values for matching PaO2 values
             for _, oxygen_pair in ipairs(oxygen_pairs) do
                 local oxygen_flow_rate_value = discrete.get_dv_value_number(oxygen_pair.first)
                 local oxygen_therapy_value = oxygen_pair.second.result
                 --- @type number?
                 local fi_o2 = nil
-                if Account.id == "1640042638" then
-                    log.debug("Checking Method #4 - fi_o2: " .. tostring(fi_o2) .. ", oxygen_therapy_value: " .. tostring(oxygen_therapy_value))
-                end
                 if oxygen_therapy_value == "Nasal Cannula" then
                     fi_o2 = flow_rate_to_fi_o2_lookup[oxygen_flow_rate_value]
                     if tonumber(fi_o2) ~= nil and tonumber(fi_o2) > 0 then
@@ -296,10 +232,6 @@ return function(Account)
                             end
                         }
                         if pa_o2_dv then
-                            if Account.id == "1640042638" then
-                                log.debug("Checking Method #4 - fi_o2: " .. tostring(fi_o2) ..
-                                    ", pa_o2_dv: " .. tostring(pa_o2_dv))
-                            end
                             local pa_o2 = discrete.get_dv_value_number(pa_o2_dv)
                             local resp_rate = "XX"
                             local ratio = pa_o2 / fi_o2
@@ -331,18 +263,12 @@ return function(Account)
         end
 
         if #pa_o2_fi_o2_ratio_links == 0 then
-            if Account.id == "1640042638" then
-                log.debug("Checking Method #5 - Look through Oxygen values for matching SpO2 values")
-            end
             -- Method #5 - Look through Oxygen values for matching SpO2 values
             for _, oxygen_pair in ipairs(oxygen_pairs) do
                 local oxygen_flow_rate_value = discrete.get_dv_value_number(oxygen_pair.first)
                 local oxygen_therapy_value = oxygen_pair.second.result
                 --- @type number?
                 local fi_o2 = nil
-                if Account.id == "1640042638" then
-                    log.debug("Checking Method #5 - fi_o2: " .. tostring(fi_o2) .. ", oxygen_therapy_value: " .. tostring(oxygen_therapy_value))
-                end
                 if oxygen_therapy_value == "Nasal Cannula" then
                     fi_o2 = flow_rate_to_fi_o2_lookup[oxygen_flow_rate_value]
                     if tonumber(fi_o2) ~= nil and tonumber(fi_o2) > 0 then
@@ -358,10 +284,6 @@ return function(Account)
                         }
 
                         if sp_o2_dv then
-                            if Account.id == "1640042638" then
-                                log.debug("Checking Method #5 - fi_o2: " .. tostring(fi_o2) ..
-                                    ", sp_o2_dv: " .. tostring(sp_o2_dv))
-                            end
                             local sp_o2 = discrete.get_dv_value_number(sp_o2_dv)
                             local resp_rate = "XX"
                             local pa_o2 = sp_o2_to_pa_o2_lookup[sp_o2]
@@ -396,18 +318,12 @@ return function(Account)
         end
 
         if #pa_o2_fi_o2_ratio_links == 0 then
-            if Account.id == "1640042638" then
-                log.debug("Checking Method #6 - Look through Oxygen therapy values for matching PaO2 values")
-            end
             -- Method #6 - Look through Oxygen therapy values for matching PaO2 values
             for _, oxygen_therapy_item in ipairs(oxygen_therapy_dv) do
                 local oxygen_therapy_value = oxygen_therapy_item.result
                 --- @type number?
                 local fi_o2 = nil
                 fi_o2 = oxgyen_therapy_to_fi_o2_lookup[oxygen_therapy_item.result]
-                if Account.id == "1640042638" then
-                    log.debug("Checking Method #6 - fi_o2: " .. tostring(fi_o2) .. ", oxygen_therapy_value: " .. tostring(oxygen_therapy_value))
-                end
                 if fi_o2 then
                     if tonumber(fi_o2) ~= nil and tonumber(fi_o2) > 0 then
                         local pa_o2_dv = discrete.get_discrete_value_nearest_to_date {
@@ -420,17 +336,10 @@ return function(Account)
                             end
                         }
                         if pa_o2_dv then
-                            if Account.id == "1640042638" then
-                                log.debug("Checking Method #6 - fi_o2: " .. tostring(fi_o2) ..
-                                    ", pa_o2_dv: " .. tostring(pa_o2_dv))
-                            end
                             local pa_o2 = discrete.get_dv_value_number(pa_o2_dv)
                             local resp_rate = "XX"
                             if pa_o2 then
                                 local ratio = pa_o2 / fi_o2
-                                if Account.id == "1640042638" then
-                                    log.debug("Checking Method #6 - pa_o2: " .. tostring(pa_o2) .. ", ratio: " .. tostring(ratio))
-                                end
                                 if ratio <= 300 then
                                     if #resp_rate_dv > 0 then
                                         for _, resp_rate_item in ipairs(resp_rate_dv) do
@@ -459,18 +368,12 @@ return function(Account)
         end
 
         if #pa_o2_fi_o2_ratio_links == 0 then
-            if Account.id == "1640042638" then
-                log.debug("Checking Method #7 - Look through Oxygen therapy values for matching SpO2 values")
-            end
             -- Method #7 - Look through Oxygen therapy values for matching SpO2 values
             for _, oxygen_therapy_item in ipairs(oxygen_therapy_dv) do
                 local oxygen_therapy_value = oxygen_therapy_item.result
                 --- @type number?
                 local fi_o2 = nil
                 fi_o2 = oxgyen_therapy_to_fi_o2_lookup[oxygen_therapy_item.result]
-                if Account.id == "1640042638" then
-                    log.debug("Checking Method #7 - fi_o2: " .. tostring(fi_o2) .. ", oxygen_therapy_value: " .. tostring(oxygen_therapy_value))
-                end
                 if fi_o2 then
                     if tonumber(fi_o2) ~= nil and tonumber(fi_o2) > 0 then
                         local sp_o2_dv = discrete.get_discrete_value_nearest_to_date {
@@ -483,22 +386,11 @@ return function(Account)
                             end
                         }
                         if sp_o2_dv then
-                            if Account.id == "1640042638" then
-                                log.debug("Checking Method #7 - fi_o2: " .. tostring(fi_o2) ..
-                                    ", sp_o2_dv: " .. tostring(sp_o2_dv))
-                            end
                             local sp_o2 = discrete.get_dv_value_number(sp_o2_dv)
                             local resp_rate = "XX"
                             local pa_o2 = sp_o2_to_pa_o2_lookup[sp_o2]
-
                             if pa_o2 then
-                                if Account.id == "1640042638" then
-                                    log.debug("Checking Method #7 - pa_o2: " .. tostring(pa_o2))
-                                end
                                 local ratio = pa_o2 / fi_o2
-                                if Account.id == "1640042638" then
-                                    log.debug("Checking Method #7 - pa_o2: " .. tostring(pa_o2) .. ", ratio: " .. tostring(ratio))
-                                end
                                 if ratio <= 300 then
                                     if #resp_rate_dv > 0 then
                                         for _, resp_rate_item in ipairs(resp_rate_dv) do
