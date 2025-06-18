@@ -38,30 +38,6 @@ return function(Account)
                                           dv_names_pa_o2_fi_o2,
                                           calc_pa_o2_fi_o2)
 
-        if Account.id == "1640042638" then
-            for _, dv_name in ipairs(dv_names_fi_o2) do
-                log.debug("pao2 fio2 calculation dv_names_fi_o2: " .. tostring(dv_name))
-            end
-            for _, dv_name in ipairs(dv_names_pa_o2) do
-                log.debug("pao2 fio2 calculation dv_names_pa_o2: " .. tostring(dv_name))
-            end
-            for _, dv_name in ipairs(dv_names_sp_o2) do
-                log.debug("pao2 fio2 calculation dv_names_sp_o2: " .. tostring(dv_name))
-            end
-            for _, dv_name in ipairs(dv_names_oxygen_flow_rate) do
-                log.debug("pao2 fio2 calculation dv_names_oxygen_flow_rate: " .. tostring(dv_name))
-            end
-            for _, dv_name in ipairs(dv_names_oxygen_therapy) do
-                log.debug("pao2 fio2 calculation dv_names_oxygen_therapy: " .. tostring(dv_name))
-            end
-            for _, dv_name in ipairs(dv_names_respiratory_rate) do
-                log.debug("pao2 fio2 calculation dv_names_respiratory_rate: " .. tostring(dv_name))
-            end
-            for _, dv_name in ipairs(dv_names_pa_o2_fi_o2) do
-                log.debug("pao2 fio2 calculation dv_names_pa_o2_fi_o2: " .. tostring(dv_name))
-            end
-            log.debug("pao2 fio2 calculation calc_pa_o2_fi_o2: " .. tostring(calc_pa_o2_fi_o2))
-        end
         --- Final links
         --- @type CdiAlertLink[]
         local pa_o2_fi_o2_ratio_links = {}
@@ -144,18 +120,38 @@ return function(Account)
         }
 
         if Account.id == "1640042638" then
-            for _, dv_name in ipairs(oxygen_pairs) do
-                log.debug("pao2 fio2 calculation oxygen_pairs: " .. tostring(dv_name.name) .. ", result: " .. tostring(dv_name.result))
+            if #oxygen_pairs > 0 then
+                for _, dv_name in ipairs(oxygen_pairs) do
+                    log.debug("pao2 fio2 calculation oxygen_pairs: " .. tostring(dv_name.name) .. ", result: " .. tostring(dv_name.result))
+                end
+            else
+                log.debug("pao2 fio2 calculation oxygen_pairs: No pairs found")
             end
-            for _, dv_name in ipairs(oxygen_therapy_dv) do
-                log.debug("pao2 fio2 calculation oxygen_therapy_dv: " .. tostring(dv_name.name) .. ", result: " .. tostring(dv_name.result))
+
+            if #oxygen_therapy_dv > 0 then
+                for _, dv_name in ipairs(oxygen_therapy_dv) do
+                    log.debug("pao2 fio2 calculation oxygen_therapy_dv: " .. tostring(dv_name.name) .. ", result: " .. tostring(dv_name.result))
+                end
+            else
+                log.debug("pao2 fio2 calculation oxygen_therapy_dv: No pairs found")
             end
-            for _, dv_name in ipairs(resp_rate_dv) do
-                log.debug("pao2 fio2 calculation resp_rate_dv: " .. tostring(dv_name.name) .. ", result: " .. tostring(dv_name.result))
+
+            if #resp_rate_dv > 0 then
+                for _, dv_name in ipairs(resp_rate_dv) do
+                    log.debug("pao2 fio2 calculation resp_rate_dv: " .. tostring(dv_name.name) .. ", result: " .. tostring(dv_name.result))
+                end
+            else
+                log.debug("pao2 fio2 calculation resp_rate_dv: No pairs found")
             end
-            for _, dv_name in ipairs(fi_o2_dvs) do
-                log.debug("pao2 fio2 calculation fi_o2_dvs: " .. tostring(dv_name.name) .. ", result: " .. tostring(dv_name.result))
+
+            if #fi_o2_dvs > 0 then
+                for _, dv_name in ipairs(fi_o2_dvs) do
+                    log.debug("pao2 fio2 calculation fi_o2_dvs: " .. tostring(dv_name.name) .. ", result: " .. tostring(dv_name.result))
+                end
+            else
+                log.debug("pao2 fio2 calculation fi_o2_dvs: No pairs found")
             end
+
         end
 
         if #pa_o2_fi_o2_ratio_links == 0 then
