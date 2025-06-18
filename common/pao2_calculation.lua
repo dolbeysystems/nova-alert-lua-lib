@@ -79,29 +79,17 @@ return function(Account)
         --- All fi_o2 dvs from the last day
         local fi_o2_dvs = discrete.get_ordered_discrete_values {
             discreteValueNames = dv_names_fi_o2,
-            predicate = function(dv)
-                return
-                    dates.date_is_less_than_x_days_ago(dv.result_date, 1) and
-                    tonumber(dv.result) ~= nil
-            end
+            daysBack = 1
         }
         --- All resp rate dvs from the last day
         local resp_rate_dv = discrete.get_ordered_discrete_values {
             discreteValueNames = dv_names_respiratory_rate,
-            predicate = function(dv)
-                return
-                    dates.date_is_less_than_x_days_ago(dv.result_date, 1) and
-                    tonumber(dv.result) ~= nil
-            end
+            daysBack = 1
         }
         --- All oxygen therapy dvs from the last day
         local oxygen_therapy_dv = discrete.get_ordered_discrete_values {
             discreteValueNames = dv_names_oxygen_therapy,
-            predicate = function(dv)
-                return
-                    dates.date_is_less_than_x_days_ago(dv.result_date, 1) and
-                    dv.result ~= nil
-            end
+            daysBack = 1
         }
         --- All oxygen dv pairs from the last day
         local oxygen_pairs = discrete.get_discrete_value_pairs {
