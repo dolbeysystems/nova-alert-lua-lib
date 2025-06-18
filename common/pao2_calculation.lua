@@ -143,6 +143,21 @@ return function(Account)
             end
         }
 
+        if Account.id == "1640042638" then
+            for _, dv_name in ipairs(oxygen_pairs) do
+                log.debug("pao2 fio2 calculation oxygen_pairs: " .. tostring(dv_name.name) .. ", result: " .. tostring(dv_name.result))
+            end
+            for _, dv_name in ipairs(oxygen_therapy_dv) do
+                log.debug("pao2 fio2 calculation oxygen_therapy_dv: " .. tostring(dv_name.name) .. ", result: " .. tostring(dv_name.result))
+            end
+            for _, dv_name in ipairs(resp_rate_dv) do
+                log.debug("pao2 fio2 calculation resp_rate_dv: " .. tostring(dv_name.name) .. ", result: " .. tostring(dv_name.result))
+            end
+            for _, dv_name in ipairs(fi_o2_dvs) do
+                log.debug("pao2 fio2 calculation fi_o2_dvs: " .. tostring(dv_name.name) .. ", result: " .. tostring(dv_name.result))
+            end
+        end
+
         if #pa_o2_fi_o2_ratio_links == 0 then
             -- Method #1 - Look for site calculated discrete values
             pa_o2_fi_o2_ratio_links = links.get_discrete_value_links {
