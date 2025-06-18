@@ -39,14 +39,28 @@ return function(Account)
                                           calc_pa_o2_fi_o2)
 
         if Account.id == "1640042638" then
-            log.debug("pao2 fio2 calculation dv names dv_names_fi_o2: " .. tostring(dv_names_fi_o2) ..
-                ", dv_names_pa_o2: " .. tostring(dv_names_pa_o2) ..
-                ", dv_names_sp_o2: " .. tostring(dv_names_sp_o2) ..
-                ", dv_names_oxygen_flow_rate: " .. tostring(dv_names_oxygen_flow_rate) ..
-                ", dv_names_oxygen_therapy: " .. tostring(dv_names_oxygen_therapy) ..
-                ", dv_names_respiratory_rate: " .. tostring(dv_names_respiratory_rate) ..
-                ", dv_names_pa_o2_fi_o2: " .. tostring(dv_names_pa_o2_fi_o2) ..
-                ", calc_pa_o2_fi_o2: " .. tostring(calc_pa_o2_fi_o2))
+            for _, dv_name in ipairs(dv_names_fi_o2) do
+                log.debug("pao2 fio2 calculation dv_names_fi_o2: " .. tostring(dv_name))
+            end
+            for _, dv_name in ipairs(dv_names_pa_o2) do
+                log.debug("pao2 fio2 calculation dv_names_pa_o2: " .. tostring(dv_name))
+            end
+            for _, dv_name in ipairs(dv_names_sp_o2) do
+                log.debug("pao2 fio2 calculation dv_names_sp_o2: " .. tostring(dv_name))
+            end
+            for _, dv_name in ipairs(dv_names_oxygen_flow_rate) do
+                log.debug("pao2 fio2 calculation dv_names_oxygen_flow_rate: " .. tostring(dv_name))
+            end
+            for _, dv_name in ipairs(dv_names_oxygen_therapy) do
+                log.debug("pao2 fio2 calculation dv_names_oxygen_therapy: " .. tostring(dv_name))
+            end
+            for _, dv_name in ipairs(dv_names_respiratory_rate) do
+                log.debug("pao2 fio2 calculation dv_names_respiratory_rate: " .. tostring(dv_name))
+            end
+            for _, dv_name in ipairs(dv_names_pa_o2_fi_o2) do
+                log.debug("pao2 fio2 calculation dv_names_pa_o2_fi_o2: " .. tostring(dv_name))
+            end
+            log.debug("pao2 fio2 calculation calc_pa_o2_fi_o2: " .. tostring(calc_pa_o2_fi_o2))
         end
         --- Final links
         --- @type CdiAlertLink[]
