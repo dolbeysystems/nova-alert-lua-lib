@@ -152,7 +152,11 @@ return function(Account)
                             tonumber(dv.result) ~= nil
                     end
                 }
-                if pa_o2_dv and pa_o2_dv.result_date == fi_o2_dv.result_date then
+                if pa_o2_dv then
+                    if Account.id == "1640042638" then
+                        log.debug("Checking Method #2 - fi_o2_dv: " .. tostring(fi_o2_dv) ..
+                            ", pa_o2_dv: " .. tostring(pa_o2_dv))
+                    end
                     local fi_o2 = discrete.get_dv_value_number(fi_o2_dv)
                     local pa_o2 = discrete.get_dv_value_number(pa_o2_dv)
                     local resp_rate = "XX"
@@ -199,7 +203,12 @@ return function(Account)
                             tonumber(dv.result) ~= nil
                     end
                 }
+
                 if sp_o2_dv then
+                    if Account.id == "1640042638" then
+                        log.debug("Checking Method #3 - fi_o2_dv: " .. tostring(fi_o2_dv) ..
+                            ", sp_o2_dv: " .. tostring(sp_o2_dv))
+                    end
                     local fi_o2 = discrete.get_dv_value_number(fi_o2_dv)
                     local sp_o2 = discrete.get_dv_value_number(sp_o2_dv)
                     local resp_rate = "XX"
@@ -255,6 +264,10 @@ return function(Account)
                             end
                         }
                         if pa_o2_dv then
+                            if Account.id == "1640042638" then
+                                log.debug("Checking Method #4 - fi_o2: " .. tostring(fi_o2) ..
+                                    ", pa_o2_dv: " .. tostring(pa_o2_dv))
+                            end
                             local pa_o2 = discrete.get_dv_value_number(pa_o2_dv)
                             local resp_rate = "XX"
                             local ratio = pa_o2 / fi_o2
@@ -310,6 +323,10 @@ return function(Account)
                         }
 
                         if sp_o2_dv then
+                            if Account.id == "1640042638" then
+                                log.debug("Checking Method #5 - fi_o2: " .. tostring(fi_o2) ..
+                                    ", sp_o2_dv: " .. tostring(sp_o2_dv))
+                            end
                             local sp_o2 = discrete.get_dv_value_number(sp_o2_dv)
                             local resp_rate = "XX"
                             local pa_o2 = sp_o2_to_pa_o2_lookup[sp_o2]
@@ -365,10 +382,17 @@ return function(Account)
                             end
                         }
                         if pa_o2_dv then
+                            if Account.id == "1640042638" then
+                                log.debug("Checking Method #6 - fi_o2: " .. tostring(fi_o2) ..
+                                    ", pa_o2_dv: " .. tostring(pa_o2_dv))
+                            end
                             local pa_o2 = discrete.get_dv_value_number(pa_o2_dv)
                             local resp_rate = "XX"
                             if pa_o2 then
                                 local ratio = pa_o2 / fi_o2
+                                if Account.id == "1640042638" then
+                                    log.debug("Checking Method #6 - pa_o2: " .. tostring(pa_o2) .. ", ratio: " .. tostring(ratio))
+                                end
                                 if ratio <= 300 then
                                     if #resp_rate_dv > 0 then
                                         for _, resp_rate_item in ipairs(resp_rate_dv) do
@@ -421,11 +445,22 @@ return function(Account)
                             end
                         }
                         if sp_o2_dv then
+                            if Account.id == "1640042638" then
+                                log.debug("Checking Method #7 - fi_o2: " .. tostring(fi_o2) ..
+                                    ", sp_o2_dv: " .. tostring(sp_o2_dv))
+                            end
                             local sp_o2 = discrete.get_dv_value_number(sp_o2_dv)
                             local resp_rate = "XX"
                             local pa_o2 = sp_o2_to_pa_o2_lookup[sp_o2]
+
                             if pa_o2 then
+                                if Account.id == "1640042638" then
+                                    log.debug("Checking Method #7 - pa_o2: " .. tostring(pa_o2))
+                                end
                                 local ratio = pa_o2 / fi_o2
+                                if Account.id == "1640042638" then
+                                    log.debug("Checking Method #7 - pa_o2: " .. tostring(pa_o2) .. ", ratio: " .. tostring(ratio))
+                                end
                                 if ratio <= 300 then
                                     if #resp_rate_dv > 0 then
                                         for _, resp_rate_item in ipairs(resp_rate_dv) do
@@ -452,7 +487,6 @@ return function(Account)
                 end
             end
         end
-        
         return pa_o2_fi_o2_ratio_links
     end
 
