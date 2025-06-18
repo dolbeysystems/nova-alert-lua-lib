@@ -152,6 +152,9 @@ return function(Account)
                             tonumber(dv.result) ~= nil
                     end
                 }
+                if Account.id == "1640042638" then
+                    log.debug("Checking Method #2 - fi_o2_dv: " .. tostring(fi_o2_dv) .. ", sp_o2_dv: " .. tostring(pa_o2_dv))
+                end
                 if pa_o2_dv then
                     if Account.id == "1640042638" then
                         log.debug("Checking Method #2 - fi_o2_dv: " .. tostring(fi_o2_dv) ..
@@ -203,7 +206,9 @@ return function(Account)
                             tonumber(dv.result) ~= nil
                     end
                 }
-
+                if Account.id == "1640042638" then
+                    log.debug("Checking Method #3 - fi_o2_dv: " .. tostring(fi_o2_dv) .. ", sp_o2_dv: " .. tostring(sp_o2_dv))
+                end
                 if sp_o2_dv then
                     if Account.id == "1640042638" then
                         log.debug("Checking Method #3 - fi_o2_dv: " .. tostring(fi_o2_dv) ..
@@ -251,6 +256,9 @@ return function(Account)
                 local oxygen_therapy_value = oxygen_pair.second.result
                 --- @type number?
                 local fi_o2 = nil
+                if Account.id == "1640042638" then
+                    log.debug("Checking Method #4 - fi_o2: " .. tostring(fi_o2) .. ", oxygen_therapy_value: " .. tostring(oxygen_therapy_value))
+                end
                 if oxygen_therapy_value == "Nasal Cannula" then
                     fi_o2 = flow_rate_to_fi_o2_lookup[oxygen_flow_rate_value]
                     if tonumber(fi_o2) ~= nil and tonumber(fi_o2) > 0 then
@@ -308,6 +316,9 @@ return function(Account)
                 local oxygen_therapy_value = oxygen_pair.second.result
                 --- @type number?
                 local fi_o2 = nil
+                if Account.id == "1640042638" then
+                    log.debug("Checking Method #5 - fi_o2: " .. tostring(fi_o2) .. ", oxygen_therapy_value: " .. tostring(oxygen_therapy_value))
+                end
                 if oxygen_therapy_value == "Nasal Cannula" then
                     fi_o2 = flow_rate_to_fi_o2_lookup[oxygen_flow_rate_value]
                     if tonumber(fi_o2) ~= nil and tonumber(fi_o2) > 0 then
@@ -370,6 +381,9 @@ return function(Account)
                 --- @type number?
                 local fi_o2 = nil
                 fi_o2 = oxgyen_therapy_to_fi_o2_lookup[oxygen_therapy_item.result]
+                if Account.id == "1640042638" then
+                    log.debug("Checking Method #6 - fi_o2: " .. tostring(fi_o2) .. ", oxygen_therapy_value: " .. tostring(oxygen_therapy_value))
+                end
                 if fi_o2 then
                     if tonumber(fi_o2) ~= nil and tonumber(fi_o2) > 0 then
                         local pa_o2_dv = discrete.get_discrete_value_nearest_to_date {
