@@ -55,8 +55,7 @@ return function(Account)
                 end
 
                 if link and not link.sequence then
-                    link.sequence = self.sequence_counter
-                    self.sequence_counter = self.sequence_counter + 1
+                    link.sequence = 1
                 end
                 table.insert(self.links, link)
                 return link
@@ -71,8 +70,7 @@ return function(Account)
                 if type(lnks[1]) == "table" then lnks = lnks[1] end
                 -- Do not use ipairs; nil values will end iteration!
                 for _, lnk in pairs(lnks or {}) do
-                    lnk.sequence = self.sequence_counter
-                    self.sequence_counter = self.sequence_counter + 1
+                    lnk.sequence = 1
                     self:add_link(lnk)
                 end
                 return lists.some(lnks)
@@ -85,8 +83,7 @@ return function(Account)
             add_text_link = function(self, text, validated)
                 local link = links_lib.make_header_link(text, validated)
                 if link then
-                    link.sequence = self.sequence_counter
-                    self.sequence_counter = self.sequence_counter + 1
+                    link.sequence = 0
                     self:add_link(link)
                 end
                 return link
@@ -99,8 +96,7 @@ return function(Account)
             add_document_link = function(self, document_type, description)
                 local link = links_lib.get_document_link { documentType = document_type, text = description }
                 if link then
-                    link.sequence = self.sequence_counter
-                    self.sequence_counter = self.sequence_counter + 1
+                    link.sequence = 1
                     self:add_link(link)
                 end
                 return link
@@ -113,8 +109,7 @@ return function(Account)
             add_code_link = function(self, code, description)
                 local link = links_lib.get_code_link { code = code, text = description }
                 if link then
-                    link.sequence = self.sequence_counter
-                    self.sequence_counter = self.sequence_counter + 1
+                    link.sequence = 1
                     self:add_link(link)
                 end
                 return link
@@ -129,8 +124,7 @@ return function(Account)
                 for _, code in ipairs(codes) do
                     local link = links_lib.get_code_link { code = code, text = description }
                     if link then
-                        link.sequence = self.sequence_counter
-                        self.sequence_counter = self.sequence_counter + 1
+                        link.sequence = 1
                         self:add_link(link)
                         return link
                     end
@@ -144,8 +138,7 @@ return function(Account)
             add_code_prefix_link = function(self, prefix, description)
                 local link = codes_lib.get_code_prefix_link { prefix = prefix, text = description }
                 if link then
-                    link.sequence = self.sequence_counter
-                    self.sequence_counter = self.sequence_counter + 1
+                    link.sequence = 1
                     self:add_link(link)
                 end
                 return link
@@ -158,8 +151,7 @@ return function(Account)
             add_abstraction_link = function(self, abstraction, description)
                 local link = links_lib.get_abstraction_link { code = abstraction, text = description }
                 if link then
-                    link.sequence = self.sequence_counter
-                    self.sequence_counter = self.sequence_counter + 1
+                    link.sequence = 1
                     self:add_link(link)
                 end
                 return link
@@ -172,8 +164,7 @@ return function(Account)
             add_abstraction_link_with_value = function(self, abstraction, description)
                 local link = links_lib.get_abstraction_value_link { code = abstraction, text = description }
                 if link then
-                    link.sequence = self.sequence_counter
-                    self.sequence_counter = self.sequence_counter + 1
+                    link.sequence = 1
                     self:add_link(link)
                 end
                 return link
@@ -191,8 +182,7 @@ return function(Account)
                     predicate = predicate
                 }
                 if link then
-                    link.sequence = self.sequence_counter
-                    self.sequence_counter = self.sequence_counter + 1
+                    link.sequence = 1
                     self:add_link(link)
                 end
                 return link
@@ -209,8 +199,7 @@ return function(Account)
                     text = description, predicate = predicate
                 }
                 if link then
-                    link.sequence = self.sequence_counter
-                    self.sequence_counter = self.sequence_counter + 1
+                    link.sequence = 1
                     self:add_link(link)
                 end
                 return link
@@ -231,8 +220,7 @@ return function(Account)
                 }
 
                 for _, link in ipairs(lnks) do
-                    link.sequence = self.sequence_counter
-                    self.sequence_counter = self.sequence_counter + 1
+                    link.sequence = 1
                     self:add_link(link)
                 end
                 return lnks
@@ -253,8 +241,7 @@ return function(Account)
                 }
 
                 for _, link in ipairs(lnks) do
-                    link.sequence = self.sequence_counter
-                    self.sequence_counter = self.sequence_counter + 1
+                    link.sequence = 1
                     self:add_link(link)
                 end
                 return lnks
@@ -269,8 +256,7 @@ return function(Account)
                 description = description or ""
                 local link = links_lib.get_medication_link { cat = cat, text = description, predicate = predicate }
                 if link then
-                    link.sequence = self.sequence_counter
-                    self.sequence_counter = self.sequence_counter + 1
+                    link.sequence = 1
                     self:add_link(link)
                 end
                 return link
@@ -285,8 +271,7 @@ return function(Account)
                 description = description or ""
                 local lnks = links_lib.get_medication_links { cats = cats, text = description, predicate = predicate }
                 for _, link in ipairs(lnks) do
-                    link.sequence = self.sequence_counter
-                    self.sequence_counter = self.sequence_counter + 1
+                    link.sequence = 1
                     self:add_link(link)
                 end
                 return lnks

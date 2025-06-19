@@ -615,7 +615,10 @@ return function(Account)
         
         table.sort(links, sort_by_link_text)
         for i, link in ipairs(links) do
-            if link.link_text == "Major:" or link.link_text == "Minor:" or link.link_text == "ABG" or link.link_text == "VBG" then
+            if link.discrete_value_id == nil and link.code == nil and link.medication_id == nil then
+                -- If the link is not a discrete value, code, or medication, skip it
+                goto continue
+            elseif link.link_text == "Major:" or link.link_text == "Minor:" or link.link_text == "ABG" or link.link_text == "VBG" then
                 local resequenced_sub_header = {}
                 -- go through sub header links
                 resequenced_sub_header = link
@@ -648,6 +651,7 @@ return function(Account)
                 resequenced_sub_header.links = sub_links
                 table.insert(resequenced_links, resequenced_sub_header)
             end
+            ::continue::
         end
         return resequenced_links
     end
