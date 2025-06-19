@@ -141,7 +141,7 @@ return function(Account)
                     local resp_rate = "XX"
                     local percentage = tonumber(fi_o2) / 100
                     if percentage ~= nil and percentage > 0 then
-                        local ratio = pa_o2 / fi_o2
+                        local ratio = math.floor(pa_o2 / fi_o2)
                         if ratio <= 300 then
                             if #resp_rate_dv > 0 then
                                 for _, resp_rate_item in ipairs(resp_rate_dv) do
@@ -186,7 +186,7 @@ return function(Account)
                     local percentage = tonumber(fi_o2) / 100
                     local pa_o2 = sp_o2_to_pa_o2_lookup[sp_o2]
                     if pa_o2 ~= nil and pa_o2 > 0 and percentage ~= nil and percentage > 0 then
-                        local ratio = pa_o2 / fi_o2
+                        local ratio = math.floor(pa_o2 / fi_o2)
                         if ratio <= 300 then
                             if #resp_rate_dv > 0 then
                                 for _, resp_rate_item in ipairs(resp_rate_dv) do
@@ -234,7 +234,7 @@ return function(Account)
                         if pa_o2_dv then
                             local pa_o2 = discrete.get_dv_value_number(pa_o2_dv)
                             local resp_rate = "XX"
-                            local ratio = pa_o2 / fi_o2
+                            local ratio = math.floor(pa_o2 / fi_o2)
                             if ratio <= 300 then
                                 if #resp_rate_dv > 0 then
                                     for _, resp_rate_item in ipairs(resp_rate_dv) do
@@ -288,7 +288,7 @@ return function(Account)
                             local resp_rate = "XX"
                             local pa_o2 = sp_o2_to_pa_o2_lookup[sp_o2]
                             if pa_o2 then
-                                local ratio = pa_o2 / fi_o2
+                                local ratio = math.floor(pa_o2 / fi_o2)
                                 if ratio <= 300 then
                                     if #resp_rate_dv > 0 then
                                         for _, resp_rate_item in ipairs(resp_rate_dv) do
@@ -339,7 +339,7 @@ return function(Account)
                             local pa_o2 = discrete.get_dv_value_number(pa_o2_dv)
                             local resp_rate = "XX"
                             if pa_o2 then
-                                local ratio = pa_o2 / fi_o2
+                                local ratio = math.floor(pa_o2 / fi_o2)
                                 if ratio <= 300 then
                                     if #resp_rate_dv > 0 then
                                         for _, resp_rate_item in ipairs(resp_rate_dv) do
@@ -390,7 +390,7 @@ return function(Account)
                             local resp_rate = "XX"
                             local pa_o2 = sp_o2_to_pa_o2_lookup[sp_o2]
                             if pa_o2 then
-                                local ratio = pa_o2 / fi_o2
+                                local ratio = math.floor(pa_o2 / fi_o2)
                                 if ratio <= 300 then
                                     if #resp_rate_dv > 0 then
                                         for _, resp_rate_item in ipairs(resp_rate_dv) do
