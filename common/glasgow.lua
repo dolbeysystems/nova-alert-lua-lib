@@ -61,7 +61,6 @@ return function(Account)
         local y = #dvs_verbal - 1
         local z = #dvs_motor - 1
 
-        local clean_numbers = function(num) return tonumber(string.gsub(num, "[<>]", "")) end
         local twelve_hour_check = function(date, oxygen_dvs_)
             for _, dv in ipairs(oxygen_dvs_) do
                 local dv_date_int = dv.result_date
@@ -78,7 +77,7 @@ return function(Account)
             if
                 a > 0 and b > 0 and c > 0 and d > 0 and
                 dvs_eye[b].result ~= 'Oriented' and
-                clean_numbers(dvs_score[a].result) <= glasgow_calculation and
+                tonumber(dvs_score[a].result) <= glasgow_calculation and
                 dvs_score[a].result_date == dvs_eye[b].result_date and
                 dvs_score[a].result_date == dvs_verbal[c].result_date and
                 dvs_score[a].result_date == dvs_motor[d].result_date and
@@ -102,7 +101,7 @@ return function(Account)
             if
                 w > 0 and x > 0 and y > 0 and z > 0 and
                 dvs_eye[x].result ~= 'Oriented' and
-                clean_numbers(dvs_score[w].result) <= glasgow_calculation and
+                tonumber(dvs_score[w].result) <= glasgow_calculation and
                 dvs_score[w].result_date == dvs_eye[x].result_date and
                 dvs_score[w].result_date == dvs_verbal[y].result_date and
                 dvs_score[w].result_date == dvs_motor[z].result_date and
