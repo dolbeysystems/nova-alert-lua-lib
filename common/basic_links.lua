@@ -615,8 +615,9 @@ return function(Account)
         
         table.sort(links, sort_by_link_text)
         for i, link in ipairs(links) do
-            if link.discrete_value_id == nil and link.code == nil and link.medication_id == nil then
+            if link.discrete_value_id == nil and link.code == nil and link.medication_id == nil and link.sequence == 0 then
                 -- If the link is not a discrete value, code, or medication, skip it
+                -- This is meant for link text where we are specifying a specific message to the user like a lacking message.
                 goto continue
             elseif link.link_text == "Major:" or link.link_text == "Minor:" or link.link_text == "ABG" or link.link_text == "VBG" then
                 local resequenced_sub_header = {}
