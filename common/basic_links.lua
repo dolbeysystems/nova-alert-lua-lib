@@ -617,7 +617,7 @@ return function(Account)
         for i, link in ipairs(links) do
             if link.discrete_value_id == nil and link.code == nil and link.medication_id == nil and link.sequence == 0 then
                 -- If the link is not a discrete value, code, or medication, skip it
-                -- This is meant for link text where we are specifying a specific message to the user like a lacking message.
+                -- This is meant for text links where we are specifying a specific message to the user like for the pao2 fio2 calculation
                 goto continue
             elseif link.link_text == "Major:" or link.link_text == "Minor:" or link.link_text == "ABG" or link.link_text == "VBG" then
                 local resequenced_sub_header = {}
