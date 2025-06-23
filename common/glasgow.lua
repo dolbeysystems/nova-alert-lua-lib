@@ -2,106 +2,121 @@
 return function(Account)
     local module = {}
     local discrete = require("libs.common.discrete_values")(Account)
-    local links = require("libs.common.basic_links")(Account)
-    local dates = require("libs.common.dates")
+    local dates = require "libs.common.dates"
     local log = require("cdi.log")
     local cdi_alert_link = require "cdi.link"
 
 
-    --- @param value number
+    --- @param glasgow_calculation number
     --- @param consecutive boolean
+    --- @param dv_names_glasgow_coma_scale string[]
+    --- @param dv_names_glasgow_eye_opening string[]
+    --- @param dv_names_glasgow_verbal string[]
+    --- @param dv_names_glasgow_motor string[]
+    --- @param dv_names_oxygen_therapy string[]
     --- @return CdiAlertLink[]
-    local function glasgow_linked_values(value, consecutive)
-        local score_dvs = discrete.get_ordered_discrete_values {
+    function module.glasgow_linked_values(
+        glasgow_calculation,
+        consecutive,
+        dv_names_glasgow_coma_scale,
+        dv_names_glasgow_eye_opening,
+        dv_names_glasgow_verbal,
+        dv_names_glasgow_motor,
+        dv_names_oxygen_therapy
+    )
+        local dvs_score = discrete.get_ordered_discrete_values {
             discreteValueNames = dv_names_glasgow_coma_scale,
             -- the annotations on predicate suggest that this is always true
             predicate = function(dv_, num) return num ~= nil end
         }
-        local eye_dvs = discrete.get_ordered_discrete_values {
+        local dvs_eye = discrete.get_ordered_discrete_values {
             discreteValueNames = dv_names_glasgow_eye_opening,
             predicate = function(dv, num_) return dv.result ~= nil end
         }
-        local verbal_dvs = discrete.get_ordered_discrete_values {
+        local dvs_verbal = discrete.get_ordered_discrete_values {
             discreteValueNames = dv_names_glasgow_verbal,
             predicate = function(dv, num_) return dv.result ~= nil end
         }
-        local motor_dvs = discrete.get_ordered_discrete_values {
+        local dvs_motor = discrete.get_ordered_discrete_values {
             discreteValueNames = dv_names_glasgow_motor,
             predicate = function(dv, num_) return dv.result ~= nil end
         }
-        local oxygen_dvs = discrete.get_ordered_discrete_values {
+        local dvs_oxygen = discrete.get_ordered_discrete_values {
             discreteValueNames = dv_names_oxygen_therapy,
             predicate = function(dv, num_)
-                return string.find(dv.result, "vent") ~= nil or
-                    string.find(dv.result, "Vent") ~= nil
+                return dv.result ~= nil and
+                    (string.find(dv.result, "vent") ~= nil or
+                        string.find(dv.result, "Vent") ~= nil or
+                        string.find(dv.result, "Mechanical Ventilation") ~= nil)
             end
         }
 
         local matched_list = {}
-        local a = #score_dvs
-        local b = #eye_dvs
-        local c = #verbal_dvs
-        local d = #motor_dvs
-        local w = #score_dvs - 1
-        local x = #eye_dvs - 1
-        local y = #verbal_dvs - 1
-        local z = #motor_dvs - 1
+        local a = #dvs_score
+        local b = #dvs_eye
+        local c = #dvs_verbal
+        local d = #dvs_motor
+        local w = #dvs_score - 1
+        local x = #dvs_eye - 1
+        local y = #dvs_verbal - 1
+        local z = #dvs_motor - 1
 
         local clean_numbers = function(num) return tonumber(string.gsub(num, "[<>]", "")) end
         local twelve_hour_check = function(date, oxygen_dvs_)
             for _, dv in ipairs(oxygen_dvs_) do
                 local dv_date_int = dv.result_date
                 local start_date = dv_date_int - (12 * 3600)
-                local end_date = dv_date_int - (12 * 3600)
+                local end_date = dv_date_int + (12 * 3600)
                 if start_date <= date and date <= end_date then
+                    log.debug("Date was found to be within a negated oxygen therapy value: " .. tostring(dv.result) .. ", date: " .. tostring(date))
                     return false
                 end
             end
             return true
         end
-        local function get_start_link()
+        local function get_first_link()
             if
                 a > 0 and b > 0 and c > 0 and d > 0 and
-                eye_dvs[b].result ~= 'Oriented' and
-                clean_numbers(score_dvs[a].result) <= value and
-                score_dvs[a].result_date == eye_dvs[b].result_date and
-                score_dvs[a].result_date == verbal_dvs[c].result_date and
-                score_dvs[a].result_date == motor_dvs[d].result_date and
-                twelve_hour_check(score_dvs[a].result_date, oxygen_dvs)
+                dvs_eye[b].result ~= 'Oriented' and
+                clean_numbers(dvs_score[a].result) <= glasgow_calculation and
+                dvs_score[a].result_date == dvs_eye[b].result_date and
+                dvs_score[a].result_date == dvs_verbal[c].result_date and
+                dvs_score[a].result_date == dvs_motor[d].result_date and
+                twelve_hour_check(dvs_score[a].result_date, dvs_oxygen)
             then
-                local matching_date = score_dvs[a].result_date
+                local matching_date = dvs_score[a].result_date
                 local link = cdi_alert_link()
-                link.discrete_value_id = score_dvs[a].unique_id
+                link.discrete_value_id = dvs_score[a].unique_id
                 link.link_text =
-                    matching_date ..
-                    " Total GCS = " .. score_dvs[a].result ..
-                    " (Eye Opening: " .. eye_dvs[b].result ..
-                    ", Verbal Response: " .. verbal_dvs[c].result ..
-                    ", Motor Response: " .. motor_dvs[d].result .. ")"
+                    dates.date_int_to_string(matching_date, "%m/%d/%Y %H:%M") ..
+                    " Total GCS = " .. dvs_score[a].result ..
+                    " (Eye Opening: " .. dvs_eye[b].result ..
+                    ", Verbal Response: " .. dvs_verbal[c].result ..
+                    ", Motor Response: " .. dvs_motor[d].result .. ")"
                 return link
             end
             return nil
         end
 
-        local function get_last_link()
+        local function get_second_link()
             if
                 w > 0 and x > 0 and y > 0 and z > 0 and
-                eye_dvs[x].result ~= 'Oriented' and
-                clean_numbers(score_dvs[w].result) <= value and
-                score_dvs[w].result_date == eye_dvs[x].result_date and
-                score_dvs[w].result_date == verbal_dvs[y].result_date and
-                score_dvs[w].result_date == motor_dvs[z].result_date and
-                twelve_hour_check(score_dvs[w].result_date, oxygen_dvs)
+                dvs_eye[x].result ~= 'Oriented' and
+                clean_numbers(dvs_score[w].result) <= glasgow_calculation and
+                dvs_score[w].result_date == dvs_eye[x].result_date and
+                dvs_score[w].result_date == dvs_verbal[y].result_date and
+                dvs_score[w].result_date == dvs_motor[z].result_date and
+                twelve_hour_check(dvs_score[w].result_date, dvs_oxygen)
             then
-                local matching_date = score_dvs[w].result_date
+                local matching_date = dvs_score[w].result_date
                 local link = cdi_alert_link()
-                link.discrete_value_id = score_dvs[w].unique_id
+                link.discrete_value_id = dvs_score[w].unique_id
                 link.link_text =
-                    matching_date ..
-                    " Total GCS = " .. score_dvs[w].result ..
-                    " (Eye Opening: " .. eye_dvs[x].result ..
-                    ", Verbal Response: " .. verbal_dvs[y].result ..
-                    ", Motor Response: " .. motor_dvs[z].result .. ")"
+                    dates.date_int_to_string(matching_date, "%m/%d/%Y %H:%M") ..
+                    " Total GCS = " .. dvs_score[w].result ..
+                    " (Eye Opening: " .. dvs_eye[x].result ..
+                    ", Verbal Response: " .. dvs_verbal[y].result ..
+                    ", Motor Response: " .. dvs_motor[z].result .. ")"
                 return link
             end
             return nil
@@ -109,13 +124,13 @@ return function(Account)
 
         if consecutive then
             if a >= 1 then
-                for _ = 1, #score_dvs do
-                    local start_link = get_start_link()
-                    local last_link = get_last_link()
+                for _ = 1, #dvs_score do
+                    local first_link = get_first_link()
+                    local second_link = get_second_link()
 
-                    if start_link ~= nil and last_link ~= nil then
-                        table.insert(matched_list, start_link)
-                        table.insert(matched_list, last_link)
+                    if first_link ~= nil and second_link ~= nil then
+                        table.insert(matched_list, first_link)
+                        table.insert(matched_list, second_link)
                         return matched_list
                     else
                         a = a - 1; b = b - 1; c = c - 1; d = d - 1;
@@ -123,11 +138,11 @@ return function(Account)
                     end
                 end
             else
-                for _ = 1, #score_dvs do
-                    local start_link = get_start_link()
+                for _ = 1, #dvs_score do
+                    local first_link = get_first_link()
 
-                    if start_link ~= nil then
-                        table.insert(matched_list, start_link)
+                    if first_link ~= nil then
+                        table.insert(matched_list, first_link)
                         return matched_list
                     else
                         a = a - 1; b = b - 1; c = c - 1; d = d - 1;
@@ -135,11 +150,11 @@ return function(Account)
                 end
             end
         else
-            for _ = 1, #score_dvs do
-                local start_link = get_start_link()
+            for _ = 1, #dvs_score do
+                local first_link = get_first_link()
 
-                if start_link ~= nil then
-                    table.insert(matched_list, start_link)
+                if first_link ~= nil then
+                    table.insert(matched_list, first_link)
                     return matched_list
                 else
                     a = a - 1; b = b - 1; c = c - 1; d = d - 1;
