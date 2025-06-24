@@ -75,7 +75,7 @@ return function(Account)
         return links.get_code_link {
             code = code,
             text = text,
-            seq = sequence,
+            seq = sequence
         }
     end
 
@@ -92,7 +92,7 @@ return function(Account)
         return links.get_code_links {
             codes = codes,
             text = text,
-            seq = sequence,
+            seq = sequence
         }
     end
 
@@ -109,7 +109,7 @@ return function(Account)
         return links.get_code_link {
             codes = codes,
             text = text,
-            seq = sequence,
+            seq = sequence
         }
     end
 
@@ -126,7 +126,7 @@ return function(Account)
         return links.get_abstraction_link {
             code = abs,
             text = text,
-            seq = sequence,
+            seq = sequence
         }
     end
 
@@ -143,7 +143,7 @@ return function(Account)
         return links.get_abstraction_value_link {
             code = abs,
             text = text,
-            seq = sequence,
+            seq = sequence
         }
     end
 
@@ -160,7 +160,7 @@ return function(Account)
         return module.get_code_prefix_link {
             prefix = prefix,
             text = text,
-            seq = sequence,
+            seq = sequence
         }
     end
 
@@ -177,7 +177,7 @@ return function(Account)
         return module.get_code_prefix_links {
             prefix = prefix,
             text = text,
-            seq = sequence,
+            seq = sequence
         }
     end
 

@@ -17,7 +17,7 @@ return function(Account)
         return links.get_document_link {
             documentType = document_type,
             text = text,
-            seq = sequence,
+            seq = sequence
         }
     end
 

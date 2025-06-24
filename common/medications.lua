@@ -9,38 +9,18 @@ return function(Account)
     ---
     --- @param cat string The medication category (name)
     --- @param text string? The text for the link
-    --- @param sequence number? The sequence number of the link
     --- @param predicate (fun(med: Medication):boolean?)? A predicate to filter the medications
+    --- @param sequence number? The sequence number of the link
     ---
     --- @return CdiAlertLink? - a link to the medication or nil if not found
     --------------------------------------------------------------------------------
-    function module.make_medication_link(cat, text, predicate)
+    function module.make_medication_link(cat, text, predicate, sequence)
         text = text or ""
         return links.get_medication_link {
             cat = cat,
             text = text,
-            predicate = predicate
-        }
-    end
-
-    --------------------------------------------------------------------------------
-    --- Make a medication link
-    ---
-    --- @param cat string The medication category (name)
-    --- @param text string? The text for the link
-    --- @param sequence number? The sequence number of the link
-    --- @param predicate (fun(med: Medication):boolean?)? A predicate to filter the medications
-    ---
-    --- @return CdiAlertLink? - a link to the medication or nil if not found
-    --------------------------------------------------------------------------------
-    function module.make_medication_link_by_cdi_category(cat, text, sequence, predicate)
-        text = text or ""
-        return links.get_medication_link {
-            cat = cat,
-            text = text,
-            seq = sequence,
             predicate = predicate,
-            useCdiAlertCategoryField = true
+            seq = sequence
         }
     end
 
@@ -49,19 +29,40 @@ return function(Account)
     ---
     --- @param cat string The medication category (name)
     --- @param text string? The text for the link
-    --- @param sequence number? The sequence number of the link
     --- @param predicate (fun(med: Medication):boolean?)? A predicate to filter the medications
+    --- @param sequence number? The sequence number of the link
     ---
     --- @return CdiAlertLink? - a link to the medication or nil if not found
     --------------------------------------------------------------------------------
-    function module.make_medication_links_by_cdi_category(cat, text, sequence, predicate)
+    function module.make_medication_link_by_cdi_category(cat, text, predicate, sequence)
+        text = text or ""
+        return links.get_medication_link {
+            cat = cat,
+            text = text,
+            predicate = predicate,
+            useCdiAlertCategoryField = true,
+            seq = sequence
+        }
+    end
+
+    --------------------------------------------------------------------------------
+    --- Make a medication link
+    ---
+    --- @param cat string The medication category (name)
+    --- @param text string? The text for the link
+    --- @param predicate (fun(med: Medication):boolean?)? A predicate to filter the medications
+    --- @param sequence number? The sequence number of the link
+    ---
+    --- @return CdiAlertLink? - a link to the medication or nil if not found
+    --------------------------------------------------------------------------------
+    function module.make_medication_links_by_cdi_category(cat, text, predicate, sequence)
         text = text or ""
         return links.get_medication_links {
             cat = cat,
             text = text,
-            seq = sequence,
             predicate = predicate,
-            useCdiAlertCategoryField = true
+            useCdiAlertCategoryField = true,
+            seq = sequence
         }
     end
 

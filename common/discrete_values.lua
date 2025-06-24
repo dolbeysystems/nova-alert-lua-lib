@@ -423,7 +423,7 @@ return function(Account)
         local predicate1 = args.predicate1 or function() return true end
         local predicate2 = args.predicate2 or function() return true end
         local join_predicate = args.joinPredicate or function() return true end
-        local max = args.max
+        local max = args.max or 10
 
         ---@type DiscreteValue[]
         local first_values = {}
@@ -649,7 +649,7 @@ return function(Account)
             discreteValueNames = dvs,
             text = text,
             predicate = predicate,
-            seq = sequence,
+            seq = sequence
         }
     end
 
@@ -659,7 +659,7 @@ return function(Account)
     --- @param dvs string[] The discrete values to search for
     --- @param text string The text for the link
     --- @param predicate (fun(discrete_value: DiscreteValue, num: number?):boolean)? Predicate function to filter discrete values
-    --- @param max_per_value number? The sequence number of the link
+    --- @param max_per_value number? The maximum number of returned links
     ---
     --- @return CdiAlertLink[] - a link to the discrete value or nil if not found
     --------------------------------------------------------------------------------

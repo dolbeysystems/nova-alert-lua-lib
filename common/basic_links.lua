@@ -40,8 +40,7 @@ return function(Account)
         local link_template = args.text or ""
         local document_types = args.document_types or {}
         local predicate = args.predicate
-        local sequence = args.seq or 0
-        local fixed_sequence = args.fixed_seq or false
+        local sequence = args.seq or 1
         local max_per_value = args.max_per_value or 9999
         local include_standard_suffix = args.include_standard_suffix
         local hidden = args.hidden or false
@@ -92,9 +91,6 @@ return function(Account)
                 link.permanent = permanent
                 link.hidden = hidden
                 table.insert(links, link)
-                if not fixed_sequence then
-                    sequence = sequence + 1
-                end
             else
                 for j = 1, #document_types do
                     if document_types[j] == document.document_type then
@@ -109,9 +105,6 @@ return function(Account)
                         table.insert(links, link)
                         if max_per_value and #links >= max_per_value then
                             break
-                        end
-                        if not fixed_sequence then
-                            sequence = sequence + 1
                         end
                     end
                 end
@@ -224,8 +217,7 @@ return function(Account)
         local document_types = args.documentTypes or { args.documentType }
         local link_template = args.text or ""
         local predicate = args.predicate
-        local sequence = args.seq or 0
-        local fixed_sequence = args.fixed_seq or false
+        local sequence = args.seq or 1
         local max_per_value = args.max_per_value or 9999
         local include_standard_suffix = args.include_standard_suffix
         local hidden = args.hidden or false
@@ -272,9 +264,6 @@ return function(Account)
             link.permanent = permanent
             link.hidden = hidden
             table.insert(links, link)
-            if not fixed_sequence then
-                sequence = sequence + 1
-            end
         end
         return links
     end
@@ -316,8 +305,7 @@ return function(Account)
         local medication_categories = args.cats or { args.cat }
         local link_template = args.text or ""
         local predicate = args.predicate
-        local sequence = args.seq or 0
-        local fixed_sequence = args.fixed_seq or false
+        local sequence = args.seq or 1
         local max_per_value = args.max_per_value or 9999
         local include_standard_suffix = args.include_standard_suffix
         local use_cdi_alert_category_field = args.useCdiAlertCategoryField or false
@@ -387,9 +375,6 @@ return function(Account)
             link.permanent     = permanent
             link.hidden        = hidden
             table.insert(links, link)
-            if not fixed_sequence then
-                sequence = sequence + 1
-            end
         end
         return links
     end
@@ -429,7 +414,7 @@ return function(Account)
         local discrete_value_names = args.discreteValueNames or { args.discreteValueName }
         local link_template = args.text or ""
         local predicate = args.predicate
-        local sequence = 1
+        local sequence = args.seq or 1
         local max_per_value = args.max_per_value or 10
         local include_standard_suffix = args.include_standard_suffix
         local hidden = args.hidden or false
@@ -618,7 +603,10 @@ return function(Account)
             if link.discrete_value_id == nil and link.code == nil and link.medication_id == nil and link.sequence == 0 then
                 -- If the link is not a discrete value, code, or medication, skip it
                 -- This is meant for text links where we are specifying a specific message to the user like for the pao2 fio2 calculation
-                goto continue
+                local resequenced_link = {}
+                resequenced_link = link
+                table.insert(resequenced_links, resequenced_link)
+
             elseif link.link_text == "Major:" or link.link_text == "Minor:" or link.link_text == "ABG" or link.link_text == "VBG" then
                 local resequenced_sub_header = {}
                 -- go through sub header links
@@ -626,7 +614,7 @@ return function(Account)
                 resequenced_sub_header.links = module.alphabetize_links_in_header(link.links)
                 table.insert(resequenced_links, resequenced_sub_header)
 
-            elseif link.sequence < 85 then
+            elseif link.sequence < 85 and link.sequence > 0 then
                 local resequenced_link = {}
                 resequenced_link = link
                 resequenced_link.sequence = i
@@ -644,15 +632,18 @@ return function(Account)
                     local date_b = module.extract_result_date(b.link_text) or 0
                     return date_a < date_b -- Sort oldest first
                 end)
-
                 -- Resequence the sorted links
                 for idx, l in ipairs(sub_links) do
-                    l.sequence = idx 
+                    if link.discrete_value_id == nil and link.code == nil and link.medication_id == nil and link.sequence == 0 then
+                        -- If the link is not a discrete value, code, or medication, skip it
+                        -- This is meant for text links where we are specifying a specific message to the user like for the pao2 fio2 calculation
+                        l.sequence = 0
+                    end
+                    l.sequence = idx
                 end
                 resequenced_sub_header.links = sub_links
                 table.insert(resequenced_links, resequenced_sub_header)
             end
-            ::continue::
         end
         return resequenced_links
     end
