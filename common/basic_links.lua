@@ -564,6 +564,29 @@ return function(Account)
     end
 
     --------------------------------------------------------------------------------
+    --- Update Link text for autoresolve but dont create link
+    ---
+    --- @param link CdiAlertLink The link to update_link_text
+    ---
+    --- @return CdiAlertLink - Return the updated link text link
+    --------------------------------------------------------------------------------
+    function module.update_link_text(link)
+        local updated_link = cdi_alert_link()
+        if link.link_text then
+            updated_link.link_text = "Autoresolved Evidence - " .. link.link_text
+            updated_link.discrete_value_id = link.discrete_value_id
+            updated_link.code = link.code
+            updated_link.medication_id = link.medication_id
+            updated_link.document_id = link.document_id
+            updated_link.is_validated = link.is_validated
+            updated_link.sequence = link.sequence
+            updated_link.hidden = link.hidden
+            updated_link.permanent = link.permanent
+        end
+        return updated_link
+    end
+
+    --------------------------------------------------------------------------------
     --- Sort through headers and readd links alphabetized by their link text
     ---
     --- @param headers CdiAlertLink[] The links to check through to alphabetize
