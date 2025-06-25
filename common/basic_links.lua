@@ -572,7 +572,7 @@ return function(Account)
     --------------------------------------------------------------------------------
     function module.update_link_text(link)
         local updated_link = cdi_alert_link()
-        if link.link_text then
+        if link and link.link_text then
             updated_link.link_text = "Autoresolved Evidence - " .. link.link_text
             updated_link.discrete_value_id = link.discrete_value_id
             updated_link.code = link.code
