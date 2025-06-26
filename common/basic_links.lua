@@ -564,13 +564,41 @@ return function(Account)
     end
 
     --------------------------------------------------------------------------------
+    --- Update Link text for star logic but dont create link
+    ---
+    --- @param link CdiAlertLink The link to update_link_text
+    --- @param autoresolve boolean? If true, the link will be updated for autoresolve
+    ---
+    --- @return CdiAlertLink - Return the updated link text link
+    --------------------------------------------------------------------------------
+    function module.update_link_text_star(link, autoresolve)
+        local updated_link = cdi_alert_link()
+        if link and link.link_text then
+            if autoresolve then
+                updated_link.link_text = "<span style='color:#005079;' title='Priority alert'>&starf; </span> Autoresolved Evidence - " .. link.link_text
+            else
+                updated_link.link_text = "<span style='color:#005079;' title='Priority alert'>&starf; </span>" .. link.link_text
+            end
+            updated_link.discrete_value_id = link.discrete_value_id
+            updated_link.code = link.code
+            updated_link.medication_id = link.medication_id
+            updated_link.document_id = link.document_id
+            updated_link.is_validated = link.is_validated
+            updated_link.sequence = link.sequence
+            updated_link.hidden = link.hidden
+            updated_link.permanent = link.permanent
+        end
+        return updated_link
+    end
+
+    --------------------------------------------------------------------------------
     --- Update Link text for autoresolve but dont create link
     ---
     --- @param link CdiAlertLink The link to update_link_text
     ---
     --- @return CdiAlertLink - Return the updated link text link
     --------------------------------------------------------------------------------
-    function module.update_link_text(link)
+    function module.update_link_text_autoresolve(link)
         local updated_link = cdi_alert_link()
         if link and link.link_text then
             updated_link.link_text = "Autoresolved Evidence - " .. link.link_text

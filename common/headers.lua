@@ -17,8 +17,12 @@ return function(Account)
     --- @field build (fun (self: header_builder, require_links: boolean): CdiAlertLink)
     --- @field add_link (fun (self: header_builder, link: CdiAlertLink?)) : CdiAlertLink?
     --- @field add_autoresolve_link (fun (self: header_builder, link: CdiAlertLink?)) : CdiAlertLink?
+    --- @field add_star_link (fun (self: header_builder, ...: CdiAlertLink?)) : boolean
+    --- @field add_star_autoresolve_link (fun (self: header_builder, ...: CdiAlertLink?)) : boolean
     --- @field add_links (fun (self: header_builder, ...: CdiAlertLink?)) : boolean
     --- @field add_autoresolve_links (fun (self: header_builder, ...: CdiAlertLink?)) : boolean
+    --- @field add_star_links (fun (self: header_builder, ...: CdiAlertLink?)) : boolean
+    --- @field add_star_autoresolve_links (fun (self: header_builder, ...: CdiAlertLink?)) : boolean
     --- @field add_text_link (fun (self: header_builder, text: string, validated: boolean?)) : CdiAlertLink?
     --- @field add_document_link (fun (self: header_builder, document_type: string, description: string)) : CdiAlertLink?
     --- @field add_code_link (fun (self: header_builder, code: string, description: string)) : CdiAlertLink?
@@ -81,6 +85,40 @@ return function(Account)
             end,
 
             --- @param self header_builder
+            --- @param link CdiAlertLink?
+            --- @return CdiAlertLink?
+            add_star_link = function(self, link)
+                if link and not type(link) == "userdata" then
+                    error("link must be a CdiAlertLink")
+                end
+                if link and (link.code or link.discrete_value_id or link.medication_id) then
+                    link.link_text = "span style='color:#005079;' title='Priority alert'>&starf; </span>" .. link.link_text
+                end
+                if link and not link.sequence then
+                    link.sequence = 1
+                end
+                table.insert(self.links, link)
+                return link
+            end,
+
+            --- @param self header_builder
+            --- @param link CdiAlertLink?
+            --- @return CdiAlertLink?
+            add_star_autoresolve_link = function(self, link)
+                if link and not type(link) == "userdata" then
+                    error("link must be a CdiAlertLink")
+                end
+                if link and (link.code or link.discrete_value_id or link.medication_id) then
+                    link.link_text = "span style='color:#005079;' title='Priority alert'>&starf; </span>Autoresolved Evidence  - " .. link.link_text
+                end
+                if link and not link.sequence then
+                    link.sequence = 1
+                end
+                table.insert(self.links, link)
+                return link
+            end,
+
+            --- @param self header_builder
             --- @param ... CdiAlertLink[]
             --- @return boolean
             add_links = function(self, ...)
@@ -111,6 +149,38 @@ return function(Account)
                 for _, lnk in ipairs(lnks) do
                     if lnk and (lnk.code or lnk.discrete_value_id or lnk.medication_id) then
                         lnk.link_text = "Autoresolved Evidence  - " .. lnk.link_text
+                    end
+                    self:add_link(lnk)
+                end
+                return lists.some(lnks)
+            end,
+
+            --- @param self header_builder
+            --- @param ... CdiAlertLink[]
+            --- @return boolean
+            add_star_links = function(self, ...)
+                local lnks = { ... }
+                -- Detect sequences instead of varargs
+                if type(lnks[1]) == "table" then lnks = lnks[1] end
+                for _, lnk in ipairs(lnks) do
+                    if lnk and (lnk.code or lnk.discrete_value_id or lnk.medication_id) then
+                        lnk.link_text = "span style='color:#005079;' title='Priority alert'>&starf; </span>" .. lnk.link_text
+                    end
+                    self:add_link(lnk)
+                end
+                return lists.some(lnks)
+            end,
+
+            --- @param self header_builder
+            --- @param ... CdiAlertLink[]
+            --- @return boolean
+            add_star_autoresolve_links = function(self, ...)
+                local lnks = { ... }
+                -- Detect sequences instead of varargs
+                if type(lnks[1]) == "table" then lnks = lnks[1] end
+                for _, lnk in ipairs(lnks) do
+                    if lnk and (lnk.code or lnk.discrete_value_id or lnk.medication_id) then
+                        lnk.link_text = "span style='color:#005079;' title='Priority alert'>&starf; </span>Autoresolved Evidence  - " .. lnk.link_text
                     end
                     self:add_link(lnk)
                 end
