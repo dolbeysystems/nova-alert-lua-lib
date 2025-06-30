@@ -11,7 +11,7 @@ return function(Account)
     --- Abstract link args class
     ---------------------------------------------------------------------------------------------
     --- @class (exact) GetGlasgowLinksArgs
-    --- @field consecutive boolean? Determines if we are looking for consecutive values
+    --- @field not_consecutive boolean? Determines if we are looking for consecutive values or not.
     --- @field glasgow_calculation number? The custom calculation for the Glasgow Coma Score.
     --- @field permanent boolean? If true, the link will be permanent
     ---------------------------------------------------------------------------------------------
@@ -20,7 +20,7 @@ return function(Account)
     --- @param args GetGlasgowLinksArgs
     --- @return CdiAlertLink[]
     function module.glasgow_linked_values(args)
-        local consecutive = args.consecutive or false
+        local not_consecutive = args.not_consecutive or true
         local glasgow_calculation = args.glasgow_calculation or 0
         local permanent = args.permanent or false
 
@@ -40,16 +40,6 @@ return function(Account)
             glasgow_calculation = 12
         elseif glasgow_calculation == 0 then
             glasgow_calculation = 14
-        end
-
-        
-        if Account.id == "1640451721" then
-            log.debug("dv_names_glasgow_coma_scale: " .. tostring(site_discretes.dv_names_glasgow_coma_scale) ..
-                ", dv_names_glasgow_eye_opening: " .. tostring(site_discretes.dv_names_glasgow_eye_opening) ..
-                ", dv_names_glasgow_verbal: " .. tostring(site_discretes.dv_names_glasgow_verbal) ..
-                ", dv_names_glasgow_motor: " .. tostring(site_discretes.dv_names_glasgow_motor) ..
-                ", dv_names_oxygen_therapy: " .. tostring(site_discretes.dv_names_oxygen_therapy) ..
-                ", glasgow_calculation: " .. tostring(glasgow_calculation))
         end
 
         local dvs_score = discrete.get_ordered_discrete_values {
@@ -79,14 +69,6 @@ return function(Account)
             end
         }
 
-        if Account.id == "1640451721" then
-            log.debug("dvs_score: " .. tostring(#dvs_score) .. 
-                ", dvs_eye: " .. tostring(#dvs_eye) ..
-                ", dvs_verbal: " .. tostring(#dvs_verbal) ..
-                ", dvs_motor: " .. tostring(#dvs_motor) ..
-                ", dvs_oxygen: " .. tostring(#dvs_oxygen))
-        end
-
         local matched_list = {}
         local a = #dvs_score
         local b = #dvs_eye
@@ -96,15 +78,6 @@ return function(Account)
         local x = #dvs_eye - 1
         local y = #dvs_verbal - 1
         local z = #dvs_motor - 1
-
-        if #dvs_score == 0 or #dvs_eye == 0 or #dvs_verbal == 0 or #dvs_motor == 0 then
-            log.debug("No Glasgow Coma Scale values found.")
-        else
-            log.debug("Glasgow Coma Scale values found: " .. tostring(a) ..
-                ", Eye Opening: " .. tostring(b) ..
-                ", Verbal Response: " .. tostring(c) ..
-                ", Motor Response: " .. tostring(d))
-        end
 
         local twelve_hour_check = function(date, oxygen_dvs_)
             for _, dv in ipairs(oxygen_dvs_) do
@@ -140,9 +113,6 @@ return function(Account)
                     ", Motor Response: " .. dvs_motor[d].result .. ")"
                 link.sequence = 1
                 link.permanent = permanent
-                if Account.id == "1640451721" then
-                    log.debug("first link check - link.link_text: " .. tostring(link.link_text))
-                end
                 return link
             end
             return nil
@@ -168,9 +138,6 @@ return function(Account)
                     " (Eye Opening: " .. dvs_eye[x].result ..
                     ", Verbal Response: " .. dvs_verbal[y].result ..
                     ", Motor Response: " .. dvs_motor[z].result .. ")"
-                if Account.id == "1640451721" then
-                    log.debug("Second link check - link.link_text: " .. tostring(link.link_text))
-                end
                 link.sequence = 1
                 link.permanent = permanent
                 return link
@@ -178,17 +145,13 @@ return function(Account)
             return nil
         end
 
-        if consecutive then
+        if not_consecutive == false then
             if a >= 1 then
                 for _ = 1, #dvs_score do
                     local first_link = get_first_link()
                     local second_link = get_second_link()
 
                     if first_link ~= nil and second_link ~= nil then
-                        if Account.id == "1640451721" then
-                            log.debug("Consecutive check - first_link: " .. tostring(first_link.link_text) ..
-                                ", second_link: " .. tostring(second_link.link_text))
-                        end
                         table.insert(matched_list, first_link)
                         table.insert(matched_list, second_link)
                         return matched_list
@@ -202,9 +165,6 @@ return function(Account)
                     local first_link = get_first_link()
 
                     if first_link ~= nil then
-                        if Account.id == "1640451721" then
-                            log.debug("Second Consecutive check - first_link: " .. tostring(first_link.link_text))
-                        end
                         table.insert(matched_list, first_link)
                         return matched_list
                     else
@@ -217,9 +177,6 @@ return function(Account)
                 local first_link = get_first_link()
 
                 if first_link ~= nil then
-                    if Account.id == "1640451721" then
-                        log.debug("Non Consecutive check - first_link: " .. tostring(first_link.link_text))
-                    end
                     table.insert(matched_list, first_link)
                     return matched_list
                 else
