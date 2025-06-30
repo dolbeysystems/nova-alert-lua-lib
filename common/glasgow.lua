@@ -37,9 +37,9 @@ return function(Account)
                 abs_link_ch_baseline_mental_status == nil
             ) and glasgow_calculation == 0
         then
-            glasgow_calculation = site_discretes.calc_very_low_glasgow_coma_scale
+            glasgow_calculation = 12
         elseif glasgow_calculation == 0 then
-            glasgow_calculation = site_discretes.calc_low_glasgow_coma_scale
+            glasgow_calculation = 14
         end
 
         
