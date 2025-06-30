@@ -10,17 +10,19 @@ return function(Account)
     ---------------------------------------------------------------------------------------------
     --- Abstract link args class
     ---------------------------------------------------------------------------------------------
-    --- @class (exact) GetGlasgowLinksArgs : LinkArgs
+    --- @class (exact) GetGlasgowLinksArgs
     --- @field consecutive boolean? Determines if we are looking for consecutive values
     --- @field glasgow_calculation number? The custom calculation for the Glasgow Coma Score.
+    --- @field permanent boolean? If true, the link will be permanent
     ---------------------------------------------------------------------------------------------
 
 
     --- @param args GetGlasgowLinksArgs
     --- @return CdiAlertLink[]
     function module.glasgow_linked_values(args)
-        local consecutive = args[1] or false
-        local glasgow_calculation = args[2] or 0
+        local consecutive = args.consecutive or false
+        local glasgow_calculation = args.glasgow_calculation or 0
+        local permanent = args.permanent or false
 
         local code_link_g30 = codes.make_code_prefix_link("G30.", "Alzheimers Disease")
         local abs_link_ch_baseline_mental_status = codes.make_abstraction_link("CHANGE_IN_BASELINE_MENTAL_STATUS", "Change in Baseline Mental Status")
@@ -108,6 +110,7 @@ return function(Account)
                     " (Eye Opening: " .. dvs_eye[b].result ..
                     ", Verbal Response: " .. dvs_verbal[c].result ..
                     ", Motor Response: " .. dvs_motor[d].result .. ")"
+                link.permanent = permanent
                 return link
             end
             return nil
@@ -121,7 +124,8 @@ return function(Account)
                 dvs_score[w].result_date == dvs_eye[x].result_date and
                 dvs_score[w].result_date == dvs_verbal[y].result_date and
                 dvs_score[w].result_date == dvs_motor[z].result_date and
-                twelve_hour_check(dvs_score[w].result_date, dvs_oxygen)
+                twelve_hour_check(dvs_score[w].result_date, dvs_oxygen) and
+                permanent == false
             then
                 local matching_date = dvs_score[w].result_date
                 local link = cdi_alert_link()
@@ -132,6 +136,7 @@ return function(Account)
                     " (Eye Opening: " .. dvs_eye[x].result ..
                     ", Verbal Response: " .. dvs_verbal[y].result ..
                     ", Motor Response: " .. dvs_motor[z].result .. ")"
+                link.permanent = permanent
                 return link
             end
             return nil
