@@ -4,7 +4,7 @@ return function(Account)
     local discrete = require("libs.common.discrete_values")(Account)
     local codes = require("libs.common.codes")(Account)
     local dates = require "libs.common.dates"
-    local site_discretes = require "libs.common.site_discretes"
+    local site_discretes = require("libs.common.site_discretes")
     local log = require("cdi.log")
     local cdi_alert_link = require "cdi.link"
     ---------------------------------------------------------------------------------------------
