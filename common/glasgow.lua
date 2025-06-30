@@ -42,6 +42,16 @@ return function(Account)
             glasgow_calculation = site_discretes.calc_low_glasgow_coma_scale
         end
 
+        
+        if Account.id == "1640451721" then
+            log.debug("dv_names_glasgow_coma_scale: " .. tostring(site_discretes.dv_names_glasgow_coma_scale) ..
+                ", dv_names_glasgow_eye_opening: " .. tostring(site_discretes.dv_names_glasgow_eye_opening) ..
+                ", dv_names_glasgow_verbal: " .. tostring(site_discretes.dv_names_glasgow_verbal) ..
+                ", dv_names_glasgow_motor: " .. tostring(site_discretes.dv_names_glasgow_motor) ..
+                ", dv_names_oxygen_therapy: " .. tostring(site_discretes.dv_names_oxygen_therapy) ..
+                ", glasgow_calculation: " .. tostring(glasgow_calculation))
+        end
+
         local dvs_score = discrete.get_ordered_discrete_values {
             discreteValueNames = site_discretes.dv_names_glasgow_coma_scale,
             -- the annotations on predicate suggest that this is always true
