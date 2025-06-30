@@ -110,6 +110,7 @@ return function(Account)
                     " (Eye Opening: " .. dvs_eye[b].result ..
                     ", Verbal Response: " .. dvs_verbal[c].result ..
                     ", Motor Response: " .. dvs_motor[d].result .. ")"
+                link.sequence = 1
                 link.permanent = permanent
                 return link
             end
@@ -136,6 +137,7 @@ return function(Account)
                     " (Eye Opening: " .. dvs_eye[x].result ..
                     ", Verbal Response: " .. dvs_verbal[y].result ..
                     ", Motor Response: " .. dvs_motor[z].result .. ")"
+                link.sequence = 1
                 link.permanent = permanent
                 return link
             end
