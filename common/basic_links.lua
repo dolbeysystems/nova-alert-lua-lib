@@ -686,8 +686,6 @@ return function(Account)
                 -- Resequence the sorted links
                 for idx, l in ipairs(sub_links) do
                     if link.discrete_value_id == nil and link.code == nil and link.medication_id == nil and link.sequence == 0 then
-                        -- If the link is not a discrete value, code, or medication, skip it
-                        -- This is meant for text links where we are specifying a specific message to the user like for the pao2 fio2 calculation
                         l.sequence = 0
                     end
                     l.sequence = idx
