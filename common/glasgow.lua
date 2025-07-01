@@ -62,7 +62,7 @@ return function(Account)
         local dvs_oxygen = discrete.get_ordered_discrete_values {
             discreteValueNames = site_discretes.dv_names_oxygen_therapy,
             predicate = function(dv, num_)
-                return dv.result ~= nil and
+                return dv.result ~= nil and dv.result ~= "" and
                     (string.find(dv.result, "vent") ~= nil or
                         string.find(dv.result, "Vent") ~= nil or
                         string.find(dv.result, "Mechanical Ventilation") ~= nil)
