@@ -774,6 +774,7 @@ return function(Account)
             local permanent_discrete_value_names = {}
             local permanent_codes = {}
             local permanent_medication_names = {}
+            local permanent_link_text = {}
 
             -- First, add all of the old links
             for _, old_link in ipairs(old_links) do
@@ -786,6 +787,8 @@ return function(Account)
                         permanent_discrete_value_names[old_link.discrete_value_name] = true
                     elseif old_link.medication_id then
                         permanent_medication_names[old_link.medication_name] = true
+                    elseif old_link.link_text[old_link.link_text] then
+                        permanent_link_text[old_link.link_text] = true
                     end
                 end
             end
@@ -797,6 +800,7 @@ return function(Account)
                 if new_link.code ~= nil and permanent_codes[new_link.code] then goto continue end
                 if new_link.discrete_value_name ~= nil and permanent_discrete_value_names[new_link.discrete_value_name] then goto continue end
                 if new_link.medication_name ~= nil and permanent_medication_names[new_link.medication_name] then goto continue end
+                if new_link.link_text ~= nil and permanent_link_text[new_link.link_text] then goto continue end
 
                 for _, existing_link in ipairs(merged_links) do
                     if compare_links(existing_link, new_link) then

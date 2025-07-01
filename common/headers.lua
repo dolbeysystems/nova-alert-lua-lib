@@ -194,6 +194,7 @@ return function(Account)
             add_text_link = function(self, text, validated)
                 local link = links_lib.make_header_link(text, validated)
                 if link then
+                    link.permanent = true
                     link.sequence = 0
                     self:add_link(link)
                 end
