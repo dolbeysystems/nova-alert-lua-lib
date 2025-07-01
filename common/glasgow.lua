@@ -113,6 +113,7 @@ return function(Account)
                     ", Motor Response: " .. dvs_motor[d].result .. ")"
                 link.sequence = 1
                 link.permanent = permanent
+                link.discrete_value_name = dvs_score[a].name
                 return link
             end
             return nil
@@ -140,6 +141,7 @@ return function(Account)
                     ", Motor Response: " .. dvs_motor[z].result .. ")"
                 link.sequence = 1
                 link.permanent = permanent
+                link.discrete_value_name = dvs_score[w].name
                 return link
             end
             return nil
