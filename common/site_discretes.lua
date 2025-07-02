@@ -98,7 +98,7 @@ discrete_names.dv_names_eosinophil_auto = { "EOS (%)" }
 discrete_names.dv_names_ethanol_level = { "ALCOHOL,ETHYL UR" }
 -- Fibrinogen - Coagulopathy
 discrete_names.dv_names_fibrinogen = { "FIBRINOGEN (mg/dL)" }
--- FiO2 - Acidosis
+-- FiO2 - Acidosis, COPD, Respiratory Failure
 discrete_names.dv_names_fio2 = { "" }
 -- Glomerular Filtration Rate - Kidney Disease Chronic, Kidney Failure Acute
 discrete_names.dv_names_glomerular_filtration_rate = { "GFR (mL/min/1.73m2)" }

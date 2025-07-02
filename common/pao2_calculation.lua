@@ -4,6 +4,7 @@ return function(Account)
     local discrete = require("libs.common.discrete_values")(Account)
     local links = require("libs.common.basic_links")(Account)
     local dates = require("libs.common.dates")
+    local site_discretes = require("libs.common.site_discretes")
     local log = require("cdi.log")
     local cdi_alert_link = require "cdi.link"
 
@@ -18,32 +19,18 @@ return function(Account)
     --- 2 - Ratio was calcluated by site
     --- 8 - Ratio was calculated by us and needs a warning added before it
     ---
-    --- @param dv_names_fi_o2 string[] - List of discrete value names for FiO2
-    --- @param dv_names_pa_o2_fi_o2 string[] - List of discrete value names for PaO2/FiO2
-    --- @param dv_names_pa_o2 string[] - List of discrete value names for PaO2
-    --- @param dv_names_sp_o2 string[] - List of discrete value names for SpO2
-    --- @param dv_names_oxygen_flow_rate string[] - List of discrete value names for Oxygen Flow Rate
-    --- @param dv_names_oxygen_therapy string[] - List of discrete value names for Oxygen Therapy
-    --- @param dv_names_respiratory_rate string[] - List of discrete value names for Respiratory Rate
-    --- @param calc_pa_o2_fi_o2 number - The calculated PaO2/FiO2 ratio to compare against
+    --- @param calc_pao2_fio2 number - The calculated PaO2/FiO2 ratio to compare against
     --- 
     --- @return PaO2FiO2Links[]
     --------------------------------------------------------------------------------
-    function module.get_pa_o2_fi_o2_links(dv_names_fi_o2,
-                                          dv_names_pa_o2,
-                                          dv_names_sp_o2,
-                                          dv_names_oxygen_flow_rate,
-                                          dv_names_oxygen_therapy,
-                                          dv_names_respiratory_rate,
-                                          dv_names_pa_o2_fi_o2,
-                                          calc_pa_o2_fi_o2)
+    function module.get_pao2_fio2_links(calc_pao2_fio2)
 
         --- Final links
         --- @type CdiAlertLink[]
-        local pa_o2_fi_o2_ratio_links = {}
+        local pao2_fio2_ratio_links = {}
 
         --- Lookup table for converting spO2 to paO2
-        local sp_o2_to_pa_o2_lookup = {
+        local spo2_to_pao2_lookup = {
             [80] = 44,
             [81] = 45,
             [82] = 46,
@@ -64,7 +51,7 @@ return function(Account)
         }
 
         --- Lookup table for converting spO2 to paO2
-        local oxgyen_therapy_to_fi_o2_lookup = {
+        local oxgyen_therapy_to_fio2_lookup = {
             ["1L/min NC"] = 0.24,
             ["2L/min NC"] = 0.28,
             ["3L/min NC"] = 0.32,
@@ -76,25 +63,25 @@ return function(Account)
         local flow_rate_to_fi_o2_lookup = {
             [1] = 0.24, [2] = 0.28, [3] = 0.32, [4] = 0.36, [5] = 0.40, [6] = 0.44
         }
-        --- All fi_o2 dvs from the last day
-        local fi_o2_dvs = discrete.get_ordered_discrete_values {
-            discreteValueNames = dv_names_fi_o2,
+        --- All fio2 dvs from the last day
+        local fio2_dvs = discrete.get_ordered_discrete_values {
+            discreteValueNames = site_discretes.dv_names_fio2,
             daysBack = 1
         }
         --- All resp rate dvs from the last day
         local resp_rate_dv = discrete.get_ordered_discrete_values {
-            discreteValueNames = dv_names_respiratory_rate,
+            discreteValueNames = site_discretes.dv_names_respiratory_rate,
             daysBack = 1
         }
         --- All oxygen therapy dvs from the last day
         local oxygen_therapy_dv = discrete.get_ordered_discrete_values {
-            discreteValueNames = dv_names_oxygen_therapy,
+            discreteValueNames = site_discretes.dv_names_oxygen_therapy,
             daysBack = 1
         }
         --- All oxygen dv pairs from the last day
         local oxygen_pairs = discrete.get_discrete_value_pairs {
-            discreteValueNames1 = dv_names_oxygen_flow_rate,
-            discreteValueNames2 = dv_names_oxygen_therapy,
+            discreteValueNames1 = site_discretes.dv_names_oxygen_flow_rate,
+            discreteValueNames2 = site_discretes.dv_names_oxygen_therapy,
             predicate1 = function(dv)
                 return
                     dates.date_is_less_than_x_days_ago(dv.result_date, 1) and
@@ -107,123 +94,123 @@ return function(Account)
             end
         }
 
-        if #pa_o2_fi_o2_ratio_links == 0 then
+        if #pao2_fio2_ratio_links == 0 then
             -- Method #1 - Look for site calculated discrete values
-            pa_o2_fi_o2_ratio_links = links.get_discrete_value_links {
-                discreteValueNames = dv_names_pa_o2_fi_o2,
+            pao2_fio2_ratio_links = links.get_discrete_value_links {
+                discreteValueNames = site_discretes.dv_names_pao2_fio2,
                 text = "PaO2/FiO2",
                 predicate = function(dv, num)
-                    return dates.date_is_less_than_x_days_ago(dv.result_date, 1) and tonumber(num) ~= nil and tonumber(num) < calc_pa_o2_fi_o2
+                    return dates.date_is_less_than_x_days_ago(dv.result_date, 1) and tonumber(num) ~= nil and tonumber(num) < calc_pao2_fio2
                 end,
                 seq = 2
             }
-            if #pa_o2_fi_o2_ratio_links > 0 then
+            if #pao2_fio2_ratio_links > 0 then
                 -- If we found links, return them
-                return pa_o2_fi_o2_ratio_links
+                return pao2_fio2_ratio_links
             end
         end
 
-        if #pa_o2_fi_o2_ratio_links == 0 then
+        if #pao2_fio2_ratio_links == 0 then
             -- Method #2 - Look through FiO2 values for matching PaO2 values
-            for _, fi_o2_dv in ipairs(fi_o2_dvs) do
-                local pa_o2_dv = discrete.get_discrete_value_nearest_to_date {
-                    discreteValueNames = dv_names_pa_o2,
-                    date = fi_o2_dv.result_date,
+            for _, fio2_dv in ipairs(fio2_dvs) do
+                local pao2_dv = discrete.get_discrete_value_nearest_to_date {
+                    discreteValueNames = site_discretes.dv_names_pao2,
+                    date = fio2_dv.result_date,
                     predicate = function(dv)
                         return
-                            dates.dates_are_less_than_x_minutes_apart(fi_o2_dv.result_date, dv.result_date, 5) and
+                            dates.dates_are_less_than_x_minutes_apart(fio2_dv.result_date, dv.result_date, 5) and
                             tonumber(dv.result) ~= nil
                     end
                 }
-                if pa_o2_dv then
-                    local fi_o2 = discrete.get_dv_value_number(fi_o2_dv)
-                    local pa_o2 = discrete.get_dv_value_number(pa_o2_dv)
+                if pao2_dv then
+                    local fio2 = discrete.get_dv_value_number(fio2_dv)
+                    local pao2 = discrete.get_dv_value_number(pao2_dv)
                     local resp_rate = "XX"
-                    local percentage = tonumber(fi_o2) / 100
+                    local percentage = tonumber(fio2) / 100
                     if percentage ~= nil and percentage > 0 then
-                        local ratio = math.floor(pa_o2 / fi_o2)
+                        local ratio = math.floor(pao2 / fio2)
                         if ratio <= 300 then
                             if #resp_rate_dv > 0 then
                                 for _, resp_rate_item in ipairs(resp_rate_dv) do
-                                    if resp_rate_item.result_date == pa_o2_dv.result_date then
+                                    if resp_rate_item.result_date == pao2_dv.result_date then
                                         resp_rate = resp_rate_item.result
                                     end
                                 end
                             end
                             -- Build links
                             local link = cdi_alert_link()
-                            link.discrete_value_id = pa_o2_dv.unique_id
+                            link.discrete_value_id = pao2_dv.unique_id
                             link.link_text =
-                                dates.date_int_to_string(pa_o2_dv.result_date) ..
+                                dates.date_int_to_string(pao2_dv.result_date) ..
                                 " - Respiratory Rate: " .. resp_rate ..
-                                ", SpO2: " .. pa_o2 ..
-                                ", FiO2: " .. fi_o2 ..
+                                ", SpO2: " .. pao2 ..
+                                ", FiO2: " .. fio2 ..
                                 ", Estimated PF Ratio- " .. ratio
                             link.sequence = 8
-                            table.insert(pa_o2_fi_o2_ratio_links, link)
+                            table.insert(pao2_fio2_ratio_links, link)
                         end
                     end
                 end
             end
         end
 
-        if #pa_o2_fi_o2_ratio_links == 0 then
+        if #pao2_fio2_ratio_links == 0 then
             -- Method #3 - Look through FiO2 values for matching SpO2 values
-            for _, fi_o2_dv in ipairs(fi_o2_dvs) do
-                local sp_o2_dv = discrete.get_discrete_value_nearest_to_date {
-                    discreteValueNames = dv_names_sp_o2,
-                    date = fi_o2_dv.result_date,
+            for _, fio2_dv in ipairs(fio2_dvs) do
+                local spo2_dv = discrete.get_discrete_value_nearest_to_date {
+                    discreteValueNames = site_discretes.dv_names_spo2,
+                    date = fio2_dv.result_date,
                     predicate = function(dv)
                         return
-                            dates.dates_are_less_than_x_minutes_apart(fi_o2_dv.result_date, dv.result_date, 5) and
+                            dates.dates_are_less_than_x_minutes_apart(fio2_dv.result_date, dv.result_date, 5) and
                             tonumber(dv.result) ~= nil
                     end
                 }
-                if sp_o2_dv then
-                    local fi_o2 = discrete.get_dv_value_number(fi_o2_dv)
-                    local sp_o2 = discrete.get_dv_value_number(sp_o2_dv)
+                if spo2_dv then
+                    local fio2 = discrete.get_dv_value_number(fio2_dv)
+                    local spo2 = discrete.get_dv_value_number(spo2_dv)
                     local resp_rate = "XX"
-                    local percentage = tonumber(fi_o2) / 100
-                    local pa_o2 = sp_o2_to_pa_o2_lookup[sp_o2]
-                    if pa_o2 ~= nil and pa_o2 > 0 and percentage ~= nil and percentage > 0 then
-                        local ratio = math.floor(pa_o2 / fi_o2)
+                    local percentage = tonumber(fio2) / 100
+                    local pao2 = spo2_to_pao2_lookup[spo2]
+                    if pao2 ~= nil and pao2 > 0 and percentage ~= nil and percentage > 0 then
+                        local ratio = math.floor(pao2 / fio2)
                         if ratio <= 300 then
                             if #resp_rate_dv > 0 then
                                 for _, resp_rate_item in ipairs(resp_rate_dv) do
-                                    if resp_rate_item.result_date == sp_o2_dv.result_date then
+                                    if resp_rate_item.result_date == spo2_dv.result_date then
                                         resp_rate = resp_rate_item.result
                                     end
                                 end
                             end
                             -- Build link
                             local link = cdi_alert_link()
-                            link.discrete_value_id = sp_o2_dv.unique_id
+                            link.discrete_value_id = spo2_dv.unique_id
                             link.link_text =
-                                dates.date_int_to_string(sp_o2_dv.result_date) ..
+                                dates.date_int_to_string(spo2_dv.result_date) ..
                                 " - Respiratory Rate: " .. resp_rate ..
-                                ", SpO2: " .. sp_o2 ..
-                                ", FiO2: " .. fi_o2 ..
+                                ", SpO2: " .. spo2 ..
+                                ", FiO2: " .. fio2 ..
                                 ", Estimated PF Ratio- " .. ratio
                             link.sequence = 8
-                            table.insert(pa_o2_fi_o2_ratio_links, link)
+                            table.insert(pao2_fio2_ratio_links, link)
                         end
                     end
                 end
             end
         end
 
-        if #pa_o2_fi_o2_ratio_links == 0 then
+        if #pao2_fio2_ratio_links == 0 then
             -- Method #4 - Look through Oxygen values for matching PaO2 values
             for _, oxygen_pair in ipairs(oxygen_pairs) do
                 local oxygen_flow_rate_value = discrete.get_dv_value_number(oxygen_pair.first)
                 local oxygen_therapy_value = oxygen_pair.second.result
                 --- @type number?
-                local fi_o2 = nil
+                local fio2 = nil
                 if oxygen_therapy_value == "Nasal Cannula" then
-                    fi_o2 = flow_rate_to_fi_o2_lookup[oxygen_flow_rate_value]
-                    if tonumber(fi_o2) ~= nil and tonumber(fi_o2) > 0 then
-                        local pa_o2_dv = discrete.get_discrete_value_nearest_to_date {
-                            discreteValueNames = dv_names_pa_o2,
+                    fio2 = flow_rate_to_fi_o2_lookup[oxygen_flow_rate_value]
+                    if tonumber(fio2) ~= nil and tonumber(fio2) > 0 then
+                        local pao2_dv = discrete.get_discrete_value_nearest_to_date {
+                            discreteValueNames = site_discretes.dv_names_pao2,
                             date = oxygen_pair.first.result_date,
                             predicate = function(dv)
                                 return
@@ -231,30 +218,30 @@ return function(Account)
                                     tonumber(dv.result) ~= nil
                             end
                         }
-                        if pa_o2_dv then
-                            local pa_o2 = discrete.get_dv_value_number(pa_o2_dv)
+                        if pao2_dv then
+                            local pao2 = discrete.get_dv_value_number(pao2_dv)
                             local resp_rate = "XX"
-                            local ratio = math.floor(pa_o2 / fi_o2)
+                            local ratio = math.floor(pao2 / fio2)
                             if ratio <= 300 then
                                 if #resp_rate_dv > 0 then
                                     for _, resp_rate_item in ipairs(resp_rate_dv) do
-                                        if resp_rate_item.result_date == pa_o2_dv.result_date then
+                                        if resp_rate_item.result_date == pao2_dv.result_date then
                                             resp_rate = resp_rate_item.result
                                         end
                                     end
                                 end
                                 -- Build link
                                 local link = cdi_alert_link()
-                                link.discrete_value_id = pa_o2_dv.unique_id
+                                link.discrete_value_id = pao2_dv.unique_id
                                 link.link_text =
-                                    dates.date_int_to_string(pa_o2_dv.result_date) ..
+                                    dates.date_int_to_string(pao2_dv.result_date) ..
                                     " - Respiratory Rate: " .. resp_rate ..
-                                    ", PaO2: " .. pa_o2 ..
+                                    ", PaO2: " .. pao2 ..
                                     ", Oxygen Flow Rate: " .. oxygen_flow_rate_value ..
                                     ", Oxygen Therapy: " .. oxygen_therapy_value ..
                                     ", Estimated PF Ratio- " .. ratio
                                 link.sequence = 8
-                                table.insert(pa_o2_fi_o2_ratio_links, link)
+                                table.insert(pao2_fio2_ratio_links, link)
                             end
                         end
                     end
@@ -262,18 +249,18 @@ return function(Account)
             end
         end
 
-        if #pa_o2_fi_o2_ratio_links == 0 then
+        if #pao2_fio2_ratio_links == 0 then
             -- Method #5 - Look through Oxygen values for matching SpO2 values
             for _, oxygen_pair in ipairs(oxygen_pairs) do
                 local oxygen_flow_rate_value = discrete.get_dv_value_number(oxygen_pair.first)
                 local oxygen_therapy_value = oxygen_pair.second.result
                 --- @type number?
-                local fi_o2 = nil
+                local fio2 = nil
                 if oxygen_therapy_value == "Nasal Cannula" then
-                    fi_o2 = flow_rate_to_fi_o2_lookup[oxygen_flow_rate_value]
-                    if tonumber(fi_o2) ~= nil and tonumber(fi_o2) > 0 then
-                        local sp_o2_dv = discrete.get_discrete_value_nearest_to_date {
-                            discreteValueNames = dv_names_sp_o2,
+                    fio2 = flow_rate_to_fi_o2_lookup[oxygen_flow_rate_value]
+                    if tonumber(fio2) ~= nil and tonumber(fio2) > 0 then
+                        local spo2_dv = discrete.get_discrete_value_nearest_to_date {
+                            discreteValueNames = site_discretes.dv_names_spo2,
                             date = oxygen_pair.first.result_date,
                             predicate = function(dv)
                                 return
@@ -283,32 +270,32 @@ return function(Account)
                             end
                         }
 
-                        if sp_o2_dv then
-                            local sp_o2 = discrete.get_dv_value_number(sp_o2_dv)
+                        if spo2_dv then
+                            local spo2 = discrete.get_dv_value_number(spo2_dv)
                             local resp_rate = "XX"
-                            local pa_o2 = sp_o2_to_pa_o2_lookup[sp_o2]
-                            if pa_o2 then
-                                local ratio = math.floor(pa_o2 / fi_o2)
+                            local pao2 = spo2_to_pao2_lookup[spo2]
+                            if pao2 then
+                                local ratio = math.floor(pao2 / fio2)
                                 if ratio <= 300 then
                                     if #resp_rate_dv > 0 then
                                         for _, resp_rate_item in ipairs(resp_rate_dv) do
-                                            if resp_rate_item.result_date == sp_o2_dv.result_date then
+                                            if resp_rate_item.result_date == spo2_dv.result_date then
                                                 resp_rate = resp_rate_item.result
                                             end
                                         end
                                     end
                                     -- Build link
                                     local link = cdi_alert_link()
-                                    link.discrete_value_id = sp_o2_dv.unique_id
+                                    link.discrete_value_id = spo2_dv.unique_id
                                     link.link_text =
-                                        dates.date_int_to_string(sp_o2_dv.result_date) ..
+                                        dates.date_int_to_string(spo2_dv.result_date) ..
                                         " - Respiratory Rate: " .. resp_rate ..
-                                        ", SpO2: " .. sp_o2 ..
+                                        ", SpO2: " .. spo2 ..
                                         ", Oxygen Flow Rate: " .. oxygen_flow_rate_value ..
                                         ", Oxygen Therapy: " .. oxygen_therapy_value ..
                                         ", Estimated PF Ratio- " .. ratio
                                     link.sequence = 8
-                                    table.insert(pa_o2_fi_o2_ratio_links, link)
+                                    table.insert(pao2_fio2_ratio_links, link)
                                 end
                             end
                         end
@@ -317,17 +304,17 @@ return function(Account)
             end
         end
 
-        if #pa_o2_fi_o2_ratio_links == 0 then
+        if #pao2_fio2_ratio_links == 0 then
             -- Method #6 - Look through Oxygen therapy values for matching PaO2 values
             for _, oxygen_therapy_item in ipairs(oxygen_therapy_dv) do
                 local oxygen_therapy_value = oxygen_therapy_item.result
                 --- @type number?
-                local fi_o2 = nil
-                fi_o2 = oxgyen_therapy_to_fi_o2_lookup[oxygen_therapy_item.result]
-                if fi_o2 then
-                    if tonumber(fi_o2) ~= nil and tonumber(fi_o2) > 0 then
-                        local pa_o2_dv = discrete.get_discrete_value_nearest_to_date {
-                            discreteValueNames = dv_names_pa_o2,
+                local fio2 = nil
+                fio2 = oxgyen_therapy_to_fio2_lookup[oxygen_therapy_item.result]
+                if fio2 then
+                    if tonumber(fio2) ~= nil and tonumber(fio2) > 0 then
+                        local pao2_dv = discrete.get_discrete_value_nearest_to_date {
+                            discreteValueNames = site_discretes.dv_names_pao2,
                             date = oxygen_therapy_item.result_date,
                             predicate = function(dv)
                                 return
@@ -335,30 +322,30 @@ return function(Account)
                                     tonumber(dv.result) ~= nil
                             end
                         }
-                        if pa_o2_dv then
-                            local pa_o2 = discrete.get_dv_value_number(pa_o2_dv)
+                        if pao2_dv then
+                            local pao2 = discrete.get_dv_value_number(pao2_dv)
                             local resp_rate = "XX"
-                            if pa_o2 then
-                                local ratio = math.floor(pa_o2 / fi_o2)
+                            if pao2 then
+                                local ratio = math.floor(pao2 / fio2)
                                 if ratio <= 300 then
                                     if #resp_rate_dv > 0 then
                                         for _, resp_rate_item in ipairs(resp_rate_dv) do
-                                            if resp_rate_item.result_date == pa_o2_dv.result_date then
+                                            if resp_rate_item.result_date == pao2_dv.result_date then
                                                 resp_rate = resp_rate_item.result
                                             end
                                         end
                                     end
                                     -- Build link
                                     local link = cdi_alert_link()
-                                    link.discrete_value_id = pa_o2_dv.unique_id
+                                    link.discrete_value_id = pao2_dv.unique_id
                                     link.link_text =
-                                        dates.date_int_to_string(pa_o2_dv.result_date) ..
+                                        dates.date_int_to_string(pao2_dv.result_date) ..
                                         " - Respiratory Rate: " .. resp_rate ..
-                                        ", PaO2: " .. pa_o2 ..
+                                        ", PaO2: " .. pao2 ..
                                         ", Oxygen Therapy: " .. oxygen_therapy_value ..
                                         ", Estimated PF Ratio- " .. ratio
                                     link.sequence = 8
-                                    table.insert(pa_o2_fi_o2_ratio_links, link)
+                                    table.insert(pao2_fio2_ratio_links, link)
                                 end
                             end
                         end
@@ -367,17 +354,17 @@ return function(Account)
             end
         end
 
-        if #pa_o2_fi_o2_ratio_links == 0 then
+        if #pao2_fio2_ratio_links == 0 then
             -- Method #7 - Look through Oxygen therapy values for matching SpO2 values
             for _, oxygen_therapy_item in ipairs(oxygen_therapy_dv) do
                 local oxygen_therapy_value = oxygen_therapy_item.result
                 --- @type number?
-                local fi_o2 = nil
-                fi_o2 = oxgyen_therapy_to_fi_o2_lookup[oxygen_therapy_item.result]
-                if fi_o2 then
-                    if tonumber(fi_o2) ~= nil and tonumber(fi_o2) > 0 then
-                        local sp_o2_dv = discrete.get_discrete_value_nearest_to_date {
-                            discreteValueNames = dv_names_sp_o2,
+                local fio2 = nil
+                fio2 = oxgyen_therapy_to_fio2_lookup[oxygen_therapy_item.result]
+                if fio2 then
+                    if tonumber(fio2) ~= nil and tonumber(fio2) > 0 then
+                        local spo2_dv = discrete.get_discrete_value_nearest_to_date {
+                            discreteValueNames = site_discretes.dv_names_spo2,
                             date = oxygen_therapy_item.result_date,
                             predicate = function(dv)
                                 return
@@ -385,31 +372,31 @@ return function(Account)
                                     tonumber(dv.result) ~= nil
                             end
                         }
-                        if sp_o2_dv then
-                            local sp_o2 = discrete.get_dv_value_number(sp_o2_dv)
+                        if spo2_dv then
+                            local spo2 = discrete.get_dv_value_number(spo2_dv)
                             local resp_rate = "XX"
-                            local pa_o2 = sp_o2_to_pa_o2_lookup[sp_o2]
-                            if pa_o2 then
-                                local ratio = math.floor(pa_o2 / fi_o2)
+                            local pao2 = spo2_to_pao2_lookup[spo2]
+                            if pao2 then
+                                local ratio = math.floor(pao2 / fio2)
                                 if ratio <= 300 then
                                     if #resp_rate_dv > 0 then
                                         for _, resp_rate_item in ipairs(resp_rate_dv) do
-                                            if resp_rate_item.result_date == sp_o2_dv.result_date then
+                                            if resp_rate_item.result_date == spo2_dv.result_date then
                                                 resp_rate = resp_rate_item.result
                                             end
                                         end
                                     end
                                     -- Build link
                                     local link = cdi_alert_link()
-                                    link.discrete_value_id = sp_o2_dv.unique_id
+                                    link.discrete_value_id = spo2_dv.unique_id
                                     link.link_text =
-                                        dates.date_int_to_string(sp_o2_dv.result_date) ..
+                                        dates.date_int_to_string(spo2_dv.result_date) ..
                                         " - Respiratory Rate: " .. resp_rate ..
-                                        ", SpO2: " .. sp_o2 ..
+                                        ", SpO2: " .. spo2 ..
                                         ", Oxygen Therapy: " .. oxygen_therapy_value ..
                                         ", Estimated PF Ratio- " .. ratio
                                     link.sequence = 8
-                                    table.insert(pa_o2_fi_o2_ratio_links, link)
+                                    table.insert(pao2_fio2_ratio_links, link)
                                 end
                             end
                         end
@@ -417,7 +404,7 @@ return function(Account)
                 end
             end
         end
-        return pa_o2_fi_o2_ratio_links
+        return pao2_fio2_ratio_links
     end
 
 
@@ -425,18 +412,10 @@ return function(Account)
     --------------------------------------------------------------------------------
     --- Get fallback links for PaO2 and SpO2
     --- These are gathered if the PaO2/FiO2 collection fails
-    ---
-    --- @param dv_names_sp_o2 string[] - List of discrete value names for SpO2
-    --- @param dv_names_pa_o2 string[] - List of discrete value names for PaO2
-    --- @param dv_names_oxygen_therapy string[] - List of discrete value names for Oxygen Therapy
-    --- @param dv_names_respiratory_rate string[] - List of discrete value names for Respiratory Rate
     --- 
     --- @return SpO2PaO2Links[]
     --------------------------------------------------------------------------------
-    function module.get_pa_o2_sp_o2_links(dv_names_sp_o2,
-                                          dv_names_pa_o2,
-                                          dv_names_oxygen_therapy,
-                                          dv_names_respiratory_rate)
+    function module.get_pa_o2_sp_o2_links()
         --- @param date_time integer?
         --- @param link_text string
         --- @param result string?
@@ -482,28 +461,28 @@ return function(Account)
         local matched_list = {}
 
         sp_o2_discrete_values = discrete.get_ordered_discrete_values {
-            discreteValueNames = dv_names_sp_o2,
+            discreteValueNames = site_discretes.dv_names_spo2,
             predicate = function(dv)
                 return dv.result_date >= date_limit and discrete.get_dv_value_number(dv) < 91
             end
         }
 
         pa_o2_discrete_values = discrete.get_ordered_discrete_values {
-            discreteValueNames = dv_names_pa_o2,
+            discreteValueNames = site_discretes.dv_names_pao2,
             predicate = function(dv)
                 return dv.result_date >= date_limit and discrete.get_dv_value_number(dv) <= 60
             end
         }
 
         o2_therapy_discrete_values = discrete.get_ordered_discrete_values {
-            discreteValueNames = dv_names_oxygen_therapy,
+            discreteValueNames = site_discretes.dv_names_oxygen_therapy,
             predicate = function(dv)
                 return dv.result_date >= date_limit and dv.result ~= nil
             end
         }
 
         respiratory_rate_discrete_values = discrete.get_ordered_discrete_values {
-            discreteValueNames = dv_names_respiratory_rate,
+            discreteValueNames = site_discretes.dv_names_respiratory_rate,
             predicate = function(dv)
                 return dv.result_date >= date_limit and discrete.get_dv_value_number(dv) ~= nil
             end
