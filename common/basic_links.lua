@@ -763,6 +763,20 @@ return function(Account)
                 (a.discrete_value_id and a.discrete_value_id == b.discrete_value_id) or
                 (not a.code and not a.medication_id and not a.discrete_value_id and a.link_text and a.link_text == b.link_text)
         end
+        
+        --- Update update_permanent_link on existing link that matches link_text
+        --- @param merged_links CdiAlertLink[]
+        --- @param new_link CdiAlertLink
+        local function update_permanent_link(merged_links, new_link)
+            -- If link_text is marked permanent, update validation and hidden status but skip full overwrite
+            for _, existing_link in ipairs(merged_links) do
+                if existing_link.link_text == new_link.link_text then
+                    existing_link.hidden = new_link.hidden
+                    existing_link.is_validated = new_link.is_validated
+                    break
+                end
+            end
+        end
 
         if #old_links == 0 then
             return new_links
@@ -795,10 +809,22 @@ return function(Account)
             for _, new_link in ipairs(new_links) do
                 local matching_existing_link = nil
 
-                if new_link.code ~= nil and permanent_codes[new_link.code] then goto continue end
-                if new_link.discrete_value_name ~= nil and permanent_discrete_value_names[new_link.discrete_value_name] then goto continue end
-                if new_link.medication_name ~= nil and permanent_medication_names[new_link.medication_name] then goto continue end
-                if new_link.link_text ~= nil and permanent_link_text[new_link.link_text] then goto continue end
+                if new_link.code ~= nil and permanent_codes[new_link.code] then
+                    update_permanent_link(merged_links, new_link)
+                    goto continue
+                end
+                if new_link.discrete_value_name ~= nil and permanent_discrete_value_names[new_link.discrete_value_name] then
+                    update_permanent_link(merged_links, new_link)
+                    goto continue
+                end
+                if new_link.medication_name ~= nil and permanent_medication_names[new_link.medication_name] then
+                    update_permanent_link(merged_links, new_link)
+                    goto continue
+                end
+                if new_link.link_text ~= nil and permanent_link_text[new_link.link_text] then
+                    update_permanent_link(merged_links, new_link)
+                    goto continue
+                end
 
                 for _, existing_link in ipairs(merged_links) do
                     if compare_links(existing_link, new_link) then
