@@ -89,6 +89,8 @@ discrete_names.dv_names_cpk = { "CPK (U/L)" }
 -- Cryoprecipitate Transfusion - Bleeding
 discrete_names.dv_names_cryoprecipitate_transfusion = { "" }
 -- DBP - Encephalopathy, Hypertensive Crisis, Pulmonary Edema, Severe Sepsis, Shock, Stroke
+discrete_names.dv_names_dbp_non_invasive = { "DBP 3.5 (No Calculation) (mmhg)", "DBP 3.5 (No Calculation) (mm Hg)", "Diastolic Blood Pressure (mm Hg)" }
+discrete_names.dv_names_dbp_invasive = { "BP Arterial Diastolic cc (mm Hg)" }
 discrete_names.dv_names_dbp = { "BP Arterial Diastolic cc (mm Hg)", "DBP 3.5 (No Calculation) (mmhg)", "DBP 3.5 (No Calculation) (mm Hg)", "Diastolic Blood Pressure (mm Hg)" }
 -- D-Dimer - Coagulopathy, Pulmonary Embolism
 discrete_names.dv_names_d_dimer = { "D-DIMER (mg/L FEU)" }
@@ -135,6 +137,8 @@ discrete_names.dv_names_lymphocyte_auto = { "LYMPHS (%)" }
 discrete_names.dv_names_lymphocyte_count = { "" }
 -- MAP - Acidosis, Acute MI, Anemia, Atrial Fibrillation, Hypertensive Crisis, Kidney Disease Chronic, 
 --           Kidney Failure Acute, Rhabdomyolysis, Sepsis-SIRS, Severe Sepsis, Shock
+discrete_names.dv_names_map_non_invasive = { "Mean 3.5 (No Calculation) (mm Hg)", "MAP Invasive (mmHg)", "MAP Non-Invasive (Calculated) (mmHg)", "Mean 3.5 DI (mm Hg)" }
+discrete_names.dv_names_map_invasive = { "BP Arterial Mean DI  CC (mmHg)" }
 discrete_names.dv_names_map = { "Mean 3.5 (No Calculation) (mm Hg)", "MAP Invasive (mmHg)", "MAP Non-Invasive (Calculated) (mmHg)", "Mean 3.5 DI (mm Hg)", "BP Arterial Mean DI  CC (mmHg)" }
 -- MCH -- Anemia,
 discrete_names.dv_names_mch = { "MCH (pg)" }
@@ -219,7 +223,9 @@ discrete_names.dv_names_sars_covid = { "SARS-CoV2 (COVID-19)" }
 discrete_names.dv_names_sars_covid_antigen = { "" }
 -- SBP - Acidosis, Acute MI, Anemia, Atrial Fibrillation, Encephalopathy, Hypertensive Crisis, Kidney Disease Chronic,
 --           Kidney Failure Acute, Pulmonary Edema, Rhabdomyolysis, Sepsis-SIRS, Severe Sepsis, Shock, Stroke, 
-discrete_names.dv_names_sbp = { "SBP 3.5 (No Calculation) (mm Hg)", "BP Arterial Systolic cc (mm Hg)", "Systolic Blood Pressure (mm Hg)" }
+discrete_names.dv_names_sbp_non_invasive = { "SBP 3.5 (No Calculation) (mm Hg)", "Systolic Blood Pressure (mm Hg)" }
+discrete_names.dv_names_sbp_invasive = { "BP Arterial Systolic cc (mm Hg)" }
+discrete_names.dv_names_sbp = { "BP Arterial Systolic cc (mm Hg)", "SBP 3.5 (No Calculation) (mm Hg)", "Systolic Blood Pressure (mm Hg)" }
 -- Serum Ammonia - Encephalopathy
 discrete_names.dv_names_serum_ammonia = { "" }
 -- Serum Band - Sepsis-SIRS
