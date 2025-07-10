@@ -821,7 +821,7 @@ return function(Account)
         merged_link.is_validated = original_link.is_validated
         merged_link.permanent = original_link.permanent
 
-        return merged_link
+        return { merged_link }
     end
     --------------------------------------------------------------------------------
     --- Merge links with old links
