@@ -648,6 +648,22 @@ return function(Account)
         local function sort_by_link_text(a, b)
             return a.link_text < b.link_text
         end
+
+        local function extract_result_date(link_text)
+            -- Example format: "WBC: 19 (ResultDate: 04/15/2025 13:54)"
+            local month, day, year, hour, minute = string.match(link_text, "Result%s+Date:%s*(%d%d?)/(%d%d?)/(%d%d%d%d)%s+(%d%d?):(%d%d)")
+            if not (month and day and year and hour and minute) then
+                return nil
+            end
+            return os.time({
+                year = tonumber(year),
+                month = tonumber(month),
+                day = tonumber(day),
+                hour = tonumber(hour),
+                min = tonumber(minute),
+                sec = 0,
+            })
+        end
         
         table.sort(links, sort_by_link_text)
         for i, link in ipairs(links) do
@@ -672,49 +688,39 @@ return function(Account)
                 table.insert(resequenced_links, resequenced_link)
 
             elseif link.sequence >= 85 then
-                local resequenced_sub_header = {}
-                -- go through sub header links
-                resequenced_sub_header = link
-                -- Recursively resequence the subheader’s links
-                local sub_links = link.links
-                -- Sort by extracted date (oldest to newest)
-                table.sort(sub_links, function(a, b)
-                    local date_a = module.extract_result_date(a.link_text) or 0
-                    local date_b = module.extract_result_date(b.link_text) or 0
-                    return date_a < date_b -- Sort oldest first
-                end)
-                -- Resequence the sorted links
-                for idx, l in ipairs(sub_links) do
-                    if link.discrete_value_id == nil and link.code == nil and link.medication_id == nil and link.sequence == 0 then
-                        l.sequence = 0
+                if string.find(link.link_text, "Trend") then
+                    local merged_trend_sub_header = {}
+                    -- go through sub header links
+                    merged_trend_sub_header = link
+                    -- Recursively resequence the subheader’s links
+                    local sub_links = module.merge_single_line_link_text(link.links)
+                    merged_trend_sub_header.links = sub_links
+                    table.insert(resequenced_links, merged_trend_sub_header)
+                else
+                    local resequenced_sub_header = {}
+                    -- go through sub header links
+                    resequenced_sub_header = link
+                    -- Recursively resequence the subheader’s links
+                    local sub_links = link.links
+                    -- Sort by extracted date (oldest to newest)
+                    table.sort(sub_links, function(a, b)
+                        local date_a = extract_result_date(a.link_text) or 0
+                        local date_b = extract_result_date(b.link_text) or 0
+                        return date_a < date_b -- Sort oldest first
+                    end)
+                    -- Resequence the sorted links
+                    for idx, l in ipairs(sub_links) do
+                        if link.discrete_value_id == nil and link.code == nil and link.medication_id == nil and link.sequence == 0 then
+                            l.sequence = 0
+                        end
+                        l.sequence = idx
                     end
-                    l.sequence = idx
+                    resequenced_sub_header.links = sub_links
+                    table.insert(resequenced_links, resequenced_sub_header)
                 end
-                resequenced_sub_header.links = sub_links
-                table.insert(resequenced_links, resequenced_sub_header)
             end
         end
         return resequenced_links
-    end
-
-    --------------------------------------------------------------------------------
-    --- Abstract date from link text for sorting
-    ---
-    --------------------------------------------------------------------------------
-    function module.extract_result_date(link_text)
-        -- Example format: "WBC: 19 (ResultDate: 04/15/2025 13:54)"
-        local month, day, year, hour, minute = string.match(link_text, "Result%s+Date:%s*(%d%d?)/(%d%d?)/(%d%d%d%d)%s+(%d%d?):(%d%d)")
-        if not (month and day and year and hour and minute) then
-            return nil
-        end
-        return os.time({
-            year = tonumber(year),
-            month = tonumber(month),
-            day = tonumber(day),
-            hour = tonumber(hour),
-            min = tonumber(minute),
-            sec = 0,
-        })
     end
 
     --------------------------------------------------------------------------------
@@ -739,6 +745,85 @@ return function(Account)
     end
 
     --------------------------------------------------------------------------------
+    --- Merge single line links with old single line links
+    ---
+    ---@param links CdiAlertLink[] The links to check for merging
+    --- 
+    --- @return CdiAlertLink[] - The unique links by discrete _id
+    --------------------------------------------------------------------------------
+    function module.merge_single_line_link_text(links)
+        if #links == 0 then return {} end
+
+        local function extract(link_text)
+            local start_date, end_date, values_str =
+                link_text:match("%((%d+/%d+/%d+) %- (%d+/%d+/%d+)%) %- (.+)")
+            local values = {}
+            for num in values_str:gmatch("%d+") do
+                table.insert(values, tonumber(num))
+            end
+            return start_date, end_date, values
+        end
+
+        local function to_date_num(date_str)
+            local m, d, y = date_str:match("(%d+)/(%d+)/(%d+)")
+            return os.time({ year = tonumber(y), month = tonumber(m), day = tonumber(d) })
+        end
+
+        local merged_values = {}
+        local earliest_start = nil
+        local latest_end = nil
+        local discrete_name = nil
+
+        for _, link in ipairs(links) do
+            local link_text = link.link_text
+            local start_date, end_date, values = extract(link_text)
+
+            if not earliest_start or to_date_num(start_date) < to_date_num(earliest_start) then
+                earliest_start = start_date
+            end
+            if not latest_end or to_date_num(end_date) > to_date_num(latest_end) then
+                latest_end = end_date
+            end
+
+            if not discrete_name then
+                discrete_name = link.discrete_value_name
+            end
+
+            -- Track duplicates
+            local duplicate_tracker = {}
+            for _, v in ipairs(merged_values) do
+                duplicate_tracker[v] = (duplicate_tracker[v] or 0) + 1
+            end
+
+            for _, v in ipairs(values) do
+                if (duplicate_tracker[v] or 0) > 0 then
+                    duplicate_tracker[v] = duplicate_tracker[v] - 1
+                else
+                    table.insert(merged_values, v)
+                end
+            end
+        end
+
+        local merged_text = string.format("%s: (%s - %s) - %s",
+            discrete_name,
+            earliest_start,
+            latest_end,
+            table.concat(merged_values, ", ")
+        )
+
+        local original_link = links[1]
+        local merged_link = cdi_alert_link()
+        merged_link.link_text = merged_text
+        merged_link.discrete_value_name = discrete_name
+        merged_link.discrete_value_id = original_link.discrete_value_id
+        merged_link.sequence = original_link.sequence
+        merged_link.hidden = original_link.hidden
+        merged_link.is_validated = original_link.is_validated
+        merged_link.permanent = original_link.permanent
+
+        return merged_link
+    end
+    --------------------------------------------------------------------------------
     --- Merge links with old links
     ---
     --- @param old_links CdiAlertLink[] The existing alert
@@ -757,11 +842,13 @@ return function(Account)
         --- @param b CdiAlertLink
         --- @return boolean
         local function compare_links(a, b)
+            local has_date_range = a.link_text and a.link_text:match("%(%d%d/%d%d/%d%d%d%d %- %d%d/%d%d/%d%d%d%d%)")
+
             return
                 (a.code and a.code == b.code) or
                 (a.medication_id and a.medication_id == b.medication_id) or
-                (a.discrete_value_id and a.discrete_value_id == b.discrete_value_id) or
-                (not a.code and not a.medication_id and not a.discrete_value_id and a.link_text and a.link_text == b.link_text)
+                (a.discrete_value_id and a.discrete_value_id == b.discrete_value_id and not has_date_range) or
+                (not a.code and not a.medication_id and not a.discrete_value_id and a.link_text and a.link_text == b.link_text and not has_date_range)
         end
         
         --- Update update_permanent_link on existing link that matches link_text
