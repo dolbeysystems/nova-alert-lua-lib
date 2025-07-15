@@ -755,13 +755,14 @@ return function(Account)
         if #links == 0 then return {} end
 
         local function extract(link_text)
-            local start_date, end_date, values_str =
-                link_text:match("%((%d+/%d+/%d+) %- (%d+/%d+/%d+)%) %- (.+)")
+            local name, start_date, end_date, values_str =
+                link_text:match("^(.-): %((%d+/%d+/%d+) %- (%d+/%d+/%d+)%) %- (.+)")
             local values = {}
-            for num in values_str:gmatch("%d+") do
-                table.insert(values, tonumber(num))
+            for val in values_str:gmatch("[^,]+") do
+                val = val:match("^%s*(.-)%s*$") -- trim whitespace
+                table.insert(values, val)
             end
-            return start_date, end_date, values
+            return name, start_date, end_date, values
         end
 
         local function to_date_num(date_str)
@@ -772,11 +773,10 @@ return function(Account)
         local merged_values = {}
         local earliest_start = nil
         local latest_end = nil
+        local duplicate_tracker = {}
         local discrete_name = nil
-
         for _, link in ipairs(links) do
-            local link_text = link.link_text
-            local start_date, end_date, values = extract(link_text)
+            local name, start_date, end_date, values = extract(link.link_text)
 
             if not earliest_start or to_date_num(start_date) < to_date_num(earliest_start) then
                 earliest_start = start_date
@@ -786,19 +786,12 @@ return function(Account)
             end
 
             if not discrete_name then
-                discrete_name = link.discrete_value_name
-            end
-
-            -- Track duplicates
-            local duplicate_tracker = {}
-            for _, v in ipairs(merged_values) do
-                duplicate_tracker[v] = (duplicate_tracker[v] or 0) + 1
+                discrete_name = name
             end
 
             for _, v in ipairs(values) do
-                if (duplicate_tracker[v] or 0) > 0 then
-                    duplicate_tracker[v] = duplicate_tracker[v] - 1
-                else
+                if not duplicate_tracker[v] then
+                    duplicate_tracker[v] = true
                     table.insert(merged_values, v)
                 end
             end
