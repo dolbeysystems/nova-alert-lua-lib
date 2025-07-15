@@ -755,13 +755,22 @@ return function(Account)
         if #links == 0 then return {} end
 
         local function extract(link_text)
+            -- Match name, start_date, end_date, and optional values (values may be empty)
             local name, start_date, end_date, values_str =
-                link_text:match("^(.-): %((%d+/%d+/%d+) %- (%d+/%d+/%d+)%) %- (.+)")
-            local values = {}
-            for val in values_str:gmatch("[^,]+") do
-                val = val:match("^%s*(.-)%s*$") -- trim whitespace
-                table.insert(values, val)
+                link_text:match("^(.-): %((%d+/%d+/%d+) %- (%d+/%d+/%d+)%) %- ?(.*)")
+
+            if not (name and start_date and end_date and values_str) then
+                error("link_text format not recognized: " .. tostring(link_text))
             end
+
+            local values = {}
+            if values_str ~= "" then
+                for val in values_str:gmatch("[^,]+") do
+                    val = val:match("^%s*(.-)%s*$") -- trim whitespace
+                    table.insert(values, val)
+                end
+            end
+
             return name, start_date, end_date, values
         end
 
