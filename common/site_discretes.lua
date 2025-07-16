@@ -258,9 +258,9 @@ discrete_names.dv_names_serum_magnesium = { "MAGNESIUM (mg/dL)" }
 discrete_names.dv_names_serum_osmolality = { "OSMOLALITY (mOsm/kg)", "OSMO CALC (mOsm/kg)" }
 -- Serum Phosphate - Malnutrition
 discrete_names.dv_names_serum_phosphate = { "PHOSPHOROUS (mg/dL)", "PHOSPHATE (mg/dL)" }
--- Serum Potassium - Abnormal Serum Potassium, Acidosis, Malnutrition, Rhabdomyolysis
+-- Serum Potassium - Abnormal Serum Potassium, Malnutrition, Rhabdomyolysis
 discrete_names.dv_names_serum_potassium = { "POTASSIUM (mmol/L)" }
--- Serum Sodium - Abnormal Serum Sodium, Acidosis, Malnutrition
+-- Serum Sodium - Abnormal Serum Sodium, Encephalopathy, Malnutrition
 discrete_names.dv_names_serum_sodium = { "SODIUM (mmol/L)" }
 -- SpO2 - Acidosis, Acute MI, COPD, Morbid Obesity, Pulmonary Edema, Respiratory Failure, Sepsis-SIRS, Severe Sepsis, 
 discrete_names.dv_names_spo2 = { "Pulse Oximetry(Num) (%)", "Pulse Oximetry (%)" }
