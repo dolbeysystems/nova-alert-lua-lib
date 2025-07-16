@@ -41,7 +41,7 @@ discrete_names.dv_names_benzodiazepine_screen = { "BENZO URINE", "BENZO UR" }
 discrete_names.dv_names_beta_hydroxybutyrate = { "BETAHYDROXY BUTYRATE (mmol/L)" }
 -- Blood CO2 - Acidosis, Diabetes
 discrete_names.dv_names_blood_co2 = { "CO2 (mmol/L)" }
--- Blood Glucose - Abnormal Serum Sodium, Acidosis, Encephalopathy, Sepis-Sirs, 
+-- Blood Glucose - Abnormal Serum Sodium, Acidosis, Encephalopathy, Diabetes, Sepis-Sirs, 
 discrete_names.dv_names_blood_glucose = { "GLUCOSE (mg/dL)", "GLUCOSE" }
 discrete_names.dv_names_blood_glucose_point_of_care = { "GLUCOSE ACCUCHECK (mg/dL)" }
 -- Blood in Urine - UTI
@@ -50,8 +50,11 @@ discrete_names.dv_names_blood_in_urine = { "BLOOD" }
 discrete_names.dv_names_blood_loss = { "" }
 -- BMI - Malnutrition, Morbid Obesity
 discrete_names.dv_names_bmi = { "3.5 BMI Calculation (kg/m2)" }
--- BNP - Pulmonary Edema, Pulmonary Embolism
-discrete_names.dv_names_bnp = { "BNP(NT proBNP) (pg/mL)" }
+-- BNP/Pro BNP - Heart Failure, Pulmonary Edema, Pulmonary Embolism
+-- Site will likely have one or the other need to make sure we call these in each of the above 
+--      scripts together and named correct can be interchangeable with calculations/counts.
+discrete_names.dv_names_bnp = { "" }
+discrete_names.dv_names_pro_bnp = { "BNP(NT proBNP) (pg/mL)" }
 -- Braden Acitivity Score -Functional Quadriplegia
 discrete_names.dv_names_braden_activity_score = { "3.5 Activity (Braden Scale)" }
 -- Braden Mobility Score - Functional Quadriplegia
@@ -111,7 +114,7 @@ discrete_names.dv_names_heart_rate = { "Heart Rate (bpm)", "Heart Rate cc (bpm)"
 discrete_names.dv_names_hematocrit = { "HEMATOCRIT (%)", "HEMATOCRIT" }
 -- Hemoglobin - Acute MI, Anemia, Bleeding, Pancytopenia, Sepsis-SIRS, Shock
 discrete_names.dv_names_hemoglobin = { "HEMOGLOBIN (g/dL)", "HEMOGLOBIN" }
--- Hemoglobin A1C - Immunocompromised
+-- Hemoglobin A1C - Diabetes, Immunocompromised
 discrete_names.dv_names_hemoglobin_a1c = { "HEMOGLOBIN A1C (%)" }
 -- Homocysteine Levels - Coagulopathy
 discrete_names.dv_names_homocysteine_levels = { "" }
@@ -163,13 +166,13 @@ discrete_names.dv_names_oxygen_flow_rate = { "Oxygen Flow Rate (L/min)", "Resp O
 -- Oxygen Therapy - Acute MI, COPD, Diabetes, Pneumonia, Pulmanary Edema, Pulmonary Embolism, Respiratory Failure, Shock
 discrete_names.dv_names_oxygen_therapy = { "DELIVERY", "Device Type", "FiO2" }
 -- PaO2 - Acidosis, Acute MI, COPD, Encephalopathy, Morbid Obesity, Pneumonia, Pulmonary Edema, Pulmonary Embolism, 
---            Respiratory Failure, Sepsis-SIRS, Severe Sepsis Shock
+--              Resp Failure, Sepsis, Severe Sepsis, Shock
 discrete_names.dv_names_pao2 = { "BLD GAS O2 (mmHg)", "PO2 (mmHg)" }
 -- PAO2/FIO2 Site Calculated - COPD, Respiratory Failure, Sepsis-SIRS, Severe Sepsis
 discrete_names.dv_names_pao2_fio2 = { "PO2/FiO2 (mmHg)" }
 -- PCO2 - Acidosis, Encephalopathy, Morbid Obesity, Pulmonary Edema, Respiratory Failure, Sepsis-SIRS
 discrete_names.dv_names_pco2 = { "pCO2 BldV (mm Hg)", "BLD GAS CO2 (mmHg)", "PaCO2 (mmHg)" }
--- PH - Acidosis, Diabetes, Encephalopathy, Morbid Obesity, Pulmonary Edema, Respiratory Failure
+-- PH - Acidosis, Diabetes, Encephalopathy, Morbid Obesity, Pulmonary Edema, Respiratory Failure, Shock
 discrete_names.dv_names_ph = { "pH" }
 -- Plasma Transfusion - Bleeding
 discrete_names.dv_names_plasma_transfusion = { "Volume (mL)-Transfuse Plasma (mL)" }
@@ -185,8 +188,6 @@ discrete_names.dv_names_pneumococcal_antigen = { "" }
 discrete_names.dv_names_poc_lactate = { "" }
 -- Pressure Injury Stage - Pressure Ulcer
 discrete_names.dv_names_pressure_injury_stage = { "" }
--- Pro BNP - Heart Failure, Pulmonary Edema
-discrete_names.dv_names_pro_bnp = { "" }
 -- Procalcitonin - Pneumonia, Sepsis-SIRS
 discrete_names.dv_names_procalcitonin = { "PROCALCITONIN (ng/mL)" }
 -- Protein C Resistance - Coagulopathy
@@ -250,7 +251,7 @@ discrete_names.dv_names_serum_folate = { "" }
 discrete_names.dv_names_serum_iron = { "IRON TOTAL (ug/dL)" }
 -- Serum Ketone -- Acidosis
 discrete_names.dv_names_serum_ketone = { "" }
--- Serum Lactate - Acidosis, Sepsis-SIRS, Shock
+-- Serum Lactate - Acidosis, Hypertensive Crisis, Sepsis, Severe Sepsis, and Shock
 discrete_names.dv_names_serum_lactate = { "LACTIC ACID (mmol/L)", "LACTATE (mmol/L)" }
 -- Serum Magnesium - Malnutrition
 discrete_names.dv_names_serum_magnesium = { "MAGNESIUM (mg/dL)" }
@@ -312,7 +313,7 @@ discrete_names.dv_names_venous_hco3 = { "HCO3 VENOUS (meq/L)" }
 discrete_names.dv_names_venous_ph = { "pH (VENOUS)", "pH VENOUS" }
 -- Vitamin B12 - Anemia, Pancytopenia
 discrete_names.dv_names_vitamin_b12 = { "VITAMIN B12 (pg/mL)" }
--- WBC - Anemia, Pancytopenia, Pneumonia, Sepsis-SIRS, UTI
+-- WBC - Anemia, Immunocompromised, Pancytopenia, Pneumonia, Sepsis-SIRS, UTI
 discrete_names.dv_names_wbc = { "WBC (10x3/ul)" }
 
 
