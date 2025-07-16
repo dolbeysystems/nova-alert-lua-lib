@@ -279,7 +279,7 @@ discrete_names.dv_names_total_iron_binding_capacity = { "IRON BINDING" }
 -- Troponin T High Sensitivity - Acute MI, Heart Failure, Hypertensive Crisis, Pulmonary Edema, Shock
 discrete_names.dv_names_troponin_t = { "TROPONIN, HIGH SENSITIVITY (ng/L)" }
 -- UA Bacteria - Encephalopathy, UTI
-discrete_names.dv_names_ua_bacteria = { "" }
+discrete_names.dv_names_ua_bacteria = { "BACTERIA (/HPF)" }
 -- UA Blood - UTI
 discrete_names.dv_names_ua_blood = { "BLOOD" }
 -- UA Hyaline Cast - UTI
