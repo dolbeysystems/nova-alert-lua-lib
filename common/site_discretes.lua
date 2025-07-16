@@ -67,7 +67,7 @@ discrete_names.dv_names_c_blood = { "" }
 -- C Reactive Protein - Pneumonia, Sepsis-SIRS
 discrete_names.dv_names_c_reactive_protein = { "C REACTIVE PROTEIN (mg/dL)" }
 -- C Urine - Encephalopathy, Sepsis-SIRS, UTI
-discrete_names.dv_names_c_urine = { "BACTERIA (/HPF)" }
+discrete_names.dv_names_c_urine = { "" }
 -- Cannabinoid Screen - Encephalopathy
 discrete_names.dv_names_cannabinoid_screen = { "CANNABINOIDS UR", "Cannabinoids (THC) UR" }
 -- Cardiac Index - Shock
