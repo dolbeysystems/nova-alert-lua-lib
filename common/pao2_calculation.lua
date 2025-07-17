@@ -462,29 +462,29 @@ return function(Account)
 
         sp_o2_discrete_values = discrete.get_ordered_discrete_values {
             discreteValueNames = site_discretes.dv_names_spo2,
-            predicate = function(dv)
-                return dv.result_date >= date_limit and discrete.get_dv_value_number(dv) < 91
+            predicate = function(dv_, num)
+                return dv_.result_date >= date_limit and tonumber(num) ~= nil and tonumber(num) < 91
             end
         }
 
         pa_o2_discrete_values = discrete.get_ordered_discrete_values {
             discreteValueNames = site_discretes.dv_names_pao2,
-            predicate = function(dv)
-                return dv.result_date >= date_limit and discrete.get_dv_value_number(dv) <= 60
+            predicate = function(dv_, num)
+                return dv_.result_date >= date_limit and tonumber(num) ~= nil and tonumber(num) <= 60
             end
         }
 
         o2_therapy_discrete_values = discrete.get_ordered_discrete_values {
             discreteValueNames = site_discretes.dv_names_oxygen_therapy,
-            predicate = function(dv)
-                return dv.result_date >= date_limit and dv.result ~= nil
+            predicate = function(dv_, num)
+                return dv_.result_date >= date_limit and tonumber(num) ~= nil
             end
         }
 
         respiratory_rate_discrete_values = discrete.get_ordered_discrete_values {
             discreteValueNames = site_discretes.dv_names_respiratory_rate,
-            predicate = function(dv)
-                return dv.result_date >= date_limit and discrete.get_dv_value_number(dv) ~= nil
+            predicate = function(dv_, num)
+                return dv_.result_date >= date_limit and tonumber(num) ~= nil
             end
         }
 
