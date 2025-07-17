@@ -591,6 +591,9 @@ return function(Account)
                             break
                         end
                     end
+                    if resp_rate_str == nil then
+                        resp_rate_str = "XX"
+                    end
                 else
                     resp_rate_str = "XX"
                 end
