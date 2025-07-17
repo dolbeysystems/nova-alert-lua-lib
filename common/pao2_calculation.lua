@@ -512,7 +512,8 @@ return function(Account)
                             break
                         end
                     end
-                else
+                end
+                if resp_rate_str == nil then
                     resp_rate_str = "XX"
                 end
 
@@ -591,10 +592,8 @@ return function(Account)
                             break
                         end
                     end
-                    if resp_rate_str == nil then
-                        resp_rate_str = "XX"
-                    end
-                else
+                end
+                if resp_rate_str == nil then
                     resp_rate_str = "XX"
                 end
                 if matching_date then
