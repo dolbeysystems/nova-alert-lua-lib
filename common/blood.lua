@@ -135,7 +135,7 @@ return function(Account)
 
         local hemoglobin_delta = 0
 
-        if highest_hemoglobin_in_past_week and lowest_hemoglobin_in_past_week_after_highest then
+        if highest_hemoglobin_in_past_week ~= nil and lowest_hemoglobin_in_past_week_after_highest ~= nil then
             hemoglobin_delta = discrete.get_dv_value_number(highest_hemoglobin_in_past_week) -
                 discrete.get_dv_value_number(lowest_hemoglobin_in_past_week_after_highest)
             if hemoglobin_delta >= 2 then
