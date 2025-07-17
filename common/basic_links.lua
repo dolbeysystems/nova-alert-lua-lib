@@ -646,7 +646,7 @@ return function(Account)
         local resequenced_links = {}
 
         local function sort_by_link_text(a, b)
-            return a.link_text < b.link_text
+            return string.lower(a.link_text) < string.lower(b.link_text)
         end
 
         local function extract_result_date(link_text)
