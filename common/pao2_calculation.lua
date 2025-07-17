@@ -415,7 +415,7 @@ return function(Account)
     --- 
     --- @return SpO2PaO2Links[]
     --------------------------------------------------------------------------------
-    function module.get_pa_o2_sp_o2_links()
+    function module.get_pao2_spo2_links()
         --- @param date_time integer?
         --- @param link_text string
         --- @param result string?
