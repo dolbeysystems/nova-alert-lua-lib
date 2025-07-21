@@ -434,10 +434,10 @@ return function(Account)
         local pa_o2_discrete_values = {}
         local o2_therapy_discrete_values = {}
         local respiratory_rate_discrete_values = {}
-        local sp_o2_link_text = "SpO2: [VALUE] (Result Date: [RESULTDATETIME])"
-        local pao2_link_text = "PaO2: [VALUE] (Result Date: [RESULTDATETIME])"
-        local o2_therapy_link_text = "Oxygen Therapy '[VALUE]' (Result Date: [RESULTDATETIME])"
-        local respiratory_rate_link_text = "Respiratory Rate: [VALUE] (Result Date: [RESULTDATETIME])"
+        local sp_o2_link_text = "SpO2: [VALUE] (Result Date: [RESULTDATE])"
+        local pao2_link_text = "PaO2: [VALUE] (Result Date: [RESULTDATE])"
+        local o2_therapy_link_text = "Oxygen Therapy '[VALUE]' (Result Date: [RESULTDATE])"
+        local respiratory_rate_link_text = "Respiratory Rate: [VALUE] (Result Date: [RESULTDATE])"
         local date_limit = dates.days_ago(1)
         local pa_dv_idx = nil
         local sp_dv_idx = nil
