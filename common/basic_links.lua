@@ -739,6 +739,9 @@ return function(Account)
             if link.discrete_value_id ~= nil and not discrete_id[link.discrete_value_id] then
                 discrete_id[link.discrete_value_id] = true
                 table.insert(unique_links, link)
+            elseif link.discrete_value_id == nil and link.link_text ~= nil then
+                -- If its just a text link add it and move on.
+                table.insert(unique_links, link)
             end
         end
         return unique_links
