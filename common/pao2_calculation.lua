@@ -416,28 +416,16 @@ return function(Account)
     --- @return SpO2PaO2Links[]
     --------------------------------------------------------------------------------
     function module.get_pao2_spo2_links()
-        --- @param date_time integer?
         --- @param link_text string
-        --- @param result string?
-        --- @param id string?
+        --- @param discrete_value DiscreteValue
         --- @param seq number
         ---
         --- @return CdiAlertLink
-        local function create_link(date_time, link_text, result, id, seq)
+        local function create_link(link_text, discrete_value, seq)
             local link = cdi_alert_link()
-
-            if date_time then
-                link_text = link_text:gsub("[RESULTDATETIME]", os.date("%c", date_time))
-            else
-                link_text = link_text:gsub("[RESULTDATETIME]", "")
-            end
-            if result then
-                link_text = link_text:gsub("[VALUE]", result)
-            else
-                link_text = link_text:gsub("[VALUE]", "")
-            end
-            link.link_text = link_text
-            link.discrete_value_id = id
+            link.link_text = links.replace_link_place_holders(link_text, nil, nil, discrete_value, nil)
+            link.discrete_value_id = discrete_value.unique_id
+            link.discrete_value_name = discrete_value.name
             link.sequence = seq
             return link
         end
@@ -523,21 +511,17 @@ return function(Account)
                 table.insert(
                     matched_list,
                     create_link(
-                        nil,
                         matching_date .. " Respiratory Rate: " .. resp_rate_str .. ", Oxygen Therapy: " .. oxygen_value ..
                         ", PaO2: " .. pa_o2_discrete_values[pa_dv_idx].result,
-                        nil,
-                        pa_o2_discrete_values[pa_dv_idx].unique_id,
+                        pa_o2_discrete_values[pa_dv_idx],
                         0
                     )
                 )
                 table.insert(
                     matched_list,
                     create_link(
-                        pa_o2_discrete_values[pa_dv_idx].result_date,
                         pao2_link_text,
-                        pa_o2_discrete_values[pa_dv_idx].result,
-                        pa_o2_discrete_values[pa_dv_idx].unique_id,
+                        pa_o2_discrete_values[pa_dv_idx],
                         2
                     )
                 )
@@ -545,10 +529,8 @@ return function(Account)
                     table.insert(
                         matched_list,
                         create_link(
-                            o2_therapy_discrete_values[ot_dv_idx].result_date,
                             o2_therapy_link_text,
-                            o2_therapy_discrete_values[ot_dv_idx].result,
-                            o2_therapy_discrete_values[ot_dv_idx].unique_id,
+                            o2_therapy_discrete_values[ot_dv_idx],
                             3
                         )
                     )
@@ -557,10 +539,8 @@ return function(Account)
                     table.insert(
                         matched_list,
                         create_link(
-                            respiratory_rate_discrete_values[rr_dv_idx].result_date,
                             respiratory_rate_link_text,
-                            respiratory_rate_discrete_values[rr_dv_idx].result,
-                            respiratory_rate_discrete_values[rr_dv_idx].unique_id,
+                            respiratory_rate_discrete_values[rr_dv_idx],
                             4
                         )
                     )
@@ -602,21 +582,17 @@ return function(Account)
                 table.insert(
                     matched_list,
                     create_link(
-                        nil,
                         matching_date .. " Respiratory Rate: " .. resp_rate_str .. ", Oxygen Therapy: " .. oxygen_value ..
                         ", SpO2: " .. sp_o2_discrete_values[sp_dv_idx].result,
-                        nil,
-                        sp_o2_discrete_values[sp_dv_idx].unique_id,
+                        sp_o2_discrete_values[sp_dv_idx],
                         0
                     )
                 )
                 table.insert(
                     matched_list,
                     create_link(
-                        sp_o2_discrete_values[sp_dv_idx].result_date,
                         sp_o2_link_text,
-                        sp_o2_discrete_values[sp_dv_idx].result,
-                        sp_o2_discrete_values[sp_dv_idx].unique_id,
+                        sp_o2_discrete_values[sp_dv_idx],
                         1
                     )
                 )
@@ -624,10 +600,8 @@ return function(Account)
                     table.insert(
                         matched_list,
                         create_link(
-                            o2_therapy_discrete_values[ot_dv_idx].result_date,
                             o2_therapy_link_text,
-                            o2_therapy_discrete_values[ot_dv_idx].result,
-                            o2_therapy_discrete_values[ot_dv_idx].unique_id,
+                            o2_therapy_discrete_values[ot_dv_idx],
                             5
                         )
                     )
@@ -636,10 +610,8 @@ return function(Account)
                     table.insert(
                         matched_list,
                         create_link(
-                            respiratory_rate_discrete_values[rr_dv_idx].result_date,
                             respiratory_rate_link_text,
-                            respiratory_rate_discrete_values[rr_dv_idx].result,
-                            respiratory_rate_discrete_values[rr_dv_idx].unique_id,
+                            respiratory_rate_discrete_values[rr_dv_idx],
                             7
                         )
                     )
