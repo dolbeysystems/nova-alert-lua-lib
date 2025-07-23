@@ -94,20 +94,18 @@ return function(Account)
             end
         }
 
-        if #pao2_fio2_ratio_links == 0 then
-            -- Method #1 - Look for site calculated discrete values
-            pao2_fio2_ratio_links = links.get_discrete_value_links {
-                discreteValueNames = site_discretes.dv_names_pao2_fio2,
-                text = "PaO2/FiO2",
-                predicate = function(dv, num)
-                    return dates.date_is_less_than_x_days_ago(dv.result_date, 1) and tonumber(num) ~= nil and tonumber(num) < calc_pao2_fio2
-                end,
-                seq = 2
-            }
-            if #pao2_fio2_ratio_links > 0 then
-                -- If we found links, return them
-                return pao2_fio2_ratio_links
-            end
+        -- Method #1 - Look for site calculated discrete values
+        pao2_fio2_ratio_links = links.get_discrete_value_links {
+            discreteValueNames = site_discretes.dv_names_pao2_fio2,
+            text = "PaO2/FiO2",
+            predicate = function(dv, num)
+                return dates.date_is_less_than_x_days_ago(dv.result_date, 1) and tonumber(num) ~= nil and tonumber(num) < calc_pao2_fio2
+            end,
+            seq = 2
+        }
+        if #pao2_fio2_ratio_links > 0 then
+            -- If we found links, return them
+            return pao2_fio2_ratio_links
         end
 
         if #pao2_fio2_ratio_links == 0 then
