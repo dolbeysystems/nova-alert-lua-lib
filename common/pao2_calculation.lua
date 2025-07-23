@@ -444,8 +444,8 @@ return function(Account)
         local ot_dv_idx = nil
         local rr_dv_idx = nil
         local matching_date = nil
-        local oxygen_value = nil
-        local resp_rate_str = nil
+        local oxygen_value = "XX"
+        local resp_rate_str = "XX"
         local matched_list = {}
 
         sp_o2_discrete_values = discrete.get_ordered_discrete_values {
@@ -489,8 +489,6 @@ return function(Account)
                             break
                         end
                     end
-                else
-                    oxygen_value = "XX"
                 end
                 if #respiratory_rate_discrete_values > 0 then
                     for idx3, item3 in ipairs(respiratory_rate_discrete_values) do
@@ -501,10 +499,6 @@ return function(Account)
                         end
                     end
                 end
-                if resp_rate_str == nil then
-                    resp_rate_str = "XX"
-                end
-
                 if matching_date then
                     matching_date = dates.date_int_to_string(matching_date)
                 end
@@ -561,7 +555,8 @@ return function(Account)
                             break
                         end
                     end
-                else
+                end
+                if oxygen_value == nil then
                     oxygen_value = "XX"
                 end
                 if #respiratory_rate_discrete_values > 0 then
