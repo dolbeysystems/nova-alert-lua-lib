@@ -85,7 +85,6 @@ return function(Account)
                 local start_date = dv_date_int - (12 * 3600)
                 local end_date = dv_date_int + (12 * 3600)
                 if start_date <= date and date <= end_date then
-                    log.debug("Date was found to be within a negated oxygen therapy value: " .. tostring(dv.result) .. ", date: " .. tostring(date))
                     return false
                 end
             end
