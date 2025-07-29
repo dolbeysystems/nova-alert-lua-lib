@@ -596,11 +596,12 @@ return function(Account)
     ---
     --- @param link CdiAlertLink The link to update_link_text
     ---
-    --- @return CdiAlertLink - Return the updated link text link
+    --- @return CdiAlertLink? - Return the updated link text link
     --------------------------------------------------------------------------------
     function module.update_link_text_autoresolve(link)
-        local updated_link = cdi_alert_link()
+        local updated_link = nil
         if link and link.link_text then
+            updated_link = cdi_alert_link()
             updated_link.link_text = "Autoresolved Evidence - " .. link.link_text
             updated_link.discrete_value_id = link.discrete_value_id
             updated_link.code = link.code
