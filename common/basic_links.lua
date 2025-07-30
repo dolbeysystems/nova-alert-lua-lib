@@ -695,7 +695,8 @@ return function(Account)
                     merged_trend_sub_header = link
                     -- Recursively resequence the subheader’s links
                     local sub_links = module.merge_single_line_link_text(link.links)
-                    table.insert(resequenced_links, sub_links[1])
+                    merged_trend_sub_header.links = sub_links
+                    table.insert(resequenced_links, merged_trend_sub_header)
                 else
                     local resequenced_sub_header = {}
                     -- go through sub header links
@@ -759,7 +760,16 @@ return function(Account)
             return {}
 
         elseif #links <= 1 or #links >= 2 and links[1].link_text == links[2].link_text then
-            return { { links[1] } }
+            local orig = links[1]
+            local link = cdi_alert_link()
+            link.link_text = orig.link_text
+            link.discrete_value_name = orig.discrete_value_name
+            link.discrete_value_id = orig.discrete_value_id
+            link.sequence = orig.sequence
+            link.hidden = orig.hidden
+            link.is_validated = orig.is_validated
+            link.permanent = orig.permanent
+            return { link }
         end
 
         local function extract(link_text)
