@@ -758,6 +758,19 @@ return function(Account)
     function module.merge_single_line_link_text(links)
         if #links == 0 then return {} end
 
+        if #links >= 2 and links[1].link_text == links[2].link_text then
+            local orig = links[1]
+            return {{
+                link_text = orig.link_text,
+                discrete_value_name = orig.discrete_value_name,
+                discrete_value_id = orig.discrete_value_id,
+                sequence = orig.sequence,
+                hidden = orig.hidden,
+                is_validated = orig.is_validated,
+                permanent = orig.permanent
+            }}
+        end
+
         local function extract(link_text)
             local name, start_date, end_date, values_str =
                 link_text:match("^(.-): %((%d+/%d+/%d+) %- (%d+/%d+/%d+)%) %- ?(.*)")
@@ -772,46 +785,57 @@ return function(Account)
                     table.insert(values, val)
                 end
             end
+
             return name, start_date, end_date, values
         end
 
         local function to_time(date_str)
             local m, d, y = date_str:match("(%d+)/(%d+)/(%d+)")
-            return os.time({ year = tonumber(y), month = tonumber(m), day = tonumber(d) })
+            return os.time({year = tonumber(y), month = tonumber(m), day = tonumber(d)})
         end
 
-        local merged_values = {}
-        local seen_across_links = {}
-        local min_start, max_end, name = nil, nil, nil
-
-        for _, link in ipairs(links) do
-            local curr_name, start_date, end_date, values = extract(link.link_text)
-
-            if not name then name = curr_name end
-            if not min_start or to_time(start_date) < to_time(min_start) then min_start = start_date end
-            if not max_end or to_time(end_date) > to_time(max_end) then max_end = end_date end
-
-            -- Track duplicates within current link only
-            local seen_in_current_link = {}
-
-            for _, val in ipairs(values) do
-                if not seen_in_current_link[val] then
-                    -- First time in this link
-                    if not seen_across_links[val] then
-                        table.insert(merged_values, val)
-                        seen_across_links[val] = true
+        -- Find overlap length of suffix of a and prefix of b
+        local function find_overlap(a, b)
+            local max_len = math.min(#a, #b)
+            for len = max_len, 1, -1 do
+                local match = true
+                for i = 1, len do
+                    if a[#a - len + i] ~= b[i] then
+                        match = false
+                        break
                     end
-                    seen_in_current_link[val] = true
-                else
-                    -- Duplicate inside current link, add it
-                    table.insert(merged_values, val)
                 end
+                if match then return len end
             end
+            return 0
         end
 
-        local merged_text = string.format(
-            "%s: (%s - %s) - %s",
-            name, min_start, max_end,
+        local link1, link2 = links[1], links[2]
+
+        local name1, start1, end1, values1 = extract(link1.link_text)
+        local name2, start2, end2, values2 = extract(link2.link_text)
+
+        -- Calculate merged date range
+        local min_start = (to_time(start1) < to_time(start2)) and start1 or start2
+        local max_end = (to_time(end1) > to_time(end2)) and end1 or end2
+
+        -- Find overlap length
+        local overlap_len = find_overlap(values1, values2)
+
+        -- Merge values: values1 + values2 after overlap_len prefix
+        local merged_values = {}
+        for i=1, #values1 do
+            table.insert(merged_values, values1[i])
+        end
+        for i = overlap_len + 1, #values2 do
+            table.insert(merged_values, values2[i])
+        end
+
+        -- Construct merged link_text
+        local merged_text = string.format("%s: (%s - %s) - %s",
+            name1,
+            min_start,
+            max_end,
             table.concat(merged_values, ", ")
         )
 
