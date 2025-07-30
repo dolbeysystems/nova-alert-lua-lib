@@ -760,16 +760,7 @@ return function(Account)
             return {}
 
         elseif #links <= 1 or #links >= 2 and links[1].link_text == links[2].link_text then
-            local orig = links[1]
-            return { {
-                link_text = orig.link_text,
-                discrete_value_name = orig.discrete_value_name,
-                discrete_value_id = orig.discrete_value_id,
-                sequence = orig.sequence,
-                hidden = orig.hidden,
-                is_validated = orig.is_validated,
-                permanent = orig.permanent
-            } }
+            return { { links[1] } }
         end
 
         local function extract(link_text)
