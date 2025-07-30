@@ -695,8 +695,7 @@ return function(Account)
                     merged_trend_sub_header = link
                     -- Recursively resequence the subheader’s links
                     local sub_links = module.merge_single_line_link_text(link.links)
-                    merged_trend_sub_header.links = sub_links
-                    table.insert(resequenced_links, merged_trend_sub_header)
+                    table.insert(resequenced_links, sub_links[1])
                 else
                     local resequenced_sub_header = {}
                     -- go through sub header links
