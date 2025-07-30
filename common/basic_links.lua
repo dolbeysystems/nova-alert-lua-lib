@@ -759,10 +759,8 @@ return function(Account)
         if #links == 0 then return {} end
 
         local function extract(link_text)
-            -- Match name, start_date, end_date, and optional values (values may be empty)
             local name, start_date, end_date, values_str =
                 link_text:match("^(.-): %((%d+/%d+/%d+) %- (%d+/%d+/%d+)%) %- ?(.*)")
-
             if not (name and start_date and end_date and values_str) then
                 error("link_text format not recognized: " .. tostring(link_text))
             end
@@ -774,53 +772,53 @@ return function(Account)
                     table.insert(values, val)
                 end
             end
-
             return name, start_date, end_date, values
         end
 
-        local function to_date_num(date_str)
+        local function to_time(date_str)
             local m, d, y = date_str:match("(%d+)/(%d+)/(%d+)")
             return os.time({ year = tonumber(y), month = tonumber(m), day = tonumber(d) })
         end
 
         local merged_values = {}
-        local earliest_start = nil
-        local latest_end = nil
-        local duplicate_tracker = {}
-        local discrete_name = nil
+        local seen_across_links = {}
+        local min_start, max_end, name = nil, nil, nil
+
         for _, link in ipairs(links) do
-            local name, start_date, end_date, values = extract(link.link_text)
+            local curr_name, start_date, end_date, values = extract(link.link_text)
 
-            if not earliest_start or to_date_num(start_date) < to_date_num(earliest_start) then
-                earliest_start = start_date
-            end
-            if not latest_end or to_date_num(end_date) > to_date_num(latest_end) then
-                latest_end = end_date
-            end
+            if not name then name = curr_name end
+            if not min_start or to_time(start_date) < to_time(min_start) then min_start = start_date end
+            if not max_end or to_time(end_date) > to_time(max_end) then max_end = end_date end
 
-            if not discrete_name then
-                discrete_name = name
-            end
+            -- Track duplicates within current link only
+            local seen_in_current_link = {}
 
-            for _, v in ipairs(values) do
-                if not duplicate_tracker[v] then
-                    duplicate_tracker[v] = true
-                    table.insert(merged_values, v)
+            for _, val in ipairs(values) do
+                if not seen_in_current_link[val] then
+                    -- First time in this link
+                    if not seen_across_links[val] then
+                        table.insert(merged_values, val)
+                        seen_across_links[val] = true
+                    end
+                    seen_in_current_link[val] = true
+                else
+                    -- Duplicate inside current link, add it
+                    table.insert(merged_values, val)
                 end
             end
         end
 
-        local merged_text = string.format("%s: (%s - %s) - %s",
-            discrete_name,
-            earliest_start,
-            latest_end,
+        local merged_text = string.format(
+            "%s: (%s - %s) - %s",
+            name, min_start, max_end,
             table.concat(merged_values, ", ")
         )
 
         local original_link = links[1]
         local merged_link = cdi_alert_link()
         merged_link.link_text = merged_text
-        merged_link.discrete_value_name = discrete_name
+        merged_link.discrete_value_name = original_link.discrete_value_name
         merged_link.discrete_value_id = original_link.discrete_value_id
         merged_link.sequence = original_link.sequence
         merged_link.hidden = original_link.hidden
