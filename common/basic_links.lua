@@ -675,7 +675,7 @@ return function(Account)
                 resequenced_link = link
                 table.insert(resequenced_links, resequenced_link)
 
-            elseif link.link_text == "Major:" or link.link_text == "Minor:" or link.link_text == "ABG" or link.link_text == "VBG" then
+            elseif link.link_text == "Major:" or link.link_text == "Minor:" or link.link_text == "ABG" or link.link_text == "VBG" or link.link_text == "Urine Analysis" then
                 local resequenced_sub_header = {}
                 -- go through sub header links
                 resequenced_sub_header = link
