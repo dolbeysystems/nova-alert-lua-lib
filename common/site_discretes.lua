@@ -39,8 +39,6 @@ discrete_names.dv_names_barbiturate_screen = { "BARBITURATES URINE", "BARBS UR" 
 discrete_names.dv_names_benzodiazepine_screen = { "BENZO URINE", "BENZO UR" }
 -- Beta Hydroxybutyrate - Diabetes
 discrete_names.dv_names_beta_hydroxybutyrate = { "BETAHYDROXY BUTYRATE (mmol/L)" }
--- Blood CO2 - Acidosis, Diabetes
-discrete_names.dv_names_blood_co2 = { "CO2 (mmol/L)" }
 -- Blood Glucose - Abnormal Serum Sodium, Acidosis, Encephalopathy, Diabetes, Sepis-Sirs, 
 discrete_names.dv_names_blood_glucose = { "GLUCOSE (mg/dL)", "GLUCOSE" }
 discrete_names.dv_names_blood_glucose_point_of_care = { "GLUCOSE ACCUCHECK (mg/dL)" }
@@ -275,6 +273,8 @@ discrete_names.dv_names_thrombin_time = { "THROMBIN CLOTTING TM" }
 discrete_names.dv_names_transferrin = { "TRANSFERRIN" }
 -- Total Cholesterol - Malnutrition
 discrete_names.dv_names_total_cholesterol = { "CHOLESTEROL (mg/dL)", "CHOLESTEROL" }
+-- Total CO2 - Acidosis, Diabetes
+discrete_names.dv_names_total_co2 = { "CO2 (mmol/L)" }
 -- Total Iron Binding Capacity - Anemia
 discrete_names.dv_names_total_iron_binding_capacity = { "IRON BINDING" }
 -- Troponin T High Sensitivity - Acute MI, Heart Failure, Hypertensive Crisis, Pulmonary Edema, Shock
