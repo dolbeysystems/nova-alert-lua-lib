@@ -198,6 +198,8 @@ discrete_names.dv_names_ptt = { "PTT (SEC)" }
 discrete_names.dv_names_pulmonary_pressure = { "" }
 -- Pus in Urine - UTI
 discrete_names.dv_names_pus_in_urine = { "" }
+-- PVCO2 - Acidosis, Morbid Obesity, Respiratory Failure
+discrete_names.dv_names_pvco2 = { "BLD GAS CO2 VEN (mmHg)" }
 -- RBC - Anemia, Pancytopenia
 discrete_names.dv_names_rbc = { "RBC  (10X6/uL)" }
 -- Reduce Ejection Fraction - Pulmonary Edema
@@ -305,8 +307,6 @@ discrete_names.dv_names_urine_output = { "" }
 discrete_names.dv_names_urine_ketones = { "UR KETONES (mg/dL)", "KETONES (mg/dL)" }
 -- Urine Sodium - Kidney Disease Chronic, Kidney Failure Acute
 discrete_names.dv_names_urine_sodium = { "URINE SODIUM (mmol/L)" }
--- Venous Blood CO2 - Acidosis, Respiratory Failure
-discrete_names.dv_names_venous_blood_co2 = { "BLD GAS CO2 VEN (mmHg)" }
 -- Venous HCO3 - Acidosis
 discrete_names.dv_names_venous_hco3 = { "HCO3 VENOUS (meq/L)" }
 -- Venous PH - Acidosis, Morbid Obesity, Respiratory Failure
