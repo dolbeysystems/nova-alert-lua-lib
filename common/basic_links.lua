@@ -825,7 +825,7 @@ return function(Account)
 
         -- Merge values: values1 + values2 after overlap_len prefix
         local merged_values = {}
-        for i=1, #values1 do
+        for i = 1, #values1 do
             table.insert(merged_values, values1[i])
         end
         for i = overlap_len + 1, #values2 do
@@ -879,14 +879,34 @@ return function(Account)
                 (a.discrete_value_id and a.discrete_value_id == b.discrete_value_id and not has_date_range) or
                 (not a.code and not a.medication_id and not a.discrete_value_id and a.link_text and a.link_text == b.link_text and not has_date_range)
         end
-        
+        -- Update Link text that don't match
+        --- @param merged_links CdiAlertLink
+        --- @param new_link CdiAlertLink
+        local function update_changed_discrete_value(merged_links, new_link)
+            local link_text = "[DISCRETENAME]: Updated Value [NEWVALUE] (Previously: [OLDVALUE]) (Result Date: [RESULTDATE])"
+            for _, existing_link in ipairs(merged_links) do
+                if existing_link.discrete_value_id == new_link.discrete_value_id then
+                    log.info("Updating link text for discrete value: " .. existing_link.link_text)
+                    log.info("New link text: " .. new_link.link_text)
+                    local discrete_name, old_result, datetime = existing_link.link_text:match("^([^:]+):%s*([^%(]+)%s*%(%s*Result Date:%s*(.+)%)")
+                    local new_result = new_link.link_text:match(":%s*([^%(]+)")
+                    link_text = string.gsub(link_text, "%[DISCRETEVALUENAME%]", discrete_name or "")
+                    link_text = string.gsub(link_text, "%[OLDVALUE%]", old_result or "")
+                    link_text = string.gsub(link_text, "%[NEWVALUE%]", new_result or "")
+                    link_text = string.gsub(link_text, "%[RESULTDATE%]", dates.date_int_to_string(datetime) or "")
+                    existing_link.link_text = link_text
+                    log.info("Updated link text: " .. existing_link.link_text)
+                    break
+                end
+            end
+        end
         --- Update update_permanent_link on existing link that matches link_text
         --- @param merged_links CdiAlertLink[]
         --- @param new_link CdiAlertLink
         local function update_permanent_link(merged_links, new_link)
             -- If link_text is marked permanent, update validation and hidden status but skip full overwrite
             for _, existing_link in ipairs(merged_links) do
-                if existing_link.link_text == new_link.link_text then
+                if existing_link.discrete_value_id == new_link.discrete_value_id then
                     existing_link.hidden = new_link.hidden
                     existing_link.is_validated = new_link.is_validated
                     break
@@ -943,7 +963,17 @@ return function(Account)
                 end
 
                 for _, existing_link in ipairs(merged_links) do
-                    if compare_links(existing_link, new_link) then
+                    local has_date_range = existing_link.link_text and existing_link.link_text:match("%(%d%d/%d%d/%d%d%d%d %- %d%d/%d%d/%d%d%d%d%)")
+
+                    if
+                        existing_link.discrete_value_id and
+                        existing_link.discrete_value_id == new_link.discrete_value_id and
+                        not has_date_range and
+                        existing_link.link_text ~= new_link.link_text
+                    then
+                        update_changed_discrete_value(existing_link, new_link)
+                        matching_existing_link = existing_link
+                    elseif compare_links(existing_link, new_link) then
                         matching_existing_link = existing_link
                         break
                     end
