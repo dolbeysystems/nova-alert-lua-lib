@@ -909,6 +909,14 @@ return function(Account)
                 end
             end
         end
+        if Account.id == "1641870317" then
+            for _, old_link in ipairs(old_links) do
+                log.info("Old link: " .. old_link.link_text)
+            end
+            for _, new_link in ipairs(new_links) do
+                log.info("New link: " .. new_link.link_text)
+            end
+        end
 
         if #old_links == 0 then
             return new_links
