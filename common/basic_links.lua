@@ -903,8 +903,21 @@ return function(Account)
             -- If link_text is marked permanent, update validation and hidden status but skip full overwrite
             for _, existing_link in ipairs(merged_links) do
                 if existing_link.discrete_value_id == new_link.discrete_value_id then
+                    local has_date_range = existing_link.link_text and existing_link.link_text:match("%(%d%d/%d%d/%d%d%d%d %- %d%d/%d%d/%d%d%d%d%)")
+                    local has_result_date = existing_link.link_text and existing_link.link_text:match("%(Result Date:")
                     existing_link.hidden = new_link.hidden
                     existing_link.is_validated = new_link.is_validated
+                    if
+                        existing_link.discrete_value_id and
+                        existing_link.discrete_value_id == new_link.discrete_value_id and
+                        not has_date_range and has_result_date and
+                        existing_link.link_text ~= new_link.link_text
+                    then
+                        log.info("Updating link text for discrete value: " .. existing_link.link_text)
+                        log.info("New link text: " .. new_link.link_text)
+                        existing_link.link_text = update_changed_discrete_value(existing_link.link_text, new_link)
+                        log.info("Updated link text: " .. existing_link.link_text)
+                    end
                     break
                 end
             end
