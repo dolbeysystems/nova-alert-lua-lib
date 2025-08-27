@@ -884,18 +884,23 @@ return function(Account)
         --- @param new_link CdiAlertLink
         --- @return string
         local function update_changed_discrete_value(existing_link, new_link)
+            local function trim(s) return s and s:match("^%s*(.-)%s*$") or s end
             local link_text = "[DISCRETENAME]: Updated Value [NEWVALUE] (Previously: [OLDVALUE]) (Result Date: [RESULTDATE])"
             log.info("Updating link text for discrete value: " .. existing_link)
             log.info("New link text: " .. new_link.link_text)
             local old_result = existing_link:match(":%s*([^%(]+)")
             local discrete_name, new_result, datetime = new_link.link_text:match("^([^:]+):%s*([^%(]+)%s*%(%s*Result Date:%s*(.+)%)")
-            log.info("Extracted discrete_name: " .. discrete_name .. ", old_result" .. old_result .. ", new_result: " .. new_result .. ", datetime: " .. datetime)
-            link_text = string.gsub(link_text, "%[DISCRETENAME%]", discrete_name or "")
-            link_text = string.gsub(link_text, "%[OLDVALUE%]", old_result or "")
-            link_text = string.gsub(link_text, "%[NEWVALUE%]", new_result or "")
-            link_text = string.gsub(link_text, "%[RESULTDATE%]", datetime or "")
-            log.info("Updated link text: " .. link_text)
-            return link_text
+            old_result, new_result = trim(old_result), trim(new_result)
+            if old_result and new_result and tonumber(old_result) ~= tonumber(new_result) then
+                log.info("Extracted discrete_name: " .. discrete_name .. ", old_result" .. old_result .. ", new_result: " .. new_result .. ", datetime: " .. datetime)
+                link_text = string.gsub(link_text, "%[DISCRETENAME%]", discrete_name or "")
+                link_text = string.gsub(link_text, "%[OLDVALUE%]", old_result or "")
+                link_text = string.gsub(link_text, "%[NEWVALUE%]", new_result or "")
+                link_text = string.gsub(link_text, "%[RESULTDATE%]", datetime or "")
+                log.info("Updated link text: " .. link_text)
+                return link_text
+            end
+            return existing_link
         end
         --- Update update_permanent_link on existing link that matches link_text
         --- @param merged_links CdiAlertLink[]
