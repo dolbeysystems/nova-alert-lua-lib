@@ -920,7 +920,7 @@ return function(Account)
                         not has_date_range and has_result_date and
                         existing_link.link_text ~= new_link.link_text
                     then
-                        log.info("Updating link text for discrete value: " .. existing_link.link_text)
+                        log.info("Existing Link Text: " .. existing_link.link_text)
                         log.info("New link text: " .. new_link.link_text)
                         existing_link.link_text = update_changed_discrete_value(existing_link.link_text, new_link)
                         log.info("Updated link text: " .. existing_link.link_text)
@@ -996,8 +996,8 @@ return function(Account)
                         not has_date_range and has_result_date and
                         matching_existing_link.link_text ~= new_link.link_text
                     then
-                        log.info("Updating link text for discrete value: " .. matching_existing_link.link_text)
-                        log.info("New link text: " .. new_link.link_text)
+                        log.info("Existing Link Text: " .. matching_existing_link.link_text)
+                        log.info("New Link Lext: " .. new_link.link_text)
                         matching_existing_link.link_text = update_changed_discrete_value(matching_existing_link.link_text, new_link)
                         log.info("Updated link text: " .. matching_existing_link.link_text)
                     elseif
