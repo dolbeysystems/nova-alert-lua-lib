@@ -975,6 +975,7 @@ return function(Account)
                         not has_date_range and
                         matching_existing_link.link_text ~= new_link.link_text
                     then
+                        log.info("Updating link text for discrete value: " .. matching_existing_link.link_text)
                         matching_existing_link.link_text = update_changed_discrete_value(matching_existing_link.link_text, new_link)
                     end
                     matching_existing_link.is_validated = new_link.is_validated
