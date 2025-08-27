@@ -884,11 +884,16 @@ return function(Account)
         --- @param new_link CdiAlertLink
         --- @return string
         local function update_changed_discrete_value(existing_link, new_link)
-            local function trim(s) return s and s:match("^%s*(.-)%s*$") or s end
+            local function clean_result(s)
+                if not s then return s end
+                s = s:gsub("Updated Value", "")
+                s = s:match("^%s*(.-)%s*$")
+                return s
+            end
             local link_text = "[DISCRETENAME]: Updated Value [NEWVALUE] (Previously: [OLDVALUE]) (Result Date: [RESULTDATE])"
             local old_result = existing_link:match(":%s*([^%(]+)")
             local discrete_name, new_result, datetime = new_link.link_text:match("^([^:]+):%s*[%a%s]*([%d%.]+).*%(%s*Result Date:%s*([^)]+)%)")
-            old_result, new_result = trim(old_result), trim(new_result)
+            old_result, new_result = clean_result(old_result), clean_result(new_result)
             if old_result and new_result and tonumber(old_result) ~= tonumber(new_result) then
                 log.info("Extracted discrete_name: " .. discrete_name .. ", old_result: " .. old_result .. ", new_result: " .. new_result .. ", datetime: " .. datetime)
                 link_text = string.gsub(link_text, "%[DISCRETENAME%]", discrete_name or "")
