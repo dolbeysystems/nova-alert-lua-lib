@@ -886,12 +886,9 @@ return function(Account)
         local function update_changed_discrete_value(existing_link, new_link)
             local function trim(s) return s and s:match("^%s*(.-)%s*$") or s end
             local link_text = "[DISCRETENAME]: Updated Value [NEWVALUE] (Previously: [OLDVALUE]) (Result Date: [RESULTDATE])"
-            log.info("Updating link text for discrete value: " .. existing_link)
-            log.info("New link text: " .. new_link.link_text)
             local old_result = existing_link:match(":%s*([^%(]+)")
             local discrete_name, new_result, datetime = new_link.link_text:match("^([^:]+):%s*[%a%s]*([%d%.]+).*%(%s*Result Date:%s*([^)]+)%)")
             old_result, new_result = trim(old_result), trim(new_result)
-            log.info("To number old_result: " .. tonumber(old_result) .. ", new_result: " .. tonumber(new_result))
             if old_result and new_result and tonumber(old_result) ~= tonumber(new_result) then
                 log.info("Extracted discrete_name: " .. discrete_name .. ", old_result: " .. old_result .. ", new_result: " .. new_result .. ", datetime: " .. datetime)
                 link_text = string.gsub(link_text, "%[DISCRETENAME%]", discrete_name or "")
@@ -990,10 +987,11 @@ return function(Account)
                 else
                     local has_date_range = matching_existing_link.link_text and matching_existing_link.link_text:match("%(%d%d/%d%d/%d%d%d%d %- %d%d/%d%d/%d%d%d%d%)")
                     local has_result_date = matching_existing_link.link_text and matching_existing_link.link_text:match("%(Result Date:")
+                    local has_autoresolve = matching_existing_link.link_text and matching_existing_link.link_text:match("^Autoresolved")
                     if
                         matching_existing_link.discrete_value_id and
                         matching_existing_link.discrete_value_id == new_link.discrete_value_id and
-                        not has_date_range and has_result_date and
+                        not has_date_range and has_result_date and not has_autoresolve and
                         matching_existing_link.link_text ~= new_link.link_text
                     then
                         log.info("Existing Link Text: " .. matching_existing_link.link_text)
