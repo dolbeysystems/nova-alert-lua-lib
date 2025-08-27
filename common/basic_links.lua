@@ -880,25 +880,20 @@ return function(Account)
                 (not a.code and not a.medication_id and not a.discrete_value_id and a.link_text and a.link_text == b.link_text and not has_date_range)
         end
         -- Update Link text that don't match
-        --- @param merged_links CdiAlertLink
+        --- @param existing_link CdiAlertLink
         --- @param new_link CdiAlertLink
-        local function update_changed_discrete_value(merged_links, new_link)
+        local function update_changed_discrete_value(existing_link, new_link)
             local link_text = "[DISCRETENAME]: Updated Value [NEWVALUE] (Previously: [OLDVALUE]) (Result Date: [RESULTDATE])"
-            for _, existing_link in ipairs(merged_links) do
-                if existing_link.discrete_value_id == new_link.discrete_value_id then
-                    log.info("Updating link text for discrete value: " .. existing_link.link_text)
-                    log.info("New link text: " .. new_link.link_text)
-                    local discrete_name, old_result, datetime = existing_link.link_text:match("^([^:]+):%s*([^%(]+)%s*%(%s*Result Date:%s*(.+)%)")
-                    local new_result = new_link.link_text:match(":%s*([^%(]+)")
-                    link_text = string.gsub(link_text, "%[DISCRETEVALUENAME%]", discrete_name or "")
-                    link_text = string.gsub(link_text, "%[OLDVALUE%]", old_result or "")
-                    link_text = string.gsub(link_text, "%[NEWVALUE%]", new_result or "")
-                    link_text = string.gsub(link_text, "%[RESULTDATE%]", dates.date_int_to_string(datetime) or "")
-                    existing_link.link_text = link_text
-                    log.info("Updated link text: " .. existing_link.link_text)
-                    break
-                end
-            end
+            log.info("Updating link text for discrete value: " .. existing_link.link_text)
+            log.info("New link text: " .. new_link.link_text)
+            local discrete_name, old_result, datetime = existing_link.link_text:match("^([^:]+):%s*([^%(]+)%s*%(%s*Result Date:%s*(.+)%)")
+            local new_result = new_link.link_text:match(":%s*([^%(]+)")
+            link_text = string.gsub(link_text, "%[DISCRETEVALUENAME%]", discrete_name or "")
+            link_text = string.gsub(link_text, "%[OLDVALUE%]", old_result or "")
+            link_text = string.gsub(link_text, "%[NEWVALUE%]", new_result or "")
+            link_text = string.gsub(link_text, "%[RESULTDATE%]", dates.date_int_to_string(datetime) or "")
+            existing_link.link_text = link_text
+            log.info("Updated link text: " .. existing_link.link_text)
         end
         --- Update update_permanent_link on existing link that matches link_text
         --- @param merged_links CdiAlertLink[]
