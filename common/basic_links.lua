@@ -880,20 +880,21 @@ return function(Account)
                 (not a.code and not a.medication_id and not a.discrete_value_id and a.link_text and a.link_text == b.link_text and not has_date_range)
         end
         -- Update Link text that don't match
-        --- @param existing_link CdiAlertLink
+        --- @param existing_link string
         --- @param new_link CdiAlertLink
+        --- @return string
         local function update_changed_discrete_value(existing_link, new_link)
             local link_text = "[DISCRETENAME]: Updated Value [NEWVALUE] (Previously: [OLDVALUE]) (Result Date: [RESULTDATE])"
-            log.info("Updating link text for discrete value: " .. existing_link.link_text)
+            log.info("Updating link text for discrete value: " .. existing_link)
             log.info("New link text: " .. new_link.link_text)
-            local discrete_name, old_result, datetime = existing_link.link_text:match("^([^:]+):%s*([^%(]+)%s*%(%s*Result Date:%s*(.+)%)")
+            local discrete_name, old_result, datetime = existing_link:match("^([^:]+):%s*([^%(]+)%s*%(%s*Result Date:%s*(.+)%)")
             local new_result = new_link.link_text:match(":%s*([^%(]+)")
             link_text = string.gsub(link_text, "%[DISCRETEVALUENAME%]", discrete_name or "")
             link_text = string.gsub(link_text, "%[OLDVALUE%]", old_result or "")
             link_text = string.gsub(link_text, "%[NEWVALUE%]", new_result or "")
             link_text = string.gsub(link_text, "%[RESULTDATE%]", datetime or "")
-            existing_link.link_text = link_text
-            log.info("Updated link text: " .. existing_link.link_text)
+            log.info("Updated link text: " .. link_text)
+            return link_text
         end
         --- Update update_permanent_link on existing link that matches link_text
         --- @param merged_links CdiAlertLink[]
@@ -958,17 +959,7 @@ return function(Account)
                 end
 
                 for _, existing_link in ipairs(merged_links) do
-                    local has_date_range = existing_link.link_text and existing_link.link_text:match("%(%d%d/%d%d/%d%d%d%d %- %d%d/%d%d/%d%d%d%d%)")
-
-                    if
-                        existing_link.discrete_value_id and
-                        existing_link.discrete_value_id == new_link.discrete_value_id and
-                        not has_date_range and
-                        existing_link.link_text ~= new_link.link_text
-                    then
-                        update_changed_discrete_value(existing_link, new_link)
-                        matching_existing_link = existing_link
-                    elseif compare_links(existing_link, new_link) then
+                    if compare_links(existing_link, new_link) then
                         matching_existing_link = existing_link
                         break
                     end
@@ -977,6 +968,15 @@ return function(Account)
                 if matching_existing_link == nil then
                     table.insert(merged_links, new_link)
                 else
+                    local has_date_range = matching_existing_link.link_text and matching_existing_link.link_text:match("%(%d%d/%d%d/%d%d%d%d %- %d%d/%d%d/%d%d%d%d%)")
+                    if
+                        matching_existing_link.discrete_value_id and
+                        matching_existing_link.discrete_value_id == new_link.discrete_value_id and
+                        not has_date_range and
+                        matching_existing_link.link_text ~= new_link.link_text
+                    then
+                        matching_existing_link.link_text = update_changed_discrete_value(matching_existing_link.link_text, new_link)
+                    end
                     matching_existing_link.is_validated = new_link.is_validated
                     matching_existing_link.sequence = new_link.sequence
                     matching_existing_link.hidden = new_link.hidden
