@@ -972,16 +972,26 @@ return function(Account)
                         log.info("Found existing link: " .. matching_existing_link.link_text)
                     end
                     local has_date_range = matching_existing_link.link_text and matching_existing_link.link_text:match("%(%d%d/%d%d/%d%d%d%d %- %d%d/%d%d/%d%d%d%d%)")
+                    local has_result_date = matching_existing_link.link_text and matching_existing_link.link_text:match("(Result Date:%s*(%d%d/%d%d/%d%d%d%d)")
                     if
                         matching_existing_link.discrete_value_id and
                         matching_existing_link.discrete_value_id == new_link.discrete_value_id and
-                        not has_date_range and
+                        not has_date_range and has_result_date and
                         matching_existing_link.link_text ~= new_link.link_text
                     then
                         log.info("Updating link text for discrete value: " .. matching_existing_link.link_text)
                         log.info("New link text: " .. new_link.link_text)
                         matching_existing_link.link_text = update_changed_discrete_value(matching_existing_link.link_text, new_link)
                         log.info("Updated link text: " .. matching_existing_link.link_text)
+                    elseif
+                        matching_existing_link.discrete_value_id and
+                        matching_existing_link.discrete_value_id == new_link.discrete_value_id and
+                        not has_date_range and not has_date_range and
+                        matching_existing_link.link_text ~= new_link.link_text
+                    then
+                        log.info("Updating sepsis link text for code: " .. matching_existing_link.link_text)
+                        matching_existing_link.link_text = new_link.link_text
+                        log.info("Updated sepsis link text: " .. matching_existing_link.link_text)
                     end
                     matching_existing_link.is_validated = new_link.is_validated
                     matching_existing_link.sequence = new_link.sequence
