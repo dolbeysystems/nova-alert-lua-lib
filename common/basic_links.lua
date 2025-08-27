@@ -922,14 +922,6 @@ return function(Account)
                 end
             end
         end
-        if Account.id == "1641870317" then
-            for _, old_link in ipairs(old_links) do
-                log.info("Old link: " .. old_link.link_text)
-            end
-            for _, new_link in ipairs(new_links) do
-                log.info("New link: " .. new_link.link_text)
-            end
-        end
 
         if #old_links == 0 then
             return new_links
@@ -989,9 +981,6 @@ return function(Account)
                 if matching_existing_link == nil then
                     table.insert(merged_links, new_link)
                 else
-                    if Account.id == "1641870317" then
-                        log.info("Found existing link: " .. matching_existing_link.link_text)
-                    end
                     local has_date_range = matching_existing_link.link_text and matching_existing_link.link_text:match("%(%d%d/%d%d/%d%d%d%d %- %d%d/%d%d/%d%d%d%d%)")
                     local has_result_date = matching_existing_link.link_text and matching_existing_link.link_text:match("%(Result Date:")
                     if
@@ -1010,9 +999,7 @@ return function(Account)
                         not has_date_range and not has_date_range and
                         matching_existing_link.link_text ~= new_link.link_text
                     then
-                        log.info("Updating sepsis link text for code: " .. matching_existing_link.link_text)
                         matching_existing_link.link_text = new_link.link_text
-                        log.info("Updated sepsis link text: " .. matching_existing_link.link_text)
                     end
                     matching_existing_link.is_validated = new_link.is_validated
                     matching_existing_link.sequence = new_link.sequence
