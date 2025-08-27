@@ -968,6 +968,9 @@ return function(Account)
                 if matching_existing_link == nil then
                     table.insert(merged_links, new_link)
                 else
+                    if Account.id == "1641870317" then
+                        log.info("Found existing link: " .. matching_existing_link.link_text)
+                    end
                     local has_date_range = matching_existing_link.link_text and matching_existing_link.link_text:match("%(%d%d/%d%d/%d%d%d%d %- %d%d/%d%d/%d%d%d%d%)")
                     if
                         matching_existing_link.discrete_value_id and
