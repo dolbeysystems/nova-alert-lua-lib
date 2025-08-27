@@ -891,7 +891,7 @@ return function(Account)
             link_text = string.gsub(link_text, "%[DISCRETEVALUENAME%]", discrete_name or "")
             link_text = string.gsub(link_text, "%[OLDVALUE%]", old_result or "")
             link_text = string.gsub(link_text, "%[NEWVALUE%]", new_result or "")
-            link_text = string.gsub(link_text, "%[RESULTDATE%]", dates.date_int_to_string(datetime) or "")
+            link_text = string.gsub(link_text, "%[RESULTDATE%]", datetime or "")
             existing_link.link_text = link_text
             log.info("Updated link text: " .. existing_link.link_text)
         end
