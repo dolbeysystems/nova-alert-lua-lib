@@ -972,7 +972,7 @@ return function(Account)
                         log.info("Found existing link: " .. matching_existing_link.link_text)
                     end
                     local has_date_range = matching_existing_link.link_text and matching_existing_link.link_text:match("%(%d%d/%d%d/%d%d%d%d %- %d%d/%d%d/%d%d%d%d%)")
-                    local has_result_date = matching_existing_link.link_text and matching_existing_link.link_text:match("(Result Date:%s*(%d%d/%d%d/%d%d%d%d)")
+                    local has_result_date = matching_existing_link.link_text and matching_existing_link.link_text:match("%(Result Date:")
                     if
                         matching_existing_link.discrete_value_id and
                         matching_existing_link.discrete_value_id == new_link.discrete_value_id and
